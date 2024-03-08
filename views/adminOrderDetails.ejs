@@ -1,0 +1,181 @@
+<!DOCTYPE HTML>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>G-HUB</title>
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta property="og:title" content="">
+    <meta property="og:type" content="">
+    <meta property="og:url" content="">
+    <meta property="og:image" content="">
+    <!-- Favicon -->
+    <!-- <link rel="shortcut icon" type="image/x-icon" href="assets/imgs/theme/favicon.svg"> -->
+    <!-- Template CSS -->
+    <link href="../assets/css/dashboard.css" rel="stylesheet"/>
+</head>
+
+<body>
+    <div class="screen-overlay"></div>
+    <form action="adminPanel" method="post">
+        <aside class="navbar-aside" id="offcanvas_aside">
+            <div class="aside-top">
+                <a href="#" class="brand-wrap">
+                    <h2>G-HUB</h2>
+                    <h3>AdminPanel</h3>
+                </a>
+            </div>
+            <nav>
+                <ul class="menu-aside">
+                    <li class="menu-item active">
+                        <a class="menu-link" href="/adminPanel"> <i class="icon material-icons md-home"></i>
+                            <span class="text">Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a class="menu-link" href="/admin/category"> <i class="icon material-icons md-menu_open"></i>
+                            <span class="text">Categories</span>
+                        </a>
+                    </li>
+                    <li class="menu-item ">
+                        <a class="menu-link" href="/admin/products"> <i class="icon material-icons md-shopping_bag"></i>
+                            <span class="text">Products</span>
+                        </a>
+                        <li class="menu-item ">
+                            <a class="menu-link" href="/admin/add"> <i class="icon material-icons md-plus"></i>
+                                <span class="text">Add Product</span>
+                            </a>
+                        </li>
+                        <li class="menu-item ">
+                            <a class="menu-link" href="/admin/user-management"> <i class="icon material-icons md-person"></i>
+                                <span class="text">User Management</span>
+                            </a>
+                        </li>
+                        <li class="menu-item ">
+                            <a class="menu-link" href='/admin-orders'> <i class="icon material-icons md-book"></i>
+                                <span class="text">Orders</span>
+                            </a>
+                        </li>
+                        <li class="menu-item ">
+                            <a class="menu-link" href="/admin/logout"> <i class="icon material-icons md-exit_to_app"></i>
+                                <span class="text">Logout</span>
+                            </a>
+                        </li>
+                        
+    
+                    </li>
+                </ul>
+                <hr>
+                <br>
+                <br>
+            </nav>
+        </aside>
+    </form>
+    <section class="content-main">
+        <h3>Order Details</h3>
+        <section class="content-main">
+            <div class="content-header">
+                <div>
+                    <h2 class="content-title card-title">Edit Order Status</h2>
+                </div>
+                <div>
+                    <a href="/admin/order-details" class="btn btn-primary">Back to Orders</a>
+                </div>
+            </div>
+    <div class="row">
+                <div class="col-lg-6">
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <form action="/admin/change-status/<%= orders._id %>" method="post" id="editStatusForm">
+                                    <div class="mb-3">
+                                        <label for="productName" class="form-label">Product Name:</label>
+                                        <% orders.products.forEach(product => { %>
+                                            <input type="text" class="form-control" id="productName" value="<%= product.productId.name %>" disabled>
+                                        <% }) %>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="productMainImage" class="form-label">Product Image:</label>
+                                        <% orders.products.forEach(product => { %>
+                                            <img src="<%= product.productId.productMainImage %>" alt="Product Image" class="img-fluid">
+                                        <% }) %>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="shippingAddress" class="form-label">Shipping Address:</label>
+                                        <textarea class="form-control" id="shippingAddress" rows="3" disabled><%= orders.shippingAddress %></textarea>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="orderStatus" class="form-label">Choose Status:</label>
+                                        <select class="form-select" id="orderStatus" name="status">
+                                            <option value="" selected disabled><%- orders.orderStatus %></option>
+                                            <% if (orders.orderStatus === 'Request approved') { %>
+                                                <option value="Returned">Returned</option>
+                                            <% } else { %>
+                                                <option value="Pending">Pending</option>
+                                                <option value="Processing">Processing</option>
+                                                <option value="Shipped">Shipped</option>
+                                                <option value="Delivered">Delivered</option>
+                                            <% } %>
+                                        </select>
+                                    </div>
+                                    <div class="text-center">
+                                        <button type="submit" class="btn btn-primary">Save changes</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </section>
+            <style>
+                body {
+                    margin: 0;
+                    font-family: Arial, sans-serif;
+                }
+            
+                .container {
+                    display: flex;
+                }
+            
+                .navbar-aside {
+                    width: 20%; /* Adjust the width of the navbar as needed */
+                    background-color: #333;
+                    color: #fff;
+                    padding: 20px;
+                    box-sizing: border-box;
+                }
+            
+                .content-main {
+                    flex: 1;
+                    padding: 20px;
+                    box-sizing: border-box;
+                }
+            
+                /* Add any additional styling as needed */
+            </style>
+            
+    </section>
+    <script>
+        $(document).ready(function(){
+            $("#logoutLink").on('click',function(e){
+                e.preventDefault()
+                $.ajax({
+                    url:'/admin/logout',
+                    method:'post',
+                    success:function(data)
+                    {
+                        window.location.href='/admin'
+                    },
+                    error:function(xhr,status,error)
+                    {
+                        console.log("Error occured during adminlogout")
+                    }
+                })
+            })
+        })
+    </script>
+</body>
+</html>

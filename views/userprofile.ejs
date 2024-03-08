@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="../assets/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="../assets/css/stylee.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../assets/css/userprofile.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</head>
+
+<body>
+    <nav class="custom-navbar navbar navbar-expand-md navbar-dark bg-dark" aria-label="Furni navigation bar">
+        <a href="#" onclick="goBack()"><img src="../public/back-button-removebg-preview.png" id="back-button"></a>
+
+        <div class="container">
+            <a class="navbar-brand" href="#">G-HUB<span>.</span></a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsFurni"
+                aria-controls="navbarsFurni" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarsFurni">
+                <ul class="custom-navbar-nav navbar-nav ms-auto mb-2 mb-md-0">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/home">Home</a>
+                    </li>
+                    <!-- <li class="nav-item">
+                        <a class="nav-link" href="shop.html">Shop</a>
+                    </li> -->
+                    <!-- <li class="nav-item">
+                        <a class="nav-link" href="about.html">About us</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="contact.html">Contact us</a>
+                    </li> -->
+                </ul>
+                <ul class="custom-navbar-cta navbar-nav mb-2 mb-md-0 ms-5">
+                    <li><a class="nav-link" href="/userprofile/<%= user._id %>"><i class="fa fa-user"></i></a></li>
+                    <li><a class="nav-link" href="/cart"><i class="fa fa-shopping-cart"></i></a></li>
+                    <li><a class="nav-link" href="/wishlist"><i class="fa fa-heart" aria-hidden="true"></i></a></li>
+                    <li><a class="nav-link" href="/userWallet"><i class="fa-solid fa-wallet"></i></a></li>
+                    <li><a class="nav-link" href=""><i></i></a></li>
+					<form action="/logout" method="POST">
+						<button type="submit" class="nav-link" style="border: none; background: none; cursor: pointer;">
+							<i class="fa fa-sign-out"></i>
+						</button>
+					</form>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="container rounded bg-white mt-5 mb-5">
+        <div class="row">
+            <div class="col-md-3 border-right">
+                <div class="d-flex flex-column align-items-center text-center p-3 py-5"><img class="rounded-circle mt-5"
+                        width="150px"
+                        src="https://st3.depositphotos.com/15648834/17930/v/600/depositphotos_179308454-stock-illustration-unknown-person-silhouette-glasses-profile.jpg"><span
+                        class="font-weight-bold"><%=user.username%></span><span class="text-black-50"><%=user.email%></span><span>
+                    </span></div>
+                <div class="mt-3 text-center">
+                    <a href="/userorders">
+                        <button class="btn btn-danger profile-button" type="submit">Orders</button>
+                    </a>
+                </div>
+                <div class="mt-3 text-center">
+                    <a href="/editpassword/<%=user._id%>">
+                        <button class="btn btn-danger profile-button" type="submit">Edit Password</button>
+                    </a>
+                </div>
+                
+                <div class="mt-3 text-center">
+                    <a href="/address/<%=user._id%>">
+                        <button class="btn btn-danger profile-button" type="submit">User Address</button>
+                    </a>
+                </div>
+                <div class="mt-3 text-center">
+                    <a href="/referandearn/<%=user._id%>">
+                        <button class="btn btn-danger profile-button" type="submit">Share and Earn</button>
+                    </a>
+                </div>
+                
+            </div>
+            <div class="col-md-5 border-right">
+                <div class="p-3 py-5">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h4 class="text-right">Profile Settings</h4>
+                    </div>
+                    <div class="row mt-3">
+                        <% if (user) { %>
+                            <form action="/editprofile/<%=user._id%>" method="post" id="profileForm">                
+                                                <div class="col-md-12"><label class="labels">Name</label><input type="text" name="username"
+                                        id="username" class="form-control" placeholder="username"
+                                        value="<%=user.username%>"></div>
+                            </div>
+                            <div class="row mt-3">
+                                <div class="col-md-12"><label class="labels">Email</label><input type="email"
+                                        class="form-control" name="email" id="email" placeholder="email"
+                                        value="<%=user.email%>"></div>
+                                <div class="col-md-12"><label class="labels">Mobile Number</label><input type="number"
+                                        class="form-control" placeholder="enter phone number" name="phonenumber" id="phonenumber"
+                                        value="<%=user.phonenumber%>"></div>
+                            </div>
+                            <div class="mt-5 text-center">
+                                <button id="editProfileButton" class="btn btn-danger profile-button" type="submit">Edit Profile</button>
+                            </form>
+                        <% } else { %>
+                            <p>User not found</p>
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+        </div>
+             <style>
+        #back-button {
+  width: 30px;
+}
+        </style>
+        <script>
+            function goBack()
+    {
+      window.history.back()
+    }
+            document.getElementById('editProfileButton').addEventListener('click', async function (event) {
+                event.preventDefault();
+        
+                const username = document.getElementById('username').value;
+                const email = document.getElementById('email').value;
+                const phonenumber = document.getElementById('phonenumber').value;
+        
+                if (!username.trim() || !email.trim() || !phonenumber.trim()) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Validation Error',
+                        text: 'All fields are required'
+                    });
+                    return;
+                } else if (!/^\S+@\S+\.\S+$/.test(email)) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Validation Error',
+                        text: 'Please enter a valid email address.',
+                    });
+                    return;
+                } else if (!/^\d{10}$/.test(phonenumber)) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Validation Error',
+                        text: 'Please enter a valid 10-digit phone number.',
+                    });
+                    return;
+                }
+        
+                const userId = "<%=user._id%>";
+        
+                try {
+                    const response = await fetch(`/editprofile/${userId}`, {
+                        method: "post",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({ username, email, phonenumber, userId }),
+                    });
+        
+                    const responseData = await response.json();
+        
+                    if (response.ok) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success',
+                            text: responseData.message
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: responseData.message
+                        });
+                    }
+                } catch (error) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'An error occurred.'
+                    });
+                }
+            });
+        </script>
+        
+   
+
+        
+    </body>
+</html>

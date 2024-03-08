@@ -1,0 +1,275 @@
+<!DOCTYPE HTML>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>G-HUB</title>
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta property="og:title" content="">
+    <meta property="og:type" content="">
+    <meta property="og:url" content="">
+    <meta property="og:image" content="">
+    <!-- Favicon -->
+    <link rel="shortcut icon" type="image/x-icon" href="assets/imgs/theme/favicon.svg">
+    <!-- Template CSS -->
+    <link href="../assets/css/dashboard.css" rel="stylesheet" type="text/css" />
+    <!-- <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"> -->
+    <style>
+        .card-body {
+            overflow-y: auto;
+        }
+
+        .pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+    margin-left: 200px;
+}
+
+.pagination a {
+    margin: 0 5px;
+    padding: 8px 12px;
+    text-decoration: none;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    color: #333;
+}
+
+.pagination a.active {
+    background-color: #007bff;
+    color: #fff;
+    border-color: #007bff;
+}
+.search-bar {
+        display: flex;
+        justify-content: flex-end;
+        margin-bottom: 20px;
+        margin-top: 20px;
+        margin-right: 20px;
+    }
+
+    .search-input {
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        margin-right: 5px;
+        flex-grow: 1;
+    }
+
+    .sea {
+        padding: 8px 12px;
+        border: 1px solid #007bff;
+        border-radius: 5px;
+        background-color: #007bff;
+        color: #fff;
+        cursor: pointer;
+    }
+
+    .sea:hover {
+        background-color: #0056b3;
+    }
+
+        
+    </style>
+
+</head>
+
+<body>
+    <div class="screen-overlay"></div>
+    <aside class="navbar-aside" id="offcanvas_aside">
+        <div class="aside-top">
+            <a href="#" class="brand-wrap">
+                <h2>G-HUB</h2>
+                <h3>Admin Panel</h3>
+            </a>
+            <a href="#" onclick="goBack()"><img src="../public/back-button-removebg-preview.png" id="back-button"></a>
+
+            <!-- <div>
+                <button class="btn btn-icon btn-aside-minimize">
+                    <i class="text-muted material-icons md-menu_open"></i>
+                </button>
+            </div> -->
+        </div>
+        <nav>
+            <ul class="menu-aside">
+                <li class="menu-item ">
+                    <a class="menu-link" href="/adminPanel"> <i class="icon material-icons md-home"></i>
+                        <span class="text">Dashboard</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a class="menu-link" href="/admin/category"> <i class="icon material-icons md-menu_open"></i>
+                        <span class="text">Categories</span>
+                    </a>
+                </li>
+                <li class="menu-item active">
+                    <a class="menu-link" href="/admin/products"> <i class="icon material-icons md-shopping_bag"></i>
+                        <span class="text">Products</span>
+                    </a>
+                    <li class="menu-item ">
+                        <a class="menu-link" href="/admin/add"> <i class="icon material-icons md-plus"></i>
+                            <span class="text">Add Product</span>
+                        </a>
+                    </li>
+                    <li class="menu-item ">
+                        <a class="menu-link" href="/admin/user-management"> <i class="icon material-icons md-person"></i>
+                            <span class="text">User Management</span>
+                        </a>
+                    </li>
+                    <li class="menu-item ">
+                        <a class="menu-link" href="/admincoupons"> <i class="icon material-icons md-check_box"></i>
+                            <span class="text">Coupon Management</span>
+                        </a>
+                    </li>
+                    <li class="menu-item ">
+                        <a class="menu-link" href="/offer-management"> <i class="icon material-icons md-redeem"></i>
+                            <span class="text">Offer Management</span>
+                        </a>
+                    </li>
+                    <li class="menu-item ">
+                        <a class="menu-link" href='/admin-orders'> <i class="icon material-icons md-book"></i>
+                            <span class="text">Orders</span>
+                        </a>
+                    </li>
+                    <li class="menu-item ">
+                        <a class="menu-link" href="#" id="logoutLink"> <i class="icon material-icons md-exit_to_app"></i>
+                            <span class="text">Logout</span>
+                        </a>
+                    </li>
+                    
+
+                </li>
+            </ul>
+            <hr>
+            <br>
+            <br>
+        </nav>
+    </aside>
+    <main class="main-wrap">
+        
+        <div class="search-bar">
+            <form action="/admin/products" method="get">
+                <input type="text" class="search-input" name="search" placeholder="Search by name or description" value="<%= searchQuery || '' %>">
+                <button type="submit" class="sea">Search</button>                    
+
+                <select name="isPublished" class="search-input">
+                    <option value="">All</option>
+                    <option value="true" <%= isPublished === 'true' ? 'selected' : '' %>>Published</option>
+                    <option value="false" <%= isPublished === 'false' ? 'selected' : '' %>>Not Published</option>
+                </select>
+                
+                <button type="submit" class="sea">Filter</button>                    
+            </form>
+        </div>
+        
+
+        <section class="content-main">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <!-- Existing code for table structure -->
+                    <table class="table table-bordered align-middle table-nowrap mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th class="align-middle" scope="col">Product</th>
+                                <th class="align-middle" scope="col">Name</th>
+                                <th class="align-middle" scope="col">Category</th>
+                                <th class="align-middle" scope="col">Description</th>
+                                <th class="align-middle" scope="col">Price</th>
+                                <th class="align-middle" scope="col">Stock</th>
+                                <th class="align-middle" scope="col">Status</th>
+                                <th class="align-middle" scope="col">Restrict</th>
+                                <th class="align-middle" scope="col">Edit</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% products.forEach(product => { %>
+                                <tr>
+                                    <!-- Move product name to the "Name" column -->
+                                    <td>
+                                        <div style="height: 100px; width: 100px; display: flex;  align-items: center;">
+                                            <div style="flex-grow: 1;"></div> <!-- Empty div to push the image to the bottom -->
+                                            <div>
+                                                <img src="/<%= product.mainimage %>" alt="">
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td><%= product.name %></td>
+                                    <td><%= product.category ? product.category.name : 'N/A' %></td>
+                                    <td><%= product.description %></td>
+                                    <td><%= product.price %></td>
+                                    <td><%= product.stock %></td>
+                                    <td>
+                                        <p class="<%= product.isPublished ? 'badge badge-pill badge-soft-success' : 'badge badge-pill badge-soft-danger' %>">
+                                            <%= product.isPublished ? 'Active' : 'Inactive' %>
+                                        </p>
+                                    </td>
+                                    <td>
+                                        <a href="/admin/products/restrict/<%= product._id %>" id="restrict"
+                                            title="<%= product.isPublished ? 'Unpublish' : 'Publish' %>"
+                                            class="fw-bold text-warning">
+                                            <%= product.isPublished ? 'Unpublish' : 'Publish' %>
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <a href="/admin/products/edit/<%= product._id %>" id="edit"
+                                            class="fw-bold text-primary">
+                                            <i class="text-muted material-icons md-edit"></i>
+                                        </a>
+                                        <hr>
+                                    </td>
+                                </tr>
+                            <% }) %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="pagination">
+            <%for(let i=1;i<=totalPages;i++){%>
+                    <a href="/admin/products?page=<%= i %>" class="<%= i === currentPage ? 'active' : '' %>"><%= i %></a>
+                    <%}%>
+                </div>
+        </div>
+       
+    </section> <!-- content-main end// -->
+</main>
+<style>
+    #back-button {
+width: 30px;
+}
+</style>
+<!-- Additional JavaScript libraries -->
+<script src="../assets/js/vendors/jquery-3.6.0.min.js"></script>
+<script src="../assets/js/vendors/bootstrap.bundle.min.js"></script>
+<script src="../assets/js/vendors/select2.min.js"></script>
+<script src="../assets/js/vendors/perfect-scrollbar.js"></script>
+<script src="../assets/js/vendors/jquery.fullscreen.min.js"></script>
+<!-- Main Script -->
+<script src="../assets/js/main.js" type="text/javascript"></script>
+<script>
+    function goBack()
+    {
+      window.history.back()
+    }
+    $(document).ready(function(){
+        $("#logoutLink").on('click',function(e){
+            e.preventDefault()
+            $.ajax({
+                url:'/admin/logout',
+                method:'post',
+                success:function(data)
+                {
+                    window.location.href='/admin'
+                },
+                error:function(xhr,status,error)
+                {
+                    console.log("Error occured during adminlogout")
+                }
+            })
+        })
+    })
+</script>
+</body>
+
+</html>

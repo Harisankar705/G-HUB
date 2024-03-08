@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Details</title>
+    <link href="../assets/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="../assets/css/stylee.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../assets/css/userprofile.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</head>
+
+<body>
+    <nav class="custom-navbar navbar navbar-expand-md navbar-dark bg-dark" aria-label="Furni navigation bar">
+        <a href="#" onclick="goBack()"><img src="../public/back-button-removebg-preview.png" id="back-button"></a>
+
+        <div class="container">
+            <a class="navbar-brand" href="#">G-HUB<span>.</span></a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsFurni"
+                aria-controls="navbarsFurni" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarsFurni">
+                <ul class="custom-navbar-nav navbar-nav ms-auto mb-2 mb-md-0">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/home">Home</a>
+                    </li>
+                </ul>
+                <ul class="custom-navbar-cta navbar-nav mb-2 mb-md-0 ms-5">
+                    <li><a class="nav-link" href="/userprofile/<%= user._id %>"><i class="fa fa-user"></i></a></li>
+                    <li><a class="nav-link" href="/cart"><i class="fa fa-shopping-cart"></i></a></li>
+                    <li><a class="nav-link" href="/wishlist"><i class="fa fa-heart" aria-hidden="true"></i></a></li>
+                    <li><a class="nav-link" href="/userWallet"><i class="fa-solid fa-wallet"></i></a></li>
+                    <li><a class="nav-link" href=""><i></i></a></li>
+					<form action="/logout" method="POST">
+						<button type="submit" class="nav-link" style="border: none; background: none; cursor: pointer;">
+							<i class="fa fa-sign-out"></i>
+						</button>
+					</form>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <h1>Order Details</h1>
+
+        <% if (orderDetails && orderDetails.products && orderDetails.products.length > 0) { %>
+            <% orderDetails.products.forEach(product => { %>
+                <div class="product-details">
+                    <img src="/<%= product.productId && product.productId.mainimage %>" alt="<%= product.productId && product.productId.name %>" class="product-image">
+                    <div class="product-info">
+                        <p class="product-name">Order Id: <%= orderDetails._id %></p>
+                        <p class="order-date">Order Date:<%=orderDetails.date.toLocaleString()%></p>
+                        <p class="product-name">Product: <%= product.productId && product.productId.name %></p>
+                        <p class="payment-method">Payment Method:<%=orderDetails.paymentMethod%></p>
+                        <p class='coupon-discount'> Discount:<%=orderDetails.couponDiscount%></p>
+                        <p class="product-quantity">Quantity: <%= product.quantity %></p>
+                        <p class="product-price">Total Price: <%= product.total %></p>
+                        <% if (orderDetails.addresstoDeliver) { %>
+                            <h5>Delivery Address</h5>
+                            <p>Username: <%= orderDetails.addresstoDeliver.username || 'Not specified' %></p>
+                            <p>Phone Number: <%= orderDetails.addresstoDeliver.phonenumber || 'Not specified' %></p>
+                            <p>Address: <%= orderDetails.addresstoDeliver.houseaddress %>, <%= orderDetails.addresstoDeliver.city %>, <%= orderDetails.addresstoDeliver.state %>, <%= orderDetails.addresstoDeliver.district %> - <%= orderDetails.addresstoDeliver.pincode %></p>
+                        <% } %>
+                    </div>
+                </div>
+            <% }); %>
+        <% } else { %>
+            <p>No products found in the order.</p>
+        <% } %>
+
+        <p class="order-status mt-4">Order Status: <%= orderDetails && orderDetails.orderStatus %></p>
+    </div>
+
+
+</body>
+<style>
+    #back-button {
+  width: 30px;
+}
+    body {
+        font-family: 'Arial', sans-serif;
+        background-color: #f8f9fa;
+        color: #343a40;
+        padding: 20px;
+        margin: 0;
+        padding: 0;
+    }
+
+    h1 {
+        color: #dc3545;
+    }
+
+    .custom-navbar {
+        background-color: #343a40;
+    }
+
+    .navbar-brand {
+        color: #ffffff;
+        font-size: 1.5rem;
+    }
+
+    .navbar-nav .nav-link {
+        color: #ffffff;
+    }
+
+    .navbar-toggler-icon {
+        background-color: #ffffff;
+    }
+
+    .product-details {
+        border: 1px solid #dee2e6;
+        border-radius: 5px;
+        margin-bottom: 20px;
+        padding: 15px;
+        background-color: #fff;
+        display: flex;
+    }
+
+    .product-image {
+        max-width: 100px;
+        max-height: 100px;
+        margin-right: 15px;
+    }
+
+    .product-info {
+        flex-grow: 1;
+    }
+
+    .product-info p {
+        margin: 0;
+    }
+
+    .order-status {
+        font-weight: bold;
+        margin-top: 20px;
+    }
+</style>
+<script>
+    function goBack()
+    {
+      window.history.back()
+    }
+</script>
+</html>

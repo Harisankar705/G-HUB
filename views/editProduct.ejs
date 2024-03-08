@@ -1,0 +1,384 @@
+<!DOCTYPE HTML>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>G-HUB</title>
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta property="og:title" content="">
+    <meta property="og:type" content="">
+    <meta property="og:url" content="">
+    <meta property="og:image" content="">
+    <!-- Favicon -->
+    <link rel="shortcut icon" type="image/x-icon" href="assets/imgs/theme/favicon.svg">
+    <!-- Template CSS -->
+    <link href="/assets/css/dashboard.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css"  crossorigin="anonymous" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
+    <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10"> -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <style>
+        /* Optional: Add some styling for the image preview */
+        .image-preview {
+            max-width: 100%;
+            max-height: 200px;
+        }
+
+        form {
+            position: relative; /* Change to relative */
+            margin: auto; /* Center the form */
+            width: 50%;
+            padding: 20px;
+            border: 1px solid #ccc;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+        }
+
+        #messageContainer {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            margin-top: -50px; /* Adjust this value based on your element's height */
+            margin-left: -50%; /* Adjust this value based on your element's width */
+            width: 100%;
+            text-align: center;
+            padding: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        /* Styling for the category dropdown */
+        label[for="category"] {
+            margin-top: 10px;
+            display: block;
+        }
+
+        select#category {
+            width: 100%;
+            padding: 10px;
+            border-radius: 1px;
+            margin-bottom: 10px;
+        }
+
+    </style>
+</head>
+
+<body>
+    <div class="screen-overlay"></div>
+    <div id="messageContainer"></div>
+
+    <aside class="navbar-aside" id="offcanvas_aside">
+        <div class="aside-top">
+            <a href="#" class="brand-wrap">
+                <h2>G-HUB</h2>
+                <h3>AdminPanel</h3>
+            </a>
+            <div>
+                <button class="btn btn-icon btn-aside-minimize"> <i class="text-muted material-icons md-menu_open"></i> </button>
+            </div>
+        </div>
+        <nav>
+            <ul class="menu-aside">
+                <li class="menu-item">
+                    <a class="menu-link" href="/adminPanel"> <i class="icon material-icons md-home"></i>
+                        <span class="text">Dashboard</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a class="menu-link" href="/admin/category"> <i class="icon material-icons md-menu_open"></i>
+                        <span class="text">Categories</span>
+                    </a>
+                </li>
+                <li class="menu-item active">
+                    <a class="menu-link" href="/admin/products"> <i class="icon material-icons md-shopping_bag"></i>
+                        <span class="text">Products</span>
+                    </a>
+                    <li class="menu-item ">
+                        <a class="menu-link" href="/admin/add"> <i class="icon material-icons md-plus"></i>
+                            <span class="text">Add Product</span>
+                        </a>
+                    </li>
+                    <li class="menu-item ">
+                        <a class="menu-link" href="/admin/user-management"> <i class="icon material-icons md-person"></i>
+                            <span class="text">User Management</span>
+                        </a>
+                    </li>
+                    <li class="menu-item ">
+                        <a class="menu-link" href="/admincoupons"> <i class="icon material-icons md-check_box"></i>
+                            <span class="text">Coupon Management</span>
+                        </a>
+                    </li>
+                    <li class="menu-item ">
+                        <a class="menu-link" href="/offer-management"> <i class="icon material-icons md-redeem"></i>
+                            <span class="text">Offer Management</span>
+                        </a>
+                    </li>
+                    <li class="menu-item ">
+                        <a class="menu-link" href='/admin-orders'> <i class="icon material-icons md-book"></i>
+                            <span class="text">Orders</span>
+                        </a>
+                    </li>
+                    <li class="menu-item ">
+                        <a class="menu-link" href="#" id="logoutLink"> <i class="icon material-icons md-exit_to_app"></i>
+                            <span class="text">Logout</span>
+                        </a>
+                    </li>
+                    
+
+                </li>
+            </ul>
+            <hr>
+            <br>
+            <br>
+        </nav>
+    </aside>
+
+    
+    <form action="/admin/products/edit/<%= products.id %>" method="post" id="editProductForm" enctype="multipart/form-data">
+        <!-- Add input fields for editing product details -->
+        <h1>Edit Product</h1>
+        <input type="hidden" id="productId" value="<%= products.id %>">
+        <label for="name">Product Name</label>
+        <input type="text" value="<%= products.name %>" class="form-control" id="name" name="name" />
+
+        <label for="description">Product Description</label>
+        <input type="text" value="<%= products.description %>" class="form-control" id="description" name="description" />
+        <div></div>
+
+        <label for="category">Product Category</label>
+        <div></div>
+        <% if (category) { %>
+            <!-- Dropdown for editing category -->
+            <select name="category" id="category">
+                <% category.forEach((category) => { %>
+                    <option value="<%= category.name %>" <%= (products.category && products.category._id.toString() === category._id.toString()) ? 'selected' : '' %>><%= category.name %></option>
+                <% }); %>
+            </select>
+        <% } else { %>
+            <!-- Display existing category as text -->
+            <!-- <input type="text" value="<%= product.category ? product.category.name : 'N/A' %>" readonly name="category" /> -->
+        <% } %>
+
+        <div></div>
+                <label for="price">Product Price</label>
+        <input type="text" value="<%= products.price %>" class="form-control" id="price" name="price" />
+            <div></div>
+            <label for="price">Product Stock</label>
+        <input type="text" value="<%= products.stock %>" class="form-control" id="stock" name="stock" />
+        <label for="mainImage">Main Image</label>
+        <input type="file" class="form-control" id="mainimage" name="mainimage" onchange="getImagePreview(event)" />
+        <div id="mainImagePreview" class="image-preview">
+            <img id="mainImageDisplay" src="/<%=products.mainimage%>" alt="Main Image" style="max-width: 200px; max-height: 200px;">
+        </div>
+            <input type="hidden" id="croppedImageData" name="croppedImageData" value="">
+
+        <label for="additionalImage">Additional Image</label>
+        <input type="file" class="form-control" id="additionalImage" name="additionalImage" onchange="addImagePreview(event)" multiple/>
+        <div id="addImagePreview" class="image-preview">
+            <img id="mainImageDisplay" src="/<%=products.additionalimages[0]%>" alt="Main Image" style="max-width: 200px; max-height: 200px;">
+            <img id="mainImageDisplay" src="/<%=products.additionalimages[1]%>" alt="Main Image" style="max-width: 200px; max-height: 200px;">
+            <img id="mainImageDisplay" src="/<%=products.additionalimages[2]%>" alt="Main Image" style="max-width: 200px; max-height: 200px;">
+ 
+        </div>
+    
+
+        <button type='submit'>Save Product</button>
+    </form>
+
+    <script>
+
+document.getElementById('editProductForm').addEventListener('submit', function (event) {
+    event.preventDefault();
+
+    // Validate product name
+    const nameInput = document.getElementById('name');
+    const nameValue = nameInput.value.trim(); // Remove leading and trailing spaces
+    if (nameValue === '') {
+        showValidationError('Product Name is required');
+        return;
+    }
+
+    // Validate product description
+    const descriptionInput = document.getElementById('description');
+    const descriptionValue = descriptionInput.value.trim();
+    if (descriptionValue === '') {
+        showValidationError('Product Description is required');
+        return;
+    }
+
+    // Validate product category
+    const categoryInput = document.getElementById('category');
+    const categoryValue = categoryInput.value.trim();
+    if (categoryValue === '') {
+        showValidationError('Product Category is required');
+        return;
+    }
+
+    // Validate product price
+    const priceInput = document.getElementById('price');
+    const priceValue = parseFloat(priceInput.value);
+    if (isNaN(priceValue) || priceValue < 0) {
+        showValidationError('Price must be a positive number');
+        return;
+    }
+
+    // Validate product stock
+    const stockInput = document.getElementById('stock');
+    const stockValue = parseInt(stockInput.value, 10);
+    if (isNaN(stockValue) || stockValue < 0) {
+        showValidationError('Stock must be a positive number');
+        return;
+    }
+
+    // Other validations and confirmation checks can be added here...
+
+    // If all validations pass, proceed with form submission
+    Swal.fire({
+        title: 'Are you sure?',
+        text: 'You are about to save changes to the product.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, save it!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            document.getElementById('editProductForm').submit();
+        }
+    });
+});
+
+function showValidationError(message) {
+    Swal.fire({
+        icon: 'error',
+        title: 'Validation Error',
+        text: message,
+    });
+}
+
+
+
+    document.getElementById('additionalImage').addEventListener('change', function (event) {
+        const selectedFiles = event.target.files;
+        if (selectedFiles.length > 4) {
+            Swal.fire({
+                icon: 'info',
+                title: 'You can choose only a maximum of four files',
+                showConfirmButton: true,
+                timer: 2000,
+                customClass: {
+                    title: 'Swal'
+                }
+            });
+            event.target.value = '';
+        }
+    });
+
+    document.addEventListener('DOMContentLoaded', function () {
+        // Call the functions to display existing images when the page is loaded
+        displayExistingImage('mainimage', 'mainImagePreview');
+        displayExistingImages('additionalImage', 'addImagePreview', 3);
+
+        // Add event listener to trigger cropping
+        initCropper('mainimage', 'mainImagePreview');
+    });
+
+    function displayExistingImage(inputId, previewId) {
+        const input = document.getElementById(inputId);
+        const previewDiv = document.getElementById(previewId);
+
+        if (input.files && input.files[0]) {
+            const image = new Image();
+            image.src = URL.createObjectURL(input.files[0]);
+
+            // Set width and height constraints
+            image.width = 200; // Set your desired width
+            image.height = 200; // Set your desired height
+
+            // Clear previous previews
+            previewDiv.innerHTML = '';
+
+            // Append the new preview image
+            previewDiv.appendChild(image);
+        }
+    }
+
+    function displayExistingImages(inputId, previewId, numberOfImages) {
+        const input = document.getElementById(inputId);
+        const previewDiv = document.getElementById(previewId);
+
+        if (input.files && input.files.length > 0) {
+            for (let i = 0; i < Math.min(input.files.length, numberOfImages); i++) {
+                const image = new Image();
+                image.src = URL.createObjectURL(input.files[i]);
+
+                // Set width and height constraints
+                image.width = 200; // Set your desired width
+                image.height = 200; // Set your desired height
+
+                // Append the new preview image
+                previewDiv.appendChild(image);
+            }
+        }
+    }
+
+    function getImagePreview(event) {
+        displayExistingImage('mainimage', 'mainImagePreview');
+        initCropper('mainimage', 'mainImagePreview');
+    }
+
+    function addImagePreview(event) {
+    const previewDiv = document.getElementById('addImagePreview');
+    previewDiv.innerHTML = ''; // Clear existing previews
+
+    displayExistingImages('additionalImage', 'addImagePreview', 3);
+}
+
+
+    // function initCropper(inputId, previewId) {
+    //     const input = document.getElementById(inputId);
+    //     const previewImage = document.getElementById(previewId).getElementsByTagName('img')[0];
+
+    //     const cropper = new Cropper(previewImage, {
+    //         aspectRatio: 1, // You can set your desired aspect ratio
+    //         viewMode: 2, // Cropper.js option for displaying the preview image
+    //     });
+
+    //     input.addEventListener('change', function (e) {
+    //         const file = e.target.files[0];
+
+    //         if (file) {
+    //             const reader = new FileReader();
+
+    //             reader.onload = function (event) {
+    //                 // Update the Cropper.js instance with the new image source
+    //                 cropper.replace(event.target.result);
+    //             };
+
+    //             reader.readAsDataURL(file);
+    //         }
+    //     });
+    // }
+
+
+    </script>
+    
+</body>
+
+</html>

@@ -1,0 +1,131 @@
+
+<html lang="en">
+
+<%-include('partials/userheader.ejs')%>
+
+
+
+<div class="search-and-filter-container">
+    <div class="search-bar">
+        <form action="/home" method="get" class="flex-container" id="searchForm">
+            <input type="text" placeholder="Search Products" name="search" id="searchQuery" value="<%=searchQuery%>" class="search-input">
+            <button class="sea" type="submit">Search</button>
+            <select name="sortCategory" id="sortCategory" class="category-select">
+                <option value="" <%= sortCategory === '' ? 'selected' : '' %>>All Categories</option>
+                <% categories.forEach(category => { %>
+                    <option value="<%= category._id %>" <%= sortCategory === category._id ? 'selected' : '' %>><%= category.name %></option>
+                <% }); %>
+            </select>
+        </form>
+    </div>
+</div>
+
+
+    <div class="untree_co-section product-section before-footer-section">
+        <div class="container">
+            <div class="row">
+                <% products.forEach(product => { %>
+                <% if (product.isPublished) { %>
+                <div class="col-12 col-md-4 col-lg-3 mb-5">
+                    <a class="product-item" href="/product-details?productId=<%= product._id %>">
+                        <img src="<%= product.mainimage %>" class="img-fluid product-thumbnail"
+                            alt="<%= product.name %>">
+                        <h3 class="product-title"><%= product.name %></h3>
+                        <strong class="product-price">₹<%= product.price.toFixed(2) %></strong>
+                        <span class="icon-cross">
+                            <img src="../assets/images/cross.svg" class="img-fluid" alt="Cross icon">
+                        </span>
+                    </a>
+                </div>
+                <% } %>
+                <% }); %>
+            </div>
+         
+            </div>
+<div class="pagination">
+    <% for(let i = 1; i <= totalPages; i++) { %>
+        <a href="?page=<%= i %>" class="<%= i === currentPage ? 'active' : '' %>"><%= i %></a>
+    <% } %>
+</div>
+
+        </div>
+    </div>
+    <style>
+        #back-button {
+  width: 30px;
+}
+            .pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+    margin-left: 200px;
+}
+
+.pagination a {
+    margin: 0 5px;
+    padding: 8px 12px;
+    text-decoration: none;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    color: #333;
+}
+
+.pagination a.active {
+    background-color: #007bff;
+    color: #fff;
+    border-color: #007bff;
+}
+.search-bar {
+        display: flex;
+        margin-bottom: 20px;
+        justify-content: flex-end;
+        margin-top: 10px;
+        margin-right: 10px;
+    }
+
+    .search-input {
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        margin-right: 5px;
+        flex-grow: 1;
+    }
+
+    .sea {
+        padding: 8px 12px;
+        border: 1px solid #007bff;
+        border-radius: 5px;
+        background-color: #007bff;
+        color: #fff;
+        cursor: pointer;
+    }
+
+    .sea:hover {
+        background-color: #0056b3;
+    }
+        .sort-category
+    {
+        display: flex;
+        margin-bottom: 20px;
+        justify-content: flex-end;
+        margin-right: 10px;
+        margin-top: 20px;
+    }
+    .category-select
+    {
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        margin-right: 5px;
+    }
+        </style>
+<script>
+    $(document).ready(function () {
+      // Listen for change event on category dropdown
+      $('#sortCategory').on('change', function () {
+        // Trigger form submission when category is selected
+        $('form#searchForm').submit();
+      });
+    });
+  </script>
+<%-include('partials/userfooter.ejs')%>

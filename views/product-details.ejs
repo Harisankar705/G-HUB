@@ -1,0 +1,420 @@
+<!-- End Header Area -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="author" content="Untree.co">
+<!-- <link rel="shortcut icon" href="favicon.png"> -->
+<meta name="description" content="" />
+<meta name="keywords" content="bootstrap, bootstrap4" />
+
+<!-- Bootstrap CSS -->
+<link href="../assets/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+<link href="../assets/css/tiny-slider.css" rel="stylesheet">
+<link href="../assets/css/stylee.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" /><body>
+
+  <nav class="custom-navbar navbar navbar-expand-md navbar-dark bg-dark" aria-label="Furni navigation bar">
+    <a href="#" onclick="goBack()"><img src="../public/back-button-removebg-preview.png" id="back-button"></a>
+
+    <div class="container">
+    <a class="navbar-brand" href="#">G-HUB<span>.</span></a>
+   
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsFurni" aria-controls="navbarsFurni" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    
+    <div class="collapse navbar-collapse" id="navbarsFurni">
+        <ul class="custom-navbar-nav navbar-nav ms-auto mb-2 mb-md-0">
+          
+        <li class="nav-item">
+            <a class="nav-link" href="/home">Home</a>
+        </li>
+        <!-- <li class="nav-item">
+            <a class="nav-link" href="shop.html">Shop</a>
+        </li> -->
+          <!-- <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="categoryDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Categories
+              </a>
+              <div class="dropdown-menu" aria-labelledby="categoryDropdown">
+              <% categories.forEach(category => { %>
+              <a class="dropdown-item" href="/<%= category.name %>"><%= category.name %></a>
+              <% }); %>
+              </div>
+          </li> -->
+        <!-- <li class="nav-item">
+            <a class="nav-link" href="about.html">About us</a>
+        </li> -->
+        <!-- <li class="nav-item">
+            <a class="nav-link" href="contact.html">Contact us</a>
+        </li> -->
+        </ul>
+
+        <ul class="custom-navbar-cta navbar-nav mb-2 mb-md-0 ms-5">
+          <li><a class="nav-link" href="/userprofile/<%= user._id %>"><i class="fa fa-user"></i></a></li>
+          <li><a class="nav-link" href="/cart"><i class="fa fa-shopping-cart"></i></a></li>
+          <li><a class="nav-link" href="/wishlist"><i class="fa fa-heart" aria-hidden="true"></i></a></li>
+          <li><a class="nav-link" href="/userWallet"><i class="fa-solid fa-wallet"></i></a></li>
+          <li><a class="nav-link" href=""><i></i></a></li>
+<form action="/logout" method="POST">
+  <button type="submit" class="nav-link" style="border: none; background: none; cursor: pointer;">
+    <i class="fa fa-sign-out"></i>
+  </button>
+</form>
+      </ul>
+    </div>
+    </div>
+</nav>  <!-- End Header/Navigation -->
+
+  <!-- Start Hero Section -->
+  <section class="">
+    <div class="container">
+      <div class="breadcrumb-banner d-flex flex-wrap align-items-center justify-content-end">
+        <div class="col-first">
+        </div>
+      </div>
+    </div>
+  </section>
+  <section>
+    <div class="container">
+      <h1 class="text-center">PRODUCT DETAILS</h1>
+    </div>
+  </section>
+  <style>
+    .s_Product_carousel {
+      display: none; /* Hide the carousel initially */
+    }
+
+    .s_Product_carousel img {
+      height: 390px;
+      width: 410px;
+      object-fit: contain;
+    }
+
+    .zoom-image {
+      transition: transform .3s ease;
+    }
+
+    .zoom-image:hover {
+      transform: scale(1.2);
+    }
+
+
+/* Optional: Add styles for the back button icon/image */
+#back-button {
+  width: 30px;
+}
+
+  </style>
+
+  <div class="product_image_area">
+    <div class="container">
+      <div class="row s_product_inner">
+        <div class="col-lg-4">
+          <div class="s_Product_carousel">
+            <!-- Main Image -->
+            <div class="single-prditem d-flex" id="mainImage">
+              <a href="/<%= product.mainimage %>" class="MagicZoom" data-options="zoomWidth:100%">
+                <img class="img-fluid magiczoom" style="height: 390px; width: 410px; object-fit: contain;"
+                  src="/<%= product.mainimage %>" alt="main-image">
+              </a>
+            </div>
+
+            <!-- Additional Images -->
+            <div class="additional-images-container d-flex justify-content-between">
+              <% product.additionalimages.forEach((img, index) => { %>
+              <% if (img !== null) { %>
+              <div class="additional-image-item">
+                <a href="/<%= img %>" class="MagicZoom" data-options="zoomWidth:100%" onclick="changeMainImage('<%= img %>')">
+                  <img id="additionalImage<%= index %>" class="img-fluid"
+                    style="height: 90px; width: 90px; object-fit: contain;" src="/<%= img %>" alt="additional-image">
+                </a>
+              </div>
+              <% } %>
+              <% }) %>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-5 offset-lg-1">
+          <div class="s_product_text">
+            <h3><%- product.name %></h3>
+            <h4>&#8377;&nbsp;<%= product.price %></h4>
+            <% if (product.discount > 0) { %>
+              <h4>Discount: <%= product.discount %>%</h4>
+          <% } %>
+      
+
+
+            <br><br>
+            <ul class="list">
+              <li><a class="active" href="#"><span>Category :</span>
+                  <%- product.category.name %></a></li>
+            </ul>
+            <h5>Product Description:</h5>
+            <p><%- product.description %></p>
+
+            <div class="card_area d-flex align-items-center justify-content-center">
+              <a></a>
+              <form action="/addtocart/<%= productId %>" method="post" id="addToCartForm">
+                <!-- You can include any additional input fields or data related to the product here -->
+                <input type="hidden" name="quantityValue" value="1"min="1" id="productQuantity">
+                <button type="submit" class="primary-btn" id="addToCartButton">Add to Cart</button>
+              </form>
+
+              <form action="/addtowishlist/<%=productId%>" method="post" id="addToWishlist">
+                <button type="submit" class="success-btn" id="addToWishlistButton">Add to Wishlist</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <section class="product_description_area">
+
+  </section>
+
+  <script>
+    function goBack()
+    {
+      window.history.back()
+    }
+    function goForward()
+    {
+      window.history.forward()
+    }
+    document.addEventListener('DOMContentLoaded', function () {
+      // Function to show SweetAlert with a success message
+      function showSuccessAlert() {
+        Swal.fire({
+          icon: 'success',
+          title: 'Product added to cart successfully!',
+          showConfirmButton: false,
+          timer: 1500
+        });
+      }
+
+      // Function to show SweetAlert with an error message
+      function showErrorAlert(errorMessage) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error!',
+          text: errorMessage,
+          confirmButtonColor: '#d33',
+          confirmButtonText: 'OK'
+        });
+      }
+
+      // Add a submit event listener to the add to cart form
+      const addToCartForm = document.getElementById('addToCartForm');
+
+      addToCartForm.addEventListener('submit', async function (event) {
+        event.preventDefault();
+
+        try {
+          const response = await fetch(this.action, {
+            method: this.method,
+            body: new URLSearchParams(new FormData(this)),
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded'
+            }
+          });
+
+          if (response.ok) {
+            showSuccessAlert();
+          } else {
+            const errorMessage = await response.text();
+            showErrorAlert(errorMessage);
+          }
+        } catch (error) {
+          console.error('Error adding product to cart:', error);
+          showErrorAlert('Internal Server Error');
+        }
+      });
+      const addToWishlistForm = document.getElementById('addToWishlist');
+
+addToWishlistForm.addEventListener('submit', async function (event) {
+    event.preventDefault();
+
+    try {
+        const response = await fetch(this.action, {
+            method: this.method,
+            body: new URLSearchParams(new FormData(this)),
+            headers: { "Content-Type": "application/x-www-form-urlencoded" }
+        });
+
+        const responseData = await response.json();
+
+        if (response.ok) {
+            if (responseData.success) {
+                showSuccessAlert("Product added to wishlist successfully");
+            } else {
+                showErrorAlert("Product is already in the wishlist");
+            }
+        } else {
+            showErrorAlert(responseData.message || "Unknown error");
+        }
+    } catch (error) {
+        console.error("Error adding product to wishlist", error);
+        showErrorAlert("Internal server error");
+    }
+});
+    });
+
+    document.addEventListener('DOMContentLoaded', function () {
+     
+});
+
+
+
+    
+    
+    window.addEventListener('load', function () {
+      const mainImageWrapper = document.getElementById('mainImage');
+      const mainImage = mainImageWrapper.querySelector('img');
+
+      mainImageWrapper.addEventListener('mousemove', function (event) {
+        const rect = mainImageWrapper.getBoundingClientRect();
+        const x = (event.clientX - rect.left) / rect.width * 100;
+        const y = (event.clientY - rect.top) / rect.height * 100;
+
+        mainImage.style.transformOrigin = `${x}% ${y}%`;
+        mainImage.style.transform = 'scale(1.5)';
+      });
+
+      mainImageWrapper.addEventListener('mouseout', function () {
+        mainImage.style.transformOrigin = 'center center';
+        mainImage.style.transform = 'scale(1)';
+      });
+    });
+
+    // Add a script to show the carousel after all images are loaded
+    window.addEventListener('load', function () {
+      document.querySelector('.s_Product_carousel').style.display = 'block';
+    });
+  </script>
+  <!-- Add to Cart and Size selecting functions -->
+  <!-- Add the following styles within the <head> section -->
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+    }
+
+    .text-center {
+      font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    }
+
+    /* Navigation Styles */
+    .custom-navbar {
+      background-color: #343a40;
+    }
+
+    .navbar-brand {
+      color: #fff;
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+
+    .navbar-nav .nav-link {
+      color: #fff !important;
+    }
+
+    .navbar-toggler-icon {
+      background-color: #fff;
+    }
+
+    /* Breadcrumb Styles */
+    .breadcrumb-banner {
+      margin-top: 20px;
+      padding: 10px;
+      background-color: #f8f9fa;
+      border: 1px solid #dee2e6;
+      border-radius: 5px;
+    }
+
+    /* Product Image Styles */
+    .s_Product_carousel img {
+      height: 100%;
+      width: 100%;
+      object-fit: contain;
+    }
+
+    .additional-images-container {
+      margin-top: 10px;
+    }
+
+    .additional-image-item {
+      margin-right: 10px;
+    }
+
+    /* Product Details Styles */
+    .s_product_text {
+      margin-top: 20px;
+    }
+
+    .s_product_text h3 {
+      color: #343a40;
+    }
+
+    .s_product_text h4 {
+      color: #007bff;
+    }
+
+    .list {
+      list-style: none;
+      padding: 0;
+    }
+
+    .list li {
+      margin-bottom: 10px;
+    }
+
+    .card_area {
+      margin-top: 20px;
+    }
+
+    .primary-btn {
+      display: inline-block;
+      background-color: #007bff;
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 5px;
+      text-decoration: none;
+      font-weight: bold;
+      margin-right: 10px;
+      transition: background-color 0.3s;
+    }
+
+    .primary-btn:hover {
+      background-color: #0056b3;
+    }
+
+    .zoom-image {
+      transition: transform .3s ease;
+    }
+
+    .zoom-image:hover {
+      transform: scale(1.2);
+    }
+    .success-btn {
+      display: inline-block;
+      background-color: #da3341;
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 5px;
+      text-decoration: none;
+      font-weight: bold;
+      margin-right: 10px;
+      transition: background-color 0.3s;
+    }
+  </style>
+
+</body>
+</html>

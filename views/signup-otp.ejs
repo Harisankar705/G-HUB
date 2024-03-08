@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>G-HUB</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="/assets/css/login.css" rel="stylesheet">
+
+    <style>
+        /* Add your modal styles here */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            justify-content: center;
+            align-items: center;
+            z-index: 999; /* Set a high z-index value */
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            padding: 20px;
+            border-radius: 5px;
+            text-align: center;
+            position: relative;
+            z-index: 1000; /* Set a higher z-index value */
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container" id="container">
+        <div class="form-container log-in-container">
+            <form id="otpForm" action="/signup-otp" method="post" onsubmit="return validate()">
+                <h1>OTP</h1>
+                <p>An otp has been send to you mail</p>
+                <p4>Type here</p4>
+                <div id="error-message-container" class="bg-danger text-white"><%=message%></div>
+                <p id="countdownTimer" class="text-muted mb-0"></p>
+                <input type="number" id="enteredOTP" name="enteredOTP" placeholder="OTP" required />
+                <input type="hidden" id="email" name="email" value="<%= email %>">
+                <button type="submit">Verify</button>
+                <!-- <a href="login">Back to login</a> -->
+           
+            <form method="post" action="/resendOTP">
+                <p class="resend text-muted mb-0">
+                    Didn't Get The OTP? <a id="resendLink" onclick="resendOTP()">Request Again</a>
+                </p>
+            </form>
+        </form>
+        </div>
+        <div class="overlay-container">
+            <div class="overlay">
+                <div class="overlay-panel overlay-right">
+                    <h1>G-HUB</h1>
+                    <p>The complete Smartphone Store</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        document.getElementById('otpForm').addEventListener('submit',(event)=>{
+            event.preventDefault()
+            handleFormSubmit()
+        })
+        function handleFormSubmit()
+        {
+            const enteredOTP=document.getElementById('enteredOTP').value
+            const email=document.getElementById('email').value
+            fetch(`/signup-otp?email=${encodeURIComponent(email)}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ enteredOTP }),
+    })
+    .then(response=>response.json())
+    .then(data=>{
+
+        const errorMessageContainer=document.getElementById('error-message-container')
+        if(!data.success)
+        {
+            console.log("OTP Verification Failed",data.message)
+            errorMessageContainer.innerText = "Incorrect OTP, Try again!!";
+        }
+        else
+        {
+            countdown=50
+            startCountdown()
+            errorMessageContainer.innerText = "OTP verification success";
+            errorMessageContainer.classList.remove('bg-danger')
+            errorMessageContainer.classList.add('bg-success')
+            window.location.href=('/home')
+        }
+    })
+    .catch(error => {
+    console.log("Error occurred during OTP Verification", error);
+    document.getElementById('error-message-container').innerText = "Error during OTP Verification";
+})
+        }
+
+
+        let countdown = 50;
+let timer;
+let isResendInProgress = false;
+
+function updateCountdown() {
+    const countdownTimer = document.getElementById('countdownTimer');
+    const resendLink = document.getElementById('resendLink');
+
+    if (countdownTimer && resendLink) {
+        if (countdown > 0) {
+            countdownTimer.innerText = `Resend OTP in ${countdown}s`;
+            countdown--;
+        } else {
+            countdownTimer.innerText = "";
+            resendLink.style.display = "inline"; // Display the resend link
+            clearInterval(timer);
+        }
+    }
+}
+
+function startCountdown() {
+    clearInterval(timer);
+    timer = setInterval(updateCountdown, 1000);
+    updateCountdown();
+}
+
+startCountdown();
+
+// hiding the resend otp initially
+if (document.getElementById('resendLink')) {
+    // document.getElementById('resendLink').style.display = "none";
+}
+
+// function to handle the otp
+function resendOTP() {
+    const resendLink = document.getElementById('resendLink');
+
+    // checking if the resend link is running
+    if (isResendInProgress) {
+        console.log("Resend already in process");
+        return;
+    }
+
+    // disable the request again and start the timer
+    if (resendLink) {
+        resendLink.textContent = "Resending...";
+        resendLink.classList.add('disabled');
+        resendLink.style.display = "none";
+    }
+
+    isResendInProgress = true;
+    fetch('/resendOTP', { method: "POST" })
+        .then(response => response.json())
+        .then(data => {
+            if (!data.success) {
+                console.log("Error resending the OTP", data.message);
+            } else {
+                countdown = 50;
+                startCountdown();
+            }
+        })
+        .catch(error => {
+            console.log("Error occurred during OTP Resending", error);
+            // resetting the countdown if an error occurred
+            countdown = 0;
+        })
+        .finally(() => {
+            isResendInProgress = false;
+        });
+}
+
+// attaching the event listener
+if (document.getElementById('resendLink')) {
+    document.getElementById('resendLink').addEventListener('click', () => {
+        if (!document.getElementById('resendLink').classList.contains('disabled'))
+            resendOTP();
+    });
+}
+
+    </script>
+</body>
+</html>

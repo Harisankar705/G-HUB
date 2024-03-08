@@ -1,0 +1,378 @@
+<!DOCTYPE HTML>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>G-HUB</title>
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta property="og:title" content="">
+    <meta property="og:type" content="">
+    <meta property="og:url" content="">
+    <meta property="og:image" content="">
+    <!-- Favicon -->    
+    <!-- <link rel="shortcut icon" type="image/x-icon" href="assets/imgs/theme/favicon.svg"> -->
+    <!-- Template CSS -->
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+    <link href="../assets/css/dashboard.css" rel="stylesheet"/>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+</head>
+
+<body>
+    <div class="screen-overlay"></div>
+    <form action="adminPanel" method="post">
+    <aside class="navbar-aside" id="offcanvas_aside">
+        <div class="aside-top">
+            <a href="#" class="brand-wrap">
+                <h2>G-HUB</h2>
+                <h3>AdminPanel</h3>
+            </a>
+            <a href="#" onclick="goBack()"><img src="../public/back-button-removebg-preview.png" id="back-button"></a>
+
+        </div>
+        <nav>
+            <ul class="menu-aside">
+                <li class="menu-item ">
+                    <a class="menu-link" href="/adminPanel"> <i class="icon material-icons md-home"></i>
+                        <span class="text">Dashboard</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a class="menu-link" href="/admin/category"> <i class="icon material-icons md-menu_open"></i>
+                        <span class="text">Categories</span>
+                    </a>
+                </li>
+                <li class="menu-item ">
+                    <a class="menu-link" href="/admin/products"> <i class="icon material-icons md-shopping_bag"></i>
+                        <span class="text">Products</span>
+                    </a>
+                    <li class="menu-item ">
+                        <a class="menu-link" href="/admin/add"> <i class="icon material-icons md-plus"></i>
+                            <span class="text">Add Product</span>
+                        </a>
+                    </li>
+                    <li class="menu-item ">
+                        <a class="menu-link" href="/admin/user-management"> <i class="icon material-icons md-person"></i>
+                            <span class="text">User Management</span>
+                        </a>
+                    </li>
+                    <li class="menu-item ">
+                        <a class="menu-link" href="/admincoupons"> <i class="icon material-icons md-check_box"></i>
+                            <span class="text">Coupon Management</span>
+                        </a>
+                    </li>
+                    <li class="menu-item ">
+                        <a class="menu-link" href="/offer-management"> <i class="icon material-icons md-redeem"></i>
+                            <span class="text">Offer Management</span>
+                        </a>
+                    </li>
+                    <li class="menu-item active">
+                        <a class="menu-link" href='/admin-orders'> <i class="icon material-icons md-book"></i>
+                            <span class="text">Orders</span>
+                        </a>
+                    </li>
+                    <li class="menu-item ">
+                        <a class="menu-link" href="#" id="logoutLink"> <i class="icon material-icons md-exit_to_app"></i>
+                            <span class="text">Logout</span>
+                        </a>
+                    </li>
+                    
+
+                </li>
+            </ul>
+            <hr>
+            <br>
+            <br>
+        </nav>
+    </aside>
+    </form>
+    <section class="content-main">
+        <div class="search-bar">
+            <form action="/admin-orders" method="get">
+                <input type='text' placeholder="Search..." name="search" id="searchQuery" value="<%=searchQuery%>" class="search-input"/> 
+                <button class="sea" type="submit">Search</button>
+                <select name="orderStatus" class="search-input">
+                    <option value=''>All</option>
+                    <option value='Pending' <%= orderStatus === 'Pending' ? 'selected' : '' %>>Pending</option>
+                    <option value='Confirmed' <%= orderStatus === 'Confirmed' ? 'selected' : '' %>>Confirmed</option>
+                    <option value='Delivered' <%= orderStatus === 'Delivered' ? 'selected' : '' %>>Delivered</option>
+                    <option value='Cancelled' <%= orderStatus === 'Cancelled' ? 'selected' : '' %>>Cancelled</option>
+                    <option value='Returned' <%= orderStatus === 'Returned' ? 'selected' : '' %>>Returned</option>
+                </select>
+    
+                <button type="submit" class="sea">Filter</button>
+            </form>
+        </div>
+       
+        <h3>Order Details</h3>
+        <div class="row">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table align-middle table-nowrap mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th class="align-middle" scope="col">ID</th>
+                                <th class="align-middle" scope="col">Products</th>
+                                <th class="align-middle" scope="col">Order ID</th>
+                                <th class="align-middle" scope="col">Date</th>
+                                <th class="align-middle" scope="col">Total</th>
+                                <th class="align-middle" scope="col">Payment Method</th>
+                                <th class="align-middle" scope="col">Order Status</th>
+                                <th class="align-middle" scope="col">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% orders.forEach(order => { %>
+                                <tr>
+                                    <td><%= order.tackingId %></td>
+    <td>
+    <% order.products.forEach((pro) => { %>
+        <p><%- pro.productId.name %></p>
+        <p> Quantity X <%- pro.quantity %></p>
+    <% }) %>
+</td>
+
+                                    <td><%= order._id %></td>
+                                    <td><%- order.date.toDateString() %></td>
+                                    <td>&#x20B9;<%- order.totalAmount %></td>
+                                    <td><%- order.paymentMethod %></td>
+                                    <td>
+                                        <p class="<%= order.orderStatus === 'Delivered' ? 'badge badge-pill badge-soft-success' :
+                                            order.orderStatus === 'Processing' ? 'badge badge-pill badge-soft-warning' :
+                                            order.orderStatus === 'Shipped' ? 'badge badge-pill badge-soft-info' :
+                                            order.orderStatus === 'Pending' ? 'badge badge-pill badge-soft-primary' :
+                                            order.orderStatus === 'Cancelled' ? 'badge badge-pill badge-soft-danger' :
+                                            'badge badge-pill badge-soft-danger' %>">
+                                            <%- order.orderStatus %>
+                                        </p><br>
+                                        <% if (order.message) { %>
+                                            <p><%- order.message %></p>
+                                        <% } %>
+                                    </td>
+                                    <td>
+                                        <select class="order-status-dropdown" data-order-id="<%= order._id %>">
+                                            <option value="Pending" <%= order.orderStatus === 'Pending' ? 'selected' : '' %>>Pending</option>
+                                            <option value="Confirmed" <%= order.orderStatus === 'Confirmed' ? 'selected' : '' %>>Confirmed</option>
+                                            <option value="Delivered" <%= order.orderStatus === 'Delivered' ? 'selected' : '' %>>Delivered</option>
+                                            <option value="Cancelled" <%= order.orderStatus === 'Cancelled' ? 'selected' : '' %>>Cancel Order</option>
+                                            <option value="Returned" <%= order.orderStatus === 'Returned' ? 'selected' : '' %>>Returned</option>
+                                        </select>
+                                    </td>
+                                    
+                                </tr>
+                            <% }); %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="pagination">
+                <%for(let i=1;i<=totalPages;i++){%>
+                        <a href="/admin-orders?page=<%= i %>" class="<%= i === currentPage ? 'active' : '' %>"><%= i %></a>
+                        <%}%>
+                    </div>
+        </div>
+    </section>
+    <style>
+         #back-button {
+  width: 30px;
+}
+            .pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+    margin-left: 200px;
+}
+
+.pagination a {
+    margin: 0 5px;
+    padding: 8px 12px;
+    text-decoration: none;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    color: #333;
+}
+
+.pagination a.active {
+    background-color: #007bff;
+    color: #fff;
+    border-color: #007bff;
+}
+.search-bar {
+        display: flex;
+        margin-bottom: 20px;
+        justify-content: flex-end;
+    }
+
+    .search-input {
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        margin-right: 5px;
+        flex-grow: 1;
+    }
+
+    .sea {
+        padding: 8px 12px;
+        border: 1px solid #007bff;
+        border-radius: 5px;
+        background-color: #007bff;
+        color: #fff;
+        cursor: pointer;
+    }
+
+    .sea:hover {
+        background-color: #0056b3;
+    }
+       
+    </style>
+    <script>
+        function goBack()
+    {
+      window.history.back()
+    }
+    document.addEventListener('DOMContentLoaded', () => {
+        const dropdowns = document.querySelectorAll('.order-status-dropdown');
+
+        dropdowns.forEach(dropdown => {
+            dropdown.addEventListener('change', (event) => {
+                const orderId = event.target.dataset.orderId;
+                const newStatus = event.target.value;
+
+                // Show a SweetAlert confirmation dialog
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: `Do you want to change the order status to "${newStatus}"?`,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, change it!',
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // If confirmed, make an AJAX request to update the order status
+                        $.ajax({
+                            url: '/admin-changeOrderStatus',
+                            method: 'POST',
+                            dataType: 'json',
+                            contentType: 'application/json',
+                            data: JSON.stringify({ orderId, status: newStatus }),
+                            success: function (result) {
+                                if (result.status === 'success') {
+                                    // Show a success SweetAlert
+                                    Swal.fire({
+                                        title: 'Success!',
+                                        text: 'Order status updated successfully.',
+                                        icon: 'success',
+                                    }).then(() => {
+                                        // Reload the page after the SweetAlert is closed
+                                        location.reload();
+                                    });
+                                } else {
+                                    // Show an error SweetAlert
+                                    Swal.fire({
+                                        title: 'Error!',
+                                        text: `Failed to update order status: ${result.message}`,
+                                        icon: 'error',
+                                    });
+                                    console.error('Failed to update order status:', result.message);
+                                }
+                            },
+                            error: function (xhr, status, error) {
+                                // Show an error SweetAlert
+                                Swal.fire({
+                                    title: 'Error!',
+                                    text: 'An error occurred while updating order status.',
+                                    icon: 'error',
+                                });
+                                console.error('Error updating order status:', error);
+                            }
+                        });
+                    } else {
+                        // If not confirmed, reset the dropdown to the previous status
+                        const previousStatus = event.target.getAttribute('data-previous-status');
+                        event.target.value = previousStatus;
+                    }
+                });
+            });
+        });
+    });
+    </script>
+     <!-- <script>
+        $(document).ready(function(){
+            $("#logoutLink").on('click',function(e){
+                e.preventDefault()
+                $.ajax({
+                    url:'/admin/logout',
+                    method:'post',
+                    success:function(data)
+                    {
+                        window.location.href='/admin'
+                    },
+                    error:function(xhr,status,error)
+                    {
+                        console.log("Error occured during adminlogout")
+                    }
+                })
+            })
+        })
+    </script> -->
+     <style>
+        .card-body {
+            overflow-y: auto;
+        }
+
+        .pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+    margin-left: 200px;
+}
+
+.pagination a {
+    margin: 0 5px;
+    padding: 8px 12px;
+    text-decoration: none;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    color: #333;
+}
+
+.pagination a.active {
+    background-color: #007bff;
+    color: #fff;
+    border-color: #007bff;
+}
+.search-bar {
+        display: flex;
+        margin-bottom: 20px;
+    }
+
+    .search-input {
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        margin-right: 5px;
+        flex-grow: 1;
+    }
+
+    .sea {
+        padding: 8px 12px;
+        border: 1px solid #007bff;
+        border-radius: 5px;
+        background-color: #007bff;
+        color: #fff;
+        cursor: pointer;
+    }
+
+    .sea:hover {
+        background-color: #0056b3;
+    }
+
+        
+    </style>
+</body>
+</html>

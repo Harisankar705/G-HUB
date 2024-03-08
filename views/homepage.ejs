@@ -1,0 +1,217 @@
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="author" content="Untree.co">
+    <meta name="description" content="">
+    <meta name="keywords" content="bootstrap, bootstrap4">
+
+    <!-- Bootstrap CSS -->
+    <link href="../assets/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="../assets/css/tiny-slider.css" rel="stylesheet">
+    <link href="../assets/css/stylee.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+
+</head>
+<body>
+
+    <!-- Start Header/Navigation -->
+    <nav class="custom-navbar navbar navbar-expand-md navbar-dark bg-dark" aria-label="Furni navigation bar">
+        <div class="container">
+            <a class="navbar-brand" href="#">G-HUB<span>.</span></a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsFurni"
+                aria-controls="navbarsFurni" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarsFurni">
+                <ul class="custom-navbar-nav navbar-nav ms-auto mb-2 mb-md-0">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/home">Home</a>
+                    </li>
+                </ul>
+                <ul class="custom-navbar-cta navbar-nav mb-2 mb-md-0 ms-5">
+                
+                    <li><a class="nav-link" href="/cart"><i class="fa fa-shopping-cart"></i></a></li>
+                    <li><a class="nav-link" href="/wishlist"><i class="fa fa-heart" aria-hidden="true"></i></a></li>
+                    <li><a class="nav-link" href="/userWallet"><i class="fa-solid fa-wallet"></i></a></li>
+                    <li><a class="nav-link" href=""><i></i></a></li>
+					<form action="/logout" method="POST">
+						<button type="submit" class="nav-link" style="border: none; background: none; cursor: pointer;">
+							<i class="fa fa-sign-out"></i>
+						</button>
+					</form>
+                </ul>
+            </div>
+        </div>
+    </nav>
+<div class="search-and-filter-container">
+    <div class="search-bar">
+        <form action="/home" method="get" class="flex-container" id="searchForm">
+            <input type="text" placeholder="Search Products" name="search" id="searchQuery" value="<%=searchQuery%>" class="search-input">
+            <button class="sea" type="submit">Search</button>
+            <select name="sortCategory" id="sortCategory" class="category-select">
+                <option value="" <%= sortCategory === '' ? 'selected' : '' %>>All Categories</option>
+                <% categories.forEach(category => { %>
+                    <option value="<%= category._id %>" <%= sortCategory === category._id ? 'selected' : '' %>><%= category.name %></option>
+                <% }); %>
+            </select>
+        </form>
+    </div>
+</div>
+
+
+    <div class="untree_co-section product-section before-footer-section">
+        <div class="container">
+            <div class="row">
+                <% products.forEach(product => { %>
+                <% if (product.isPublished) { %>
+                <div class="col-12 col-md-4 col-lg-3 mb-5">
+                    <a class="product-item" href="/product-details?productId=<%= product._id %>">
+                        <img src="<%= product.mainimage %>" class="img-fluid product-thumbnail"
+                            alt="<%= product.name %>">
+                        <h3 class="product-title"><%= product.name %></h3>
+                        <strong class="product-price">₹<%= product.price.toFixed(2) %></strong>
+                        <span class="icon-cross">
+                            <img src="../assets/images/cross.svg" class="img-fluid" alt="Cross icon">
+                        </span>
+                    </a>
+                </div>
+                <% } %>
+                <% }); %>
+            </div>
+         
+            </div>
+<div class="pagination">
+    <% for(let i = 1; i <= totalPages; i++) { %>
+        <a href="?page=<%= i %>" class="<%= i === currentPage ? 'active' : '' %>"><%= i %></a>
+    <% } %>
+</div>
+
+        </div>
+    </div>
+    <style>
+        #back-button {
+  width: 30px;
+}
+            .pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+    margin-left: 200px;
+}
+
+.pagination a {
+    margin: 0 5px;
+    padding: 8px 12px;
+    text-decoration: none;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    color: #333;
+}
+
+.pagination a.active {
+    background-color: #007bff;
+    color: #fff;
+    border-color: #007bff;
+}
+.search-bar {
+        display: flex;
+        margin-bottom: 20px;
+        justify-content: flex-end;
+        margin-top: 10px;
+        margin-right: 10px;
+    }
+
+    .search-input {
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        margin-right: 5px;
+        flex-grow: 1;
+    }
+
+    .sea {
+        padding: 8px 12px;
+        border: 1px solid #007bff;
+        border-radius: 5px;
+        background-color: #007bff;
+        color: #fff;
+        cursor: pointer;
+    }
+
+    .sea:hover {
+        background-color: #0056b3;
+    }
+        .sort-category
+    {
+        display: flex;
+        margin-bottom: 20px;
+        justify-content: flex-end;
+        margin-right: 10px;
+        margin-top: 20px;
+    }
+    .category-select
+    {
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        margin-right: 5px;
+    }
+        </style>
+<script>
+    $(document).ready(function () {
+      // Listen for change event on category dropdown
+      $('#sortCategory').on('change', function () {
+        // Trigger form submission when category is selected
+        $('form#searchForm').submit();
+      });
+    });
+  </script><footer class="footer-section">
+    <div class="container relative">
+        <!-- ... (previous code) ... -->
+    </div>
+</footer>
+<!-- End Footer Section -->
+
+<style>
+    .product-thumbnail {
+        height: 200px;
+        width: auto;
+        object-fit: cover;
+    }
+
+    .dropdown-item {
+        color: #000000 !important;
+    }
+    .pagination {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 20px;
+    margin-right: 20px;
+}
+
+.pagination a {
+    margin: 0 5px;
+    padding: 8px 12px;
+    text-decoration: none;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    color: #333;
+}
+
+.pagination a.active {
+    background-color: #007bff;
+    color: #fff;
+    border-color: #007bff;
+}
+</style>
+
+<script src="../assets/js/bootstrap.bundle.min.js"></script>
+<script src="../assets/js/tiny-slider.js"></script>
+<script src="../assets/js/custom.js"></script>
+</body>
+
+</html>

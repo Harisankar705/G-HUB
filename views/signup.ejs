@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>G-HUB</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="/assets/css/login.css" rel="stylesheet">
+
+    <style>
+        /* Add your modal styles here */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            justify-content: center;
+            align-items: center;
+            z-index: 999; /* Set a high z-index value */
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            padding: 20px;
+            border-radius: 5px;
+            text-align: center;
+            position: relative;
+            z-index: 1000; /* Set a higher z-index value */
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container" id="container">
+        <div class="form-container log-in-container">
+            <form id="signupForm" action="/signup" method="post" onsubmit="return validate()">
+                <h1>Sign Up</h1>
+                <div id="error-message-container" class="bg-danger text-white"><%=message%></div>
+                <input type="text" id="username" name="username" placeholder="Username" required />
+                <input type="email" id="email" name="email" placeholder="Email" required />
+                <input type="password" id="password" name="password" placeholder="Password" required />
+                <!-- <input type="password" id="confirmPassword" placeholder="Confirm Password" required /> -->
+                <p class="small mb-4 pb-lg-2" style="color: rgba(18, 14, 14, 0.541);">Already have an account? <a href="/login" class="link-info" style="color: #ff9d35;">Login here</a></p>
+
+                <button type="submit">Signup</button>
+            </form>
+        </div>
+        <div class="overlay-container">
+            <div class="overlay">
+                <div class="overlay-panel overlay-right">
+                    <h1>G-HUB</h1>
+                    <p>The complete Smartphone Store</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        function isValidName(name)
+        {
+                 
+      const nameRegex = /^[A-Za-z\s]+$/;
+      return nameRegex.test(name) && !/\d/.test(name); 
+        }
+        function validate()
+        {
+            let username=document.getElementById('username')
+            let useremail=document.getElementById('email')
+            let userPassword=document.getElementById('password')
+            const errorMessageContainer=document.getElementById('error-message-container')
+
+            let trimUsername=username.value.trim()
+            let trimuseremail=useremail.value.trim()
+            let trimpassword=userPassword.value.trim()
+
+            errorMessageContainer.innerText=""
+
+            if(trimUsername===""||trimuseremail===""||userPassword==="")
+            {
+                errorMessageContainer.innerText="Enter all the fields"
+                displayErrorMessage(errorMessageContainer)
+                return false
+            }
+            if(trimUsername==="")
+            {
+                errorMessageContainer.innerText="Enter email"
+                displayErrorMessage(errorMessageContainer)
+
+                return false
+            }
+            if(userPassword==="")
+            {
+                errorMessageContainer.innerText="Enter password"
+                displayErrorMessage(errorMessageContainer)
+
+                return false
+            }
+            if(!isValidName(trimUsername))
+            {
+                errorMessageContainer.innerText="Please enter a name without numbers"
+                displayErrorMessage(errorMessageContainer)
+
+                return false
+            }
+            if(trimUsername.length>=20)
+            {
+                errorMessageContainer.innerText="Username too lengthy"
+                displayErrorMessage(errorMessageContainer)
+
+                return false
+            }
+            if(trimuseremail.length<=3||trimpassword.length<=4)
+            {
+                errorMessageContainer.innerText="Password and username too short!"
+                displayErrorMessage(errorMessageContainer)
+
+                return false
+            }
+            if(!isStrongPassword(trimpassword))
+            {
+                errorMessageContainer.innerText="Password should be atleast 8 character with uppercase,lowercase and numbers"
+                displayErrorMessage(errorMessageContainer)
+
+                return false
+
+            }
+            return true
+        }
+        function displayErrorMessage(container) {
+        container.style.display = 'block';
+
+        // Set a timeout to hide the error message after 5 seconds
+        setTimeout(function () {
+            container.style.display = 'none';
+        }, 5000);
+    }
+        function isStrongPassword(password)
+        {
+            const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
+            return passwordRegex.test(password)
+
+        }
+        
+    </script>
+</body>
+</html>

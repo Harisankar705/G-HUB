@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="author" content="Untree.co">
+<!-- <link rel="shortcut icon" href="favicon.png"> -->
+<meta name="description" content="" />
+<meta name="keywords" content="bootstrap, bootstrap4" />
+
+<!-- Bootstrap CSS -->
+<link href="../assets/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+<link href="../assets/css/tiny-slider.css" rel="stylesheet">
+<link href="../assets/css/stylee.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" /><body>
+
+<!-- Start Header/Navigation -->
+<nav class="custom-navbar navbar navbar-expand-md navbar-dark bg-dark" aria-label="Furni navigation bar">
+    <a href="#" onclick="goBack()"><img src="../public/back-button-removebg-preview.png" id="back-button"></a>
+
+    <div class="container">
+    <a class="navbar-brand" href="#">G-HUB<span>.</span></a>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsFurni" aria-controls="navbarsFurni" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarsFurni">
+        <ul class="custom-navbar-nav navbar-nav ms-auto mb-2 mb-md-0">
+        <li class="nav-item">
+            <a class="nav-link" href="/home">Home</a>
+        </li>
+        <!-- <li class="nav-item">
+            <a class="nav-link" href="shop.html">Shop</a>
+        </li>
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="categoryDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Categories
+            </a>
+            <div class="dropdown-menu" aria-labelledby="categoryDropdown">
+            <% categories.forEach(category => { %>
+            <a class="dropdown-item" href="/<%= category.name %>"><%= category.name %></a>
+            <% }); %>
+            </div>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="about.html">About us</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="contact.html">Contact us</a>
+        </li> -->
+        </ul>
+
+        <ul class="custom-navbar-cta navbar-nav mb-2 mb-md-0 ms-5">
+            <li><a class="nav-link" href="/userprofile/<%= user._id %>"><i class="fa fa-user"></i></a></li>
+            <li><a class="nav-link" href="/cart"><i class="fa fa-shopping-cart"></i></a></li>
+        <!-- <li><a class="nav-link" href="/home/logout"><img src="../assets/images/logout_white_24dp.svg"></a></li> -->
+        </ul>
+    </div>
+    </div>
+</nav>
+<!-- Start Footer Section -->
+<footer class="footer-section">
+    <div class="container relative">
+        <div class="container mt-5">
+            <h2>Your Wishlist</h2>
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Price</th>
+                            <th>Category</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Loop through your wishlist items and populate the table rows -->
+                        <% if(products.length){ %>
+                            <% products.forEach(product => { %>
+                                <% if (product.productId.isPublished){ %>
+                                    <tr>
+                                        <td>
+                                            <img src="<%- product.productId.mainimage %>" alt="Product Image" class="img-thumbnail" style="max-width: 100px;">
+                                            <p><%- product.productId.name %></p>
+                                        </td>
+                                        <td><%- product.productId.price%></td>
+                                        <td><%- product.productId.category.name%></td>
+                                        <td>
+                                            <button  id="removeProductButton" data-productId="<%= product._id %>" class="btn btn-danger btn-sm removeWishlist">Remove</button>
+                                        </td>
+                                    </tr>
+                                <% } %>
+                            <% }); %>
+                        <% } else { %>
+                            <tr>
+                                <td colspan="3" class="text-center">
+                                    <img src="empty-wishlist-image.png" alt="Empty Wishlist Image" class="img-fluid">
+                                    <p class="mt-3">Wishlist is Empty!</p>
+                                </td>
+                            </tr>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <style>
+            #back-button {
+width: 30px;
+margin-left: 10px;
+}
+.cart_inner .table {
+    border: 1px solid #e6e6e6;
+    border-radius: 5px;
+}
+
+.cart_inner .table th, .cart_inner .table td {
+    border: 1px solid #e6e6e6;
+}
+
+.cart_inner .table thead th {
+    background-color: #f8f9fa;
+}
+
+.cart_inner .table tbody td {
+    vertical-align: middle;
+}
+
+/* Style for the "Total" row */
+.cart_inner .table tbody tr:last-child {
+    background-color: #f8f9fa;
+}
+
+.cart_inner .table tbody tr:last-child h5 {
+    font-weight: bold;
+}
+
+/* Style for the "Proceed to Checkout" button */
+#proceedBtn {
+    background-color: #007bff;
+    color: #ffffff;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#proceedBtn:hover {
+    background-color: #0056b3;
+}
+
+/* Style for the "Remove" button */
+.removeProduct {
+    color: #dc3545;
+    cursor: pointer;
+}
+
+.removeProduct:hover {
+    text-decoration: underline;
+}
+
+/* Additional styling for the checkout button area */
+.checkout_btn_inner {
+    margin-top: 20px;
+}
+
+.checkout_btn_inner a.gray_btn {
+    background-color: #f8f9fa;
+    color: #007bff;
+    border: 2px solid #007bff;
+    margin-right: 10px;
+}
+
+.checkout_btn_inner a.gray_btn:hover {
+    background-color: #007bff;
+    color: #ffffff;
+}
+
+/* Footer style for the copyright section */
+.copyright {
+    padding: 20px 0;
+    background-color: #f8f9fa;
+    text-align: center;
+    font-size: 14px;
+}
+
+/* Styling for the dropdown items in the navigation */
+.dropdown-menu a {
+    color: #000000;
+}
+
+.dropdown-menu a:hover {
+    background-color: #007bff;
+    color: #ffffff;
+}
+
+        </style>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js" integrity="sha512-AA1Bzp5Q0K1KanKKmvN/4d3IRKVlv9PYgwFPvm32nPO6QS8yH1HO7LbgB1pgiOxPtfeg5zEn2ba64MUcqJx6CA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+        <script>
+           const removeWishlistBtn = document.querySelectorAll('.removeWishlist')
+
+removeWishlistBtn.forEach((btn) => {
+    btn.addEventListener('click', async (event) => {
+        event.preventDefault();
+
+        const productId = event.currentTarget.getAttribute('data-productId')
+
+        if (productId) {
+            const sendAlert = await Swal.fire({
+                title: "Are you Sure ",
+                text: "The product will be removed from wishlist",
+                icon: "question",
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#990f0f',
+                confirmButtonText: 'Yes',
+                cancelButtonText: 'No'
+            });
+
+            if (sendAlert.isConfirmed) {
+                const response = await fetch(`/removefromwishlist/?productId=${productId}`);
+                const result = await response.json()
+                if (result.status === 'success') {
+                    Swal.fire({
+                        icon: 'success',
+                        title: result.message,
+                        showConfirmButton: false,
+                        timer: 2000
+                    })
+                    setTimeout(() => {
+                        location.reload()
+                    }, 2000);
+
+                } else if (result.status === 'blocked') {
+                    Swal.fire({
+                        icon: 'info',
+                        title: result.message,
+                        showConfirmButton: false,
+                        timer: 3000
+                    })
+                    setTimeout(() => {
+                        location.href = '/login?blocked=true'
+                    }, 3500);
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: result.message,
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                }
+            }
+        }
+    })
+})
+        </script>
+        
+        
+
+    
+
+   
+    <div class="border-top copyright">
+        <div class="row pt-4">
+        <div class="col-lg-6 text-center text-lg-end">
+            <ul class="list-unstyled d-inline-flex ms-auto">
+            <li class="me-4"><a href="#">Terms &amp; Conditions</a></li>
+            <li><a href="#">Privacy Policy</a></li>
+            </ul>
+        </div>
+        </div>
+    </div>
+    </div>
+</footer>
+<!-- End Footer Section -->
+<style>
+    .product-thumbnail {
+    height: 200px; /* Set your desired height for the product images */
+    width: auto; /* Maintain the aspect ratio */
+    object-fit: cover; /* Ensure the image covers the entire container */
+    }
+    /* Add a custom style for the dropdown */
+    /* Set the text color for dropdown items */
+    .dropdown-item  {
+    color: #000000 !important;
+    }
+</style>
+
+    <style>
+        /* Add custom style for product count buttons */
+.product_count button {
+    background-color: #007bff; /* Change to your desired button color */
+    color: #ffffff; /* Change to your desired text color */
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
+.product_count button:hover {
+    background-color: #0056b3; /* Change to your desired button hover color */
+}
+
+/* Add margin between the buttons */
+.product_count button + button {
+    margin-left: 5px;
+}
+
+    </style>
+    
+    
+<script src="../assets/js/bootstrap.bundle.min.js"></script>
+<script src="../assets/js/tiny-slider.js"></script>
+<script src="../assets/js/custom.js"></script>
+</body>
+</html>
