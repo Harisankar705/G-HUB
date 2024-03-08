@@ -324,13 +324,12 @@
         <!-- cart + summary -->
         <script>
             // Function to calculate and update the cart total
-        async function changeQuantity(productId, value, currentValue, size,price) {
+        async function changeQuantity(productId, value, currentValue, size,) {
     const data = {
         proId: productId,
         quantity: value, // Use 'quantity' instead of 'count'
         currentValue: currentValue,
-        size: size,
-        price:totalPriceElement
+
         
     };
 
@@ -445,7 +444,6 @@ if(!response.ok)
                     totalPriceElement.textContent = `${newTotal.toLocaleString('en-IN')}`;
                 }
             }
-            const totalPriceElement = querySelectorAll('.total-price');
 
 
             // Function to update the cart after quantity changes
