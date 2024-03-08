@@ -201,12 +201,13 @@ userCartController.updateQuantity = async (req, res) => {
     const userId = req.session.userId;
     const productId = req.params.productId;
     const newQuantity = parseInt(req.body.quantity, 10);
-    const price=req.body.total
+    
 
 
     console.log('userId:', userId);
     console.log('productId:', productId);
     console.log('newQuantity:', newQuantity);
+    // console.log("price",price)
 
     try {
         const userCart = await cartSchema.findOne({ userId });
