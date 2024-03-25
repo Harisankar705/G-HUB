@@ -10,17 +10,7 @@ const userCartController = {};
 const couponSchema=require('../models/couponSchema');
 const coupon = require('../models/couponSchema');
 
-// Define a function to calculate the total price of items in the cart
-const calculateTotalPrice = (items) => {
-    const totalPrice = items.reduce((total, item) => {
-        if (item.productId.totalQuantity > 0) {
-            return total + item.productId.price * item.quantity;
-        }
-        return total;
-    }, 0);
 
-    return totalPrice.toFixed(2);
-};
 //displaying cart
 userCartController.showCart= async (req, res) => {
     try {
@@ -39,7 +29,7 @@ userCartController.showCart= async (req, res) => {
   
       // Now, check if products are available
       if (cart[0].products && cart[0].products.length > 0) {
-        products = cart[0].products;
+        products = cart[0].products.filter(product=>product.productId.isPublished)
   
         // Calculate the total cart value
         cart[0].total = products.reduce((total, product) => {
@@ -91,7 +81,6 @@ userCartController.addProductToCart = async (req, res) => {
           const product = await productSchema.findById(productId);
 
           // Log the product details for debugging
-          console.log("Product details:", product);
 
           // Check if the requested quantity is available in the stock
           if (product.stock < quantity) {
@@ -127,11 +116,13 @@ userCartController.addProductToCart = async (req, res) => {
 
       } catch (error) {
           console.error("Error while adding product to cart:", error);
-          res.status(500).send("Error while adding product to cart");
+          res.render('error')
+        //   res.status(500).send("Error while adding product to cart");
       }
   } catch (error) {
       console.error("Error in addProductToCart:", error);
-      res.status(500).send("Error in addProductToCart");
+      res.render('error')
+    //   res.status(500).send("Error in addProductToCart");
   }
 };
 
@@ -189,7 +180,8 @@ userCartController.removeProduct = async (req, res) => {
 
     } catch (error) {
         console.log("Error occurred during remove product from cart", error);
-        res.json({ status: 'failed', message: "Error occurred during item removal" });
+        res.render('error')
+        // res.json({ status: 'failed', message: "Error occurred during item removal" });
     }
 };
 
@@ -248,7 +240,8 @@ userCartController.updateQuantity = async (req, res) => {
 
     } catch (error) {
         console.error("Error occurred during update Quantity: ", error);
-        res.json({ status: "danger", message: "Error occurred during quantity update" });
+        res.render('error')
+        // res.json({ status: "danger", message: "Error occurred during quantity update" });
     }
 };
 //decreasing quantity
@@ -295,7 +288,8 @@ userCartController.decreaseQuantity = async (req, res) => {
       }
   } catch (error) {
       console.error("Error occurred during decrease Quantity: ", error);
-      res.json({ status: "danger", message: "Error occurred during quantity decrease" });
+      res.render('error')
+    //   res.json({ status: "danger", message: "Error occurred during quantity decrease" });
   }
 };
 
@@ -311,11 +305,8 @@ userCartController.showcheckOut = async (req, res) => {
     try {
         console.log("IN show checkout");
         const userId = req.session.userId;
-        console.log("userid in checkout", userId);
         const user = await User.findById(userId);
-        console.log("user in checkout", user);
         const cart = await cartSchema.findOne({ userId: userId }).populate('products.productId');
-        console.log("cart in user", cart);
         const coupons=await couponSchema.find()
 
         const products = cart.products;
@@ -331,10 +322,24 @@ userCartController.showcheckOut = async (req, res) => {
                 return total;
             }
         }, 0);
-
         const grandTotal = cart.total;
+        let deliveryCharges=0
+        if(grandTotal>1000 )
+        {
+            deliveryCharges=20
+        }
+        else if(grandTotal>1400 || grandTotal>1700)
+        {
+            deliveryCharges=50
+        }
+        else if(grandTotal >1700 || grandTotal >2000)
+        {
+            deliveryCharges=100
+        }
+        // const grandTotalWithDelivery=grandTotal+deliveryCharges
+
         console.log("Grand Total", grandTotal);
-        res.render('checkout', { user, products:cart.products, grandTotal,coupons});
+        res.render('checkout', { user, products:cart.products, grandTotal,deliveryCharges,coupons});
     } catch (error) {
         res.render('error')
     }

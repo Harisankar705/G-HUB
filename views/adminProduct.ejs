@@ -128,16 +128,33 @@
                             <span class="text">Offer Management</span>
                         </a>
                     </li>
+                    <li class="menu-item has-submenu">
+                        <a class="menu-link" href="#"> <i class="icon material-icons md-star"></i>
+                            <span class="text">Best Selling</span>
+                        </a>
+                        <ul class="submenu">
+                            <li><a href="/bestSellingProducts">Best Selling Product </a></li>
+                            <li><a href="bestSellingCategory">Best Selling Category </a></li>
+                            <li><a href="/bestSellingBrands">Best Selling Brand </a></li>
+                        </ul>
+                    </li>
+                    
                     <li class="menu-item ">
                         <a class="menu-link" href='/admin-orders'> <i class="icon material-icons md-book"></i>
                             <span class="text">Orders</span>
                         </a>
                     </li>
                     <li class="menu-item ">
-                        <a class="menu-link" href="#" id="logoutLink"> <i class="icon material-icons md-exit_to_app"></i>
-                            <span class="text">Logout</span>
+                        <a class="menu-link" href='/admin-brand'> <i class="icon material-icons md-comment"></i>
+                            <span class="text">Brand Management</span>
                         </a>
                     </li>
+                        <li class="menu-item ">
+                            <a class="menu-link" href="#" id="logoutLink"> <i class="icon material-icons md-exit_to_app"></i>
+                                <span class="text">Logout</span>
+                            </a>
+                        </li>
+                   
                     
 
                 </li>
@@ -198,6 +215,8 @@
                                     <td><%= product.name %></td>
                                     <td><%= product.category ? product.category.name : 'N/A' %></td>
                                     <td><%= product.description %></td>
+                                    <td><%= product.brand ? product.brand.name : 'N/A' %></td>
+                        
                                     <td><%= product.price %></td>
                                     <td><%= product.stock %></td>
                                     <td>

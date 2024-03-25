@@ -13,7 +13,6 @@ const UserSchema = new Schema({
         required: true,
         trim: true
     },
-    phonenumber: Number,
     address: [{
         username:String,
         houseaddress: String,
@@ -21,6 +20,7 @@ const UserSchema = new Schema({
         pincode: Number,
         district: String, // Corrected from 'district' to 'String'
         state: String,
+        phonenumber:Number,
         isDefault: {
             type: Boolean,
             default: true
@@ -44,6 +44,14 @@ const UserSchema = new Schema({
         default: false,
     },
     isReferralLinkUsed:{
+        type:Boolean,
+        default:false
+    },
+    hasReceivedSignupReward:{
+        type:Boolean,
+        default:false
+    },
+    hasReceivedReferralReward:{
         type:Boolean,
         default:false
     }

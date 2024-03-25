@@ -75,6 +75,12 @@
             border-radius: 1px;
             margin-bottom: 10px;
         }
+        select#brand {
+            width: 100%;
+            padding: 10px;
+            border-radius: 1px;
+            margin-bottom: 10px;
+        }
 
     </style>
 </head>
@@ -129,11 +135,27 @@
                             <span class="text">Offer Management</span>
                         </a>
                     </li>
-                    <li class="menu-item ">
-                        <a class="menu-link" href='/admin-orders'> <i class="icon material-icons md-book"></i>
-                            <span class="text">Orders</span>
-                        </a>
-                    </li>
+                    <li class="menu-item has-submenu">
+                    <a class="menu-link" href="#"> <i class="icon material-icons md-star"></i>
+                        <span class="text">Best Selling</span>
+                    </a>
+                    <ul class="submenu">
+                        <li><a href="/bestSellingProducts">Best Selling Product </a></li>
+                        <li><a href="bestSellingCategory">Best Selling Category </a></li>
+                        <li><a href="/bestSellingBrands">Best Selling Brand </a></li>
+                    </ul>
+                </li>
+                
+                <li class="menu-item ">
+                    <a class="menu-link" href='/admin-orders'> <i class="icon material-icons md-book"></i>
+                        <span class="text">Orders</span>
+                    </a>
+                </li>
+                <li class="menu-item ">
+                    <a class="menu-link" href='/admin-brand'> <i class="icon material-icons md-comment"></i>
+                        <span class="text">Brand Management</span>
+                    </a>
+                </li>
                     <li class="menu-item ">
                         <a class="menu-link" href="#" id="logoutLink"> <i class="icon material-icons md-exit_to_app"></i>
                             <span class="text">Logout</span>
@@ -171,11 +193,21 @@
                 <% }); %>
             </select>
         <% } else { %>
-            <!-- Display existing category as text -->
-            <!-- <input type="text" value="<%= product.category ? product.category.name : 'N/A' %>" readonly name="category" /> -->
         <% } %>
 
         <div></div>
+        <label for="brand">Brand</label>
+        <% if (brand) { %>
+            <select name="brand" id="brand">
+                <% brand.forEach((brand) => { %>
+                    <option value="<%= brand.name %>" <%= (products.brand && products.brand._id.toString() === brand._id.toString()) ? 'selected' : '' %>>
+                        <%= brand.name %>
+                    </option>
+                <% }); %>
+            </select>
+        <% } %>
+        
+            
                 <label for="price">Product Price</label>
         <input type="text" value="<%= products.price %>" class="form-control" id="price" name="price" />
             <div></div>
@@ -276,10 +308,10 @@ function showValidationError(message) {
 
     document.getElementById('additionalImage').addEventListener('change', function (event) {
         const selectedFiles = event.target.files;
-        if (selectedFiles.length > 4) {
+        if (selectedFiles.length > 3) {
             Swal.fire({
                 icon: 'info',
-                title: 'You can choose only a maximum of four files',
+                title: 'You can choose only a maximum of three files',
                 showConfirmButton: true,
                 timer: 2000,
                 customClass: {

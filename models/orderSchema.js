@@ -20,11 +20,23 @@
             paymentMethod: {
                 type: String
             },
+            deliveryCharges:{
+                type:Number,
+                default:0
+            },
             products: [{
                 productId: {
                     type: mongoose.Schema.Types.ObjectId,
                     ref: 'Product',
                     required: true
+                },
+                orderStatus:{
+                    type:String,
+                    default:'pending'
+
+                },
+                message:{
+                    type:String
                 },
                 quantity: {
                     type: Number,
@@ -46,8 +58,7 @@
 
             },
             orderStatus:{
-                type:String,
-                default: "Pending"
+                type:String,    
             },
             deliveredDate:{
                 type:Date,
@@ -57,6 +68,10 @@
                 type:Number,
                 default:0,
             },
+            couponDiscountDifference:{
+                type:Number,
+                default:0
+            }
         });
 
 

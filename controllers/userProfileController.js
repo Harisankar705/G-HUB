@@ -5,6 +5,8 @@ const mongoose=require('mongoose')
 const bcrypt=require('bcrypt')
 const orderSchema = require('../models/orderSchema')
 const userProfileController={}
+const productSchema=require('../models/product')
+const { retryPayment } = require('./userOrderController')
 
 
 userProfileController.showProfile=async(req,res)=>{
@@ -25,6 +27,7 @@ userProfileController.showProfile=async(req,res)=>{
         }
     } catch (error) {
         console.log("Error occurred during showing profile",error)
+        res.render('error')
     }
 }
 // userProfileController.showEditProfile=async(req,res)=>{
@@ -65,8 +68,8 @@ userProfileController.editProfile = async (req, res) => {
         console.log("Edited succesfully");
     } catch (error) {
         console.log("Error occurred while editing user data:", error);
-        res.json({ status: "error", message: "An error occurred while updating user data" });
-        console.log("failed to edit");
+        res.render('error')
+       
     }
 }
 
@@ -78,6 +81,7 @@ userProfileController.showPassword=async(req,res)=>{
         res.render('editPassword',{user})
     } catch (error) {
 console.log("Error occured while loading editPassword",error)
+res.render('error')
     }
    
 
@@ -126,7 +130,8 @@ userProfileController.changePassword = async (req, res) => {
         }
     } catch (error) {
         console.log("Error occurred while editing password", error);
-        res.json({ status: "error", message: "Internal server error" });
+        res.render('error')
+        // res.json({ status: "error", message: "Internal server error" });
     }
 };
 
@@ -151,8 +156,9 @@ userProfileController.addAddress=async(req,res)=>{
         const user=await User.findById(userId)
         res.render('addAddress',{user})
     } catch (error) {
-        console.log("Error occured during add address");   
-        res.status(500).send("Internal Server Error");
+        console.log("Error occured during add address"); 
+        res.render('error')  
+        // res.status(500).send("Internal Server Error");
  
     }
 }
@@ -161,14 +167,21 @@ userProfileController.manageAddAddress = async (req, res) => {
     try {
         console.log("In manageAddAddress");
 
-        const { houseaddress, state, district, city, pincode } = req.body;
+        const { houseaddress, state, district, city, pincode,phonenumber } = req.body;
         console.log("BOODY", req.body);
         const userId = req.session.userId;
         console.log("USERS", userId);
 
         // Check if required fields are empty
-        if (!houseaddress || !state || !district || !city || !pincode) {
+        if (!houseaddress || !state || !district || !city || !pincode ||!phonenumber) {
             return res.json({ status: "error", message: "All fields are required" });
+        }
+        if(phonenumber.toString().length!==10){
+            return res.json({status:"error",message:"Phone number must be 10 digits"})
+        }
+        if(pincode.toString().length!==6)
+        {
+            return res.json({status:"error",message:"Pincode must be 6 digits"})
         }
 
         // Find the user by ID
@@ -182,7 +195,7 @@ userProfileController.manageAddAddress = async (req, res) => {
         console.log("USERaddress", userAddress);
 
         // Check if the maximum limit of addresses is reached
-        if (userAddress.length >= 10) {
+        if (userAddress.length >=4) {
             return res.json({ status: "error", message: "Maximum limit of addresses reached" });
         }
 
@@ -193,6 +206,7 @@ userProfileController.manageAddAddress = async (req, res) => {
                 addr.state === state &&
                 addr.district === district &&
                 addr.city === city &&
+                addr.phonenumber===phonenumber &&
                 addr.pincode.toString() === pincode.toString()
             );
         });
@@ -205,7 +219,8 @@ userProfileController.manageAddAddress = async (req, res) => {
                     'state': state,
                     'district': district,
                     'city': city,
-                    'pincode': pincode
+                    'pincode': pincode,
+                    'phonenumber':phonenumber,
                 }
             }
         });
@@ -220,7 +235,8 @@ userProfileController.manageAddAddress = async (req, res) => {
             state: state,
             district: district,
             pincode: pincode,
-            city: city
+            city: city,
+            phonenumber:phonenumber
         };
 
         // Add the new address to the user's list
@@ -232,7 +248,8 @@ userProfileController.manageAddAddress = async (req, res) => {
         return res.json({ status: "success", message: "Address added successfully", newAddress });
     } catch (error) {
         console.log("Error occurred during adding address", error);
-        return res.json({ status: "error", message: "Internal server error" });
+        res.render('error')
+        // return res.json({ status: "error", message: "Internal server error" });
     }
 };
 
@@ -262,13 +279,14 @@ userProfileController.showEditAddress=async(req,res)=>{
         console.log("Addressssss",address);
     } catch (error) {
         console.log("An error occured while displaying edit address",error)
+        res.render('error')
 
     }
 }
 userProfileController.manageEditAddress = async (req, res) => {
     try {
         const userId = req.session.userId
-        const { addressId, houseaddress, street, state, city, pincode } = req.body
+        const { addressId, houseaddress, street, state, city, pincode,phonenumber} = req.body
         const user = await User.findById(userId)
         const userAddress = user.address
   
@@ -285,6 +303,7 @@ userProfileController.manageEditAddress = async (req, res) => {
               userAddr.city === city &&
               userAddr.pincode.toString().trim() === pincode.toString().trim() &&
               userAddr.state === state &&
+              userAddr.phonenumber===phonenumber &&
               userAddr._id.toString() !== addressId // Exclude the current address being edited
         );
   
@@ -295,7 +314,8 @@ userProfileController.manageEditAddress = async (req, res) => {
            address.street = street
            address.state = state
            address.city = city
-           address.pincode = pincode
+           address.pincode = pincode,
+           address.phonenumber=phonenumber
   
            await user.save();
   
@@ -331,7 +351,8 @@ userProfileController.deleteaddress=async(req,res)=>{
         res.json({status:"success",message:"Address deleted successfully"})
     } catch (error) {
         console.log("Error occured while deleting address")
-        res.json({status:"error",message:"Address deleted successfully"})
+        res.json({status:"error",message:"Address failed to delete "})
+        res.render('error')
     }
 }
 //showing orderdetails
@@ -345,12 +366,13 @@ userProfileController.orderDetails = async (req, res) => {
             .populate('products.productId')
             .populate("userId");
         const user=await User.findById(userId)
-        res.render('orderDetails', { orderDetails,user});
-        console.log("Orderdetails",orderDetails);
+        const product=await productSchema.find()
+        res.render('orderDetails', { orderDetails,user,product});
     } catch (error) {
         console.log("Error occurred while showing order details", error);
         // Handle the error appropriately, e.g., send an error response
-        res.status(500).json({ status: 'error', message: 'Internal Server Error' });
+        res.render('error')
+        // res.status(500).json({ status: 'error', message: 'Internal Server Error' });
     }
 };
 

@@ -35,7 +35,7 @@
                   <li><a class="nav-link" href="/userprofile/<%= user._id %>"><i class="fa fa-user"></i></a></li>
                   <li><a class="nav-link" href="/cart"><i class="fa fa-shopping-cart"></i></a></li>
                   <li><a class="nav-link" href="/wishlist"><i class="fa fa-heart" aria-hidden="true"></i></a></li>
-                  <li><a class="nav-link" href="/userWallet"><i class="fa-solid fa-wallet"></i></a></li>
+                  <li><a class="nav-link" href="/userWallet/<%=user._id%>"><i class="fa-solid fa-wallet"></i></a></li>
                   <li><a class="nav-link" href=""><i></i></a></li>
         <form action="/logout" method="POST">
           <button type="submit" class="nav-link" style="border: none; background: none; cursor: pointer;">
@@ -76,6 +76,21 @@
                     </li>
                 <% }); %>
             </ul>
+            <ul class="pagination justify-content-center">
+                <li class="page-item <%= currentPage == 1 ? 'disabled' : '' %>">
+                  <a class="page-link" href="<%= currentPage > 1 ? '/userWallet/'+user._id+'?page='+(currentPage-1) : '#' %>">Previous</a
+                </li>
+                <% for (var i = 1; i <= totalPages; i++) { %>
+                  <li class="page-item <%= i == currentPage ? 'active' : '' %>">
+                    <a class="page-link" href="<%= '/userWallet/'+user._id+'?page='+i %>"><%= i %></a>
+                  </li>
+                <% } %>
+                <li class="page-item <%= currentPage == totalPages ? 'disabled' : '' %>">
+                  <a class="page-link" href="<%= currentPage < totalPages ? '/userWallet/'+user._id+'?page='+(currentPage+1) : '#' %>">Next</a>
+                </li>
+              </ul>
+            
+
         <% } else { %>
             <p class="text-muted mt-3">No transactions yet.</p>
         <% } %>
@@ -84,6 +99,8 @@
         <p class="text-danger">User wallet not found.</p>
     <% } %>
 </div>
+<%-include('partials/userfooter.ejs')%>
+
 
 
   <style>

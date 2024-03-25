@@ -5,9 +5,9 @@ const adminUserController={}
 adminUserController.displayUsers=async(req,res)=>{
     try
     {
-    const usersPerPage=5
+    const usersPerPage=2
     const page=parseInt(req.query.page)||1
-    const limit=8
+    const limit=2
     const searchQuery=req.query.search||''
     const statusFilter=req.query.status||''
     let query={}
@@ -15,7 +15,7 @@ adminUserController.displayUsers=async(req,res)=>{
     {
         const  searchRegex=new RegExp(searchQuery,'i')
         query={
-            $or:[{emai:{$regex:searchRegex}}]
+            $or:[{email:{$regex:searchRegex}}]
         }
     }
     if(statusFilter)
@@ -33,6 +33,7 @@ adminUserController.displayUsers=async(req,res)=>{
 catch(error)
 {
     console.log("Error in adminuser",error)
+    res.render('error')
 }
 }
 
@@ -51,7 +52,7 @@ adminUserController.blockuser=async(req,res)=>{
         res.redirect('/admin/user-management');
     } catch (error) {
         console.error('Error toggling user block status:', error);
-        res.status(500).send('Internal Server Error');
+        res.render('error')
     }
 }
 //unblocking users
@@ -66,7 +67,7 @@ adminUserController.unblockuser=async(req,res)=>{
         res.redirect('/admin/user-management');
     } catch (error) {
         console.error('Error setting isBlocked to false:', error);
-        res.status(500).send('Internal Server Error');
+        res.render('error')
     }
 }
 

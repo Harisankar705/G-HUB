@@ -1,4 +1,4 @@
-    <DOCTYPE html>
+    <!DOCTYPE html>
     <html lang="en">
 
     <head>
@@ -15,6 +15,8 @@
         <link rel="shortcut icon" type="image/x-icon" href="assets/imgs/theme/favicon.svg">
         <!-- Template CSS -->
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.min.css">
+        <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.min.js"></script>
         <link href="../assets/css/dashboard.css" rel="stylesheet"/>
         
@@ -68,9 +70,25 @@
                                 <span class="text">Offer Management</span>
                             </a>
                         </li>
+                        <li class="menu-item has-submenu">
+                            <a class="menu-link" href="#"> <i class="icon material-icons md-star"></i>
+                                <span class="text">Best Selling</span>
+                            </a>
+                            <ul class="submenu">
+                                <li><a href="/bestSellingProducts">Best Selling Product </a></li>
+                                <li><a href="bestSellingCategory">Best Selling Category </a></li>
+                                <li><a href="/bestSellingBrands">Best Selling Brand </a></li>
+                            </ul>
+                        </li>
+                        
                         <li class="menu-item ">
                             <a class="menu-link" href='/admin-orders'> <i class="icon material-icons md-book"></i>
                                 <span class="text">Orders</span>
+                            </a>
+                        </li>
+                        <li class="menu-item ">
+                            <a class="menu-link" href='/admin-brand'> <i class="icon material-icons md-comment"></i>
+                                <span class="text">Brand Management</span>
                             </a>
                         </li>
                         <li class="menu-item ">
@@ -113,18 +131,14 @@
 
                                                     <option>category</option>
                                                     <option>product</option>
+                                                    <option>All Products</option>
                                                 </select>
                                             </div>
                                             <div class="mb-4">
                                                 <label for="name">Discount value in %</label>
-                                                <input type="text" class="form-control mb-2" id="discountValue" name="discountValue" placeholder="Discount in Percentage">
+                                                <input type="number" class="form-control mb-2" id="discountValue" name="discountValue" placeholder="Discount in Percentage">
 
-                                            </div>
-                                            <div class="mb-4">
-                                                <label for="name">Start Date</label>
-                                                <input type="date" class="form-control mb-2" id="startDate" name="startDate">
-
-                                            </div>
+                                            </div>  
                                             <div class="mb-4">
                                                 <label for="name">End Date</label>
                                                 <input type="date" class="form-control mb-2" id="endDate" name="endDate">
@@ -188,23 +202,53 @@
 
         
         </style>
-
-        <script src="../assets/js/vendors/jquery-3.6.0.min.js"></script>
-        <script src="../assets/js/vendors/bootstrap.bundle.min.js"></script>
-        <script src="../assets/js/vendors/select2.min.js"></script>
-        <script src="../assets/js/vendors/perfect-scrollbar.js"></script>
-        <script src="../assets/js/vendors/jquery.fullscreen.min.js"></script>
-        <script src="../assets/js/vendors/chart.js"></script>
-        <!-- Main Script -->
-        <script src="../assets/js/custom-chart.js" type="text/javascript"></script>
+<script src="../assets/js/vendors/bootstrap.bundle.min.js"></script>
+<script src="../assets/js/vendors/select2.min.js"></script>
+<script src="../assets/js/vendors/perfect-scrollbar.js"></script>
+<script src="../assets/js/vendors/jquery.fullscreen.min.js"></script>
+<script src="../assets/js/vendors/chart.js"></script>
+<!-- Main Script -->
+<script src="../assets/js/main.js" type="text/javascript"></script>
+<script src="../assets/js/custom-chart.js"></script>
         <!-- Main Script -->
         
       <script>
         document.addEventListener('DOMContentLoaded', function () {
+            
     var form = document.getElementById('addOfferForm');
     var discountOnSelect = document.getElementById('discountOn');
     var categorySelector = document.getElementById('categorySelector');
     var productSelector = document.getElementById('productSelector');
+    function validateForm(formData) {
+        if (!formData.offerName || !formData.discountOn || !formData.discountValue  || !formData.endDate) {
+            Swal.fire({
+                icon: "error",
+                title: "Validation Error",
+                text: "Please fill in all required fields.",
+            });
+            return false;
+        }
+        return true;
+    }
+    function validateCategoryProduct(formData) {
+        if (formData.discountOn === 'category' && !formData.selectedCategory) {
+            Swal.fire({
+                icon: "error",
+                title: "Validation Error",
+                text: "Please select a category for the offer.",
+            });
+            return false;
+        } else if (formData.discountOn === 'product' && !formData.selectedProducts) {
+            Swal.fire({
+                icon: "error",
+                title: "Validation Error",
+                text: "Please select a product for the offer.",
+            });
+            return false;
+        }
+        return true;
+    }
+
 
     discountOnSelect.addEventListener('change', function() {
         // Check the selected value
@@ -219,7 +263,14 @@
             categorySelector.style.display = 'none';
             productSelector.style.display = 'block';
             categorySelector.disabled = true;
-        } else {
+        }else if(selectedValue==="All Products")
+        {
+            categorySelector.style.display='none'
+            productSelector.style.display='none',
+            categorySelector.disabled=true
+            productSelector.disabled=true
+        } 
+        else {
             // Hide both if neither category nor product is selected
             productSelector.style.display = 'none';
             categorySelector.style.display = 'none';
@@ -237,6 +288,9 @@
             new FormData(form).forEach((value, key) => {
                 formData[key] = value;
             });
+            if (!validateForm(formData) || !validateCategoryProduct(formData)) {
+                return; // Stop form submission if validation fails
+            }
 
             // Assuming you're using the Fetch API to make a request
             try {

@@ -34,22 +34,25 @@ userWishlistController.displayWishlist=async(req,res)=>{
         res.render('wishlist',{products,categories,user})
     } catch (error) {
         console.log("Error occured while loading wishlist",error)
+        res.render('error')
     }
 }  
 
 userWishlistController.addToWishlist = async (req, res) => {
     try {
+        console.log("IN ADD TO WISHLIST")
         const userId = req.session.userId;
+
         const productId = req.params.id;
+        console.log('PRODUCTID',productId)
 
         const product = await productSchema.findById(productId).populate('category');
+        console.log('product',product)
 
-        if (!product) {
-            return res.json({ status: "error", message: "Product not found" });
-        }
+       
 
         // Check if the category exists and is published
-        if (!product.category || !product.category.isPublished) {
+        if ( !product.category.isPublished) {
             return res.json({ status: "error", message: "The category of the product is not available" });
         }
 
@@ -64,11 +67,12 @@ userWishlistController.addToWishlist = async (req, res) => {
 
         if (wishlist.products.length > 0) {
             productAlreadyExists = wishlist.products.find((product) => product.productId._id.toString() === productId.toString());
+            if (productAlreadyExists) {
+                return res.json({ status: "error", message: "Product already exists in the wishlist" });
+            }
         }
 
-        if (productAlreadyExists) {
-            return res.json({ status: "error", message: "Product already exists in the wishlist" });
-        }
+        
 
         const wishlistProduct = {
             productId: productId
@@ -81,7 +85,8 @@ userWishlistController.addToWishlist = async (req, res) => {
 
     } catch (error) {
         console.log("Error occurred while adding product to wishlist", error);
-        return res.status(500).json({ status: "error", message: "Internal Server Error" });
+        res.render('error')
+        // return res.status(500).json({ status: "error", message: "Internal Server Error" });
     }
 };
 

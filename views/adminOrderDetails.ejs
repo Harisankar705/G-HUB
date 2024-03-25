@@ -11,171 +11,327 @@
     <meta property="og:type" content="">
     <meta property="og:url" content="">
     <meta property="og:image" content="">
-    <!-- Favicon -->
+    <!-- Favicon -->    
     <!-- <link rel="shortcut icon" type="image/x-icon" href="assets/imgs/theme/favicon.svg"> -->
     <!-- Template CSS -->
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
     <link href="../assets/css/dashboard.css" rel="stylesheet"/>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 </head>
 
 <body>
     <div class="screen-overlay"></div>
-    <form action="adminPanel" method="post">
-        <aside class="navbar-aside" id="offcanvas_aside">
-            <div class="aside-top">
-                <a href="#" class="brand-wrap">
-                    <h2>G-HUB</h2>
-                    <h3>AdminPanel</h3>
-                </a>
-            </div>
-            <nav>
-                <ul class="menu-aside">
-                    <li class="menu-item active">
-                        <a class="menu-link" href="/adminPanel"> <i class="icon material-icons md-home"></i>
-                            <span class="text">Dashboard</span>
-                        </a>
-                    </li>
-                    <li class="menu-item">
-                        <a class="menu-link" href="/admin/category"> <i class="icon material-icons md-menu_open"></i>
-                            <span class="text">Categories</span>
+    <!-- <form action="adminPanel" method="post"> -->
+    <aside class="navbar-aside" id="offcanvas_aside">
+        <div class="aside-top">
+            <a href="#" class="brand-wrap">
+                <h2>G-HUB</h2>
+                <h3>AdminPanel</h3>
+            </a>
+            <a href="#" onclick="goBack()"><img src="../public/back-button-removebg-preview.png" id="back-button"></a>
+
+        </div>
+        <nav>
+            <ul class="menu-aside">
+                <li class="menu-item ">
+                    <a class="menu-link" href="/adminPanel"> <i class="icon material-icons md-home"></i>
+                        <span class="text">Dashboard</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a class="menu-link" href="/admin/category"> <i class="icon material-icons md-menu_open"></i>
+                        <span class="text">Categories</span>
+                    </a>
+                </li>
+                <li class="menu-item ">
+                    <a class="menu-link" href="/admin/products"> <i class="icon material-icons md-shopping_bag"></i>
+                        <span class="text">Products</span>
+                    </a>
+                    <li class="menu-item ">
+                        <a class="menu-link" href="/admin/add"> <i class="icon material-icons md-plus"></i>
+                            <span class="text">Add Product</span>
                         </a>
                     </li>
                     <li class="menu-item ">
-                        <a class="menu-link" href="/admin/products"> <i class="icon material-icons md-shopping_bag"></i>
-                            <span class="text">Products</span>
+                        <a class="menu-link" href="/admin/user-management"> <i class="icon material-icons md-person"></i>
+                            <span class="text">User Management</span>
                         </a>
-                        <li class="menu-item ">
-                            <a class="menu-link" href="/admin/add"> <i class="icon material-icons md-plus"></i>
-                                <span class="text">Add Product</span>
-                            </a>
-                        </li>
-                        <li class="menu-item ">
-                            <a class="menu-link" href="/admin/user-management"> <i class="icon material-icons md-person"></i>
-                                <span class="text">User Management</span>
-                            </a>
-                        </li>
-                        <li class="menu-item ">
-                            <a class="menu-link" href='/admin-orders'> <i class="icon material-icons md-book"></i>
-                                <span class="text">Orders</span>
-                            </a>
-                        </li>
-                        <li class="menu-item ">
-                            <a class="menu-link" href="/admin/logout"> <i class="icon material-icons md-exit_to_app"></i>
-                                <span class="text">Logout</span>
-                            </a>
-                        </li>
-                        
-    
                     </li>
-                </ul>
-                <hr>
-                <br>
-                <br>
-            </nav>
-        </aside>
-    </form>
-    <section class="content-main">
-        <h3>Order Details</h3>
-        <section class="content-main">
-            <div class="content-header">
-                <div>
-                    <h2 class="content-title card-title">Edit Order Status</h2>
-                </div>
-                <div>
-                    <a href="/admin/order-details" class="btn btn-primary">Back to Orders</a>
-                </div>
-            </div>
-    <div class="row">
-                <div class="col-lg-6">
-                    <div class="card mb-4">
-                        <div class="card-body">
-                            <div class="table-responsive">
-                                <form action="/admin/change-status/<%= orders._id %>" method="post" id="editStatusForm">
-                                    <div class="mb-3">
-                                        <label for="productName" class="form-label">Product Name:</label>
-                                        <% orders.products.forEach(product => { %>
-                                            <input type="text" class="form-control" id="productName" value="<%= product.productId.name %>" disabled>
-                                        <% }) %>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="productMainImage" class="form-label">Product Image:</label>
-                                        <% orders.products.forEach(product => { %>
-                                            <img src="<%= product.productId.productMainImage %>" alt="Product Image" class="img-fluid">
-                                        <% }) %>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="shippingAddress" class="form-label">Shipping Address:</label>
-                                        <textarea class="form-control" id="shippingAddress" rows="3" disabled><%= orders.shippingAddress %></textarea>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="orderStatus" class="form-label">Choose Status:</label>
-                                        <select class="form-select" id="orderStatus" name="status">
-                                            <option value="" selected disabled><%- orders.orderStatus %></option>
-                                            <% if (orders.orderStatus === 'Request approved') { %>
-                                                <option value="Returned">Returned</option>
-                                            <% } else { %>
-                                                <option value="Pending">Pending</option>
-                                                <option value="Processing">Processing</option>
-                                                <option value="Shipped">Shipped</option>
-                                                <option value="Delivered">Delivered</option>
-                                            <% } %>
-                                        </select>
-                                    </div>
-                                    <div class="text-center">
-                                        <button type="submit" class="btn btn-primary">Save changes</button>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
+                    <li class="menu-item ">
+                        <a class="menu-link" href="/admincoupons"> <i class="icon material-icons md-check_box"></i>
+                            <span class="text">Coupon Management</span>
+                        </a>
+                    </li>
+                    <li class="menu-item ">
+                        <a class="menu-link" href="/offer-management"> <i class="icon material-icons md-redeem"></i>
+                            <span class="text">Offer Management</span>
+                        </a>
+                    </li>
+                    <li class="menu-item has-submenu">
+                        <a class="menu-link" href="#"> <i class="icon material-icons md-star"></i>
+                            <span class="text">Best Selling</span>
+                        </a>
+                        <ul class="submenu">
+                            <li><a href="/bestSellingProducts">Best Selling Product </a></li>
+                            <li><a href="bestSellingCategory">Best Selling Category </a></li>
+                            <li><a href="/bestSellingBrands">Best Selling Brand </a></li>
+                        </ul>
+                    </li>
+                    
+                    <li class="menu-item active">
+                        <a class="menu-link" href='/admin-orders'> <i class="icon material-icons md-book"></i>
+                            <span class="text">Orders</span>
+                        </a>
+                    </li>
+                    <li class="menu-item ">
+                        <a class="menu-link" href='/admin-brand'> <i class="icon material-icons md-comment"></i>
+                            <span class="text">Brand Management</span>
+                        </a>
+                    </li>
+                    <li class="menu-item ">
+                        <a class="menu-link" href="#" id="logoutLink"> <i class="icon material-icons md-exit_to_app"></i>
+                            <span class="text">Logout</span>
+                        </a>
+                    </li>
+                    
+
+                </li>
+            </ul>
+            <hr>
+            <br>
+            <br>
+        </nav>
+    </aside>
+    <div class="container mt-4">
+        <h1>Order Details</h1>
+
+        <% if (orderDetails && orderDetails.products && orderDetails.products.length > 0) { %>
+            <% orderDetails.products.forEach(product => { %>
+                <div class="product-details">
+                    <img src="/<%= product.productId && product.productId.mainimage %>" alt="<%= product.productId && product.productId.name %>" class="product-image">
+                    <div class="product-info">
+                        <p class="product-name">Order Id: <%= orderDetails._id %></p>
+                        <p class="order-date">Order Date:<%=orderDetails.date.toLocaleString()%></p>
+                        <p class="product-name">Product: <%= product.productId && product.productId.name %></p>
+                        <p class="product-price">Product Price: <%= product.productId && product.productId.price %></p>
+                        <p class="payment-method">Payment Method:<%=orderDetails.paymentMethod%></p>
+                        <p class="delivery-charge">Delivery Charge: <%= orderDetails.deliveryCharges %></p>
+                        <p class='coupon-discount'> Discount:<%=orderDetails.couponDiscount%></p>
+                        <p class="product-quantity">Quantity: <%= product.quantity %></p>
+                        <p class="product-price">Total Price: <%= product.total %></p>
+                        <% if (orderDetails.addresstoDeliver) { %>
+                            <h5>Delivery Address</h5>
+                            <p>Username: <%= orderDetails.addresstoDeliver.username || 'Not specified' %></p>
+                            <p>Phone Number: <%= orderDetails.addresstoDeliver.phonenumber || 'Not specified' %></p>
+                            <p>Address: <%= orderDetails.addresstoDeliver.houseaddress %>, <%= orderDetails.addresstoDeliver.city %>, <%= orderDetails.addresstoDeliver.state %>, <%= orderDetails.addresstoDeliver.district %> - <%= orderDetails.addresstoDeliver.pincode %></p>
+                            <p class="order-status mt-4">Order Status: <%= product.orderStatus %></p>
+
+                        <% } %>
+                       
                     </div>
+                    
+                   
+
                 </div>
-            </div>
-            </section>
-            <style>
-                body {
-                    margin: 0;
-                    font-family: Arial, sans-serif;
-                }
-            
-                .container {
-                    display: flex;
-                }
-            
-                .navbar-aside {
-                    width: 20%; /* Adjust the width of the navbar as needed */
-                    background-color: #333;
-                    color: #fff;
-                    padding: 20px;
-                    box-sizing: border-box;
-                }
-            
-                .content-main {
-                    flex: 1;
-                    padding: 20px;
-                    box-sizing: border-box;
-                }
-            
-                /* Add any additional styling as needed */
-            </style>
-            
-    </section>
-    <script>
-        $(document).ready(function(){
-            $("#logoutLink").on('click',function(e){
-                e.preventDefault()
-                $.ajax({
-                    url:'/admin/logout',
-                    method:'post',
-                    success:function(data)
-                    {
-                        window.location.href='/admin'
-                    },
-                    error:function(xhr,status,error)
-                    {
-                        console.log("Error occured during adminlogout")
-                    }
-                })
-            })
-        })
-    </script>
+                <% if(product.orderStatus === "Return Requested") { %>
+                    <div class="return-message">
+                        <p class="return-message-text">Return Message: <%= product.message || 'No message provided' %></p>
+                        <button class="btn btn-success allowReturn" data-product-id="<%= product.productId._id %>" data-order-id="<%= orderDetails._id %>">Allow Return</button>
+                        <button class="btn btn-danger declineReturn" data-product-id="<%= product.productId._id %>" data-order-id="<%= orderDetails._id %>">Deny Return</button>
+                    </div>
+                <% } %>
+                
+
+            <% }); %>
+        <% } else { %>
+            <p>No products found in the order.</p>
+        <% } %>
+
+
+    </div>
+
 </body>
-</html>
+<style>
+.container {
+    max-width: 960px;
+    margin: auto;
+    margin-top: 4rem; /* Add margin-top to move the container down */
+    margin-right: 20%; /* Add margin-right to move the container to the right */
+}
+
+@media screen and (max-width: 768px) {
+    .container {
+        padding: 0 10px;
+        margin-right: 0; /* Reset margin-right for smaller screens */
+    }
+}
+    #back-button {
+  width: 30px;
+}
+.return-message {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 20px;
+}
+
+.return-message-text {
+    margin-bottom: 10px;
+}
+
+    body {
+        font-family: 'Arial', sans-serif;
+        background-color: #f8f9fa;
+        color: #343a40;
+        padding: 20px;
+        margin: 0;
+        padding: 0;
+    }
+
+    h1 {
+        color: #dc3545;
+    }
+
+    .custom-navbar {
+        background-color: #343a40;
+    }
+
+    .navbar-brand {
+        color: #ffffff;
+        font-size: 1.5rem;
+    }
+
+    .navbar-nav .nav-link {
+        color: #ffffff;
+    }
+
+    .navbar-toggler-icon {
+        background-color: #ffffff;
+    }
+
+    .product-details {
+        border: 1px solid #dee2e6;
+        border-radius: 5px;
+        margin-bottom: 20px;
+        padding: 15px;
+        background-color: #fff;
+        display: flex;
+    }
+
+    .product-image {
+        max-width: 100px;
+        max-height: 100px;
+        margin-right: 15px;
+    }
+
+    .product-info {
+        flex-grow: 1;
+    }
+
+    .product-info p {
+        margin: 0;
+    }
+
+    .order-status {
+        font-weight: bold;
+        margin-top: 20px;
+    }
+</style>
+<script>
+  const allowReturnButton = document.querySelector('.allowReturn');
+allowReturnButton.addEventListener('click', async () => {
+  const productId = allowReturnButton.dataset.productId;
+  const orderId = allowReturnButton.dataset.orderId;
+
+  try {
+    const response = await fetch(`/allow-return/${orderId}/${productId}`, {
+      method: 'POST',
+    });
+
+    if (!response.ok) {
+      throw new Error('Something went wrong.');
+    }
+
+    const data = await response.json();
+
+    if (data.status === 'success') {
+      Swal.fire({
+        icon: 'success',
+        title: 'Return allowed',
+        showConfirmButton:false,
+        timer:1500
+      });
+      setTimeout(() => {
+        location.reload()
+      }, 1500);
+
+      // Reload the page to see the updated order details
+    } else {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error occured',
+      });
+    }
+  } catch (error) {
+    console.log('Error occured', error);
+
+    Swal.fire({
+      icon: 'error',
+      title: 'Error occured',
+    });
+  }
+});
+
+const declineReturnButton = document.querySelector('.declineReturn');
+declineReturnButton.addEventListener('click', async () => {
+  const productId = allowReturnButton.dataset.productId; // <-- Should be declineReturnButton
+  const orderId = allowReturnButton.dataset.orderId; // <-- Should be declineReturnButton
+
+  try {
+    const response = await fetch(`/decline-return/${orderId}/${productId}`, {
+      method: 'POST',
+    });
+
+   
+
+    const data = await response.json();
+
+    if (data.status === 'success') {
+      Swal.fire({
+        icon: 'success',
+        title: 'Return Declined Successfully!!',
+        showConfirmButton:false,
+        timer:1500
+      });
+      setTimeout(() => {
+        location.reload()
+      }, 1500);
+
+      // Reload the page to see the updated order details
+    } else {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error occured',
+      });
+      console.error("ERROR OCCURRED")
+    }
+  } catch (error) {
+    console.log('Error occured', error);
+
+    Swal.fire({
+      icon: 'error',
+      title: 'Error occured',
+    });
+  }
+});
+
+
+   
+    
+</script>
+    

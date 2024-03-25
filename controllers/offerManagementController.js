@@ -7,6 +7,7 @@ const { ObjectId } = require('mongoose');
 
 const offer = require('../models/offerSchema')
 const User = require('../models/User')
+const { existsSync } = require('fs-extra')
 const offerManagementController={}
 
 offerManagementController.showOffers=async(req,res)=>{
@@ -49,7 +50,7 @@ offerManagementController.displayAddOffer=async(req,res)=>{
                 product.discount=0
                 await product.save()
             }
-            else if(offer.discounOn==='category' && offer.selectedCategory)
+            else if(offer.discountOn==='category' && offer.selectedCategory)
             {
                 const categoryId=offer.selectedCategory
                 const productsInCategory=await productSchema.find({category:categoryId})
@@ -78,7 +79,6 @@ offerManagementController.displayAddOffer=async(req,res)=>{
         offerName,
         discountOn,
         discountValue,
-        startDate,
         endDate,
         selectedCategory,
         selectedProducts
@@ -105,8 +105,8 @@ offerManagementController.displayAddOffer=async(req,res)=>{
             return res.json({ status: "error", message: "Offer Name cannot be empty" });
         }
 
-        if (discountOn !== 'category' && discountOn !== 'product') {
-            return res.json({ status: "error", message: "Invalid value for discountOn" });
+        if (!discountOn) {
+            return res.json({ status: "error", message: "Fields are Missing" });
         }
 
         if (discountValue <= 0) {
@@ -117,17 +117,10 @@ offerManagementController.displayAddOffer=async(req,res)=>{
             return res.json({status:"error",message:"Discount value must be less than 100"})
         }
         let currentDate=Date.now()
-        if(endDate<=currentDate)
+        console.log(currentDate)
+if(new Date(endDate) <= new Date(currentDate))
         {
             return res.json({status:"error",message:"End date must be in the future"})
-        }
-        if(startDate<currentDate)
-        {
-            return res.json({status:"error",message:"Date already expired"})
-        }
-        if(endDate<=startDate)
-        {
-            return res.json({status:"error",message:"End date must start after start date"})
         }
         let modifiedSelectedCategory=selectedCategory
         let modifiedProductCategory=selectedProducts
@@ -145,7 +138,8 @@ offerManagementController.displayAddOffer=async(req,res)=>{
     for (const product of productsInCategory) {
         product.originalPrice = product.price;
         const discountedPrice = product.price - (product.price * discountValue / 100);
-        product.price = discountedPrice;
+        product.price = 0
+        product.discountBadge=0
         await product.save();
     }
         }
@@ -160,15 +154,29 @@ offerManagementController.displayAddOffer=async(req,res)=>{
                 product.originalPrice=product.price
                 product.discount=discountValue
                 product.price=discountedPrice
+                product.discountBadge=0
                 await product.save()
 
             }
+        }
+        else if(discountOn==='All Products')
+        {
+            const allProducts=await productSchema.find()
+            for(const product of allProducts)
+            {
+                const discountedPrice=product.price-(product.price*discountValue)/100
+                product.originalPrice=product.price
+                product.discount=discountValue
+                product.price=discountedPrice
+                product.discountBadge=0
+                await product.save()
+            }
+
         }
             const newOffer=new offerSchema({
                 offerName,
                 discountOn,
                 discountValue,
-                startDate,
                 endDate,
                 selectedCategory:modifiedSelectedCategory,
                 selectedProducts:modifiedProductCategory
@@ -179,6 +187,7 @@ offerManagementController.displayAddOffer=async(req,res)=>{
         
     } catch (error) {
        console.log("error occured while creting offer",error) 
+       res.render('error')
     }
  }
 
@@ -205,15 +214,17 @@ offerManagementController.displayAddOffer=async(req,res)=>{
                         product.originalPrice=0;
                         product.discount=0
                         product.priceDifference=0
+                        product.discountBadge=0
 
                     }
                     else
                     {
                         product.originalPrice=product.price
-                        const discountedPrice=product.price-(product.price*offer.discountValue)/100
+                        const discountedPrice=Math.floor(product.price-(product.price*offer.discountValue)/100)
                         product.price=discountedPrice
-                        product.priceDifference=product.originalPrice-product.price
+                        product.priceDifference=Math.floor(product.originalPrice-product.price)
                         product.discount=offer.discountValue
+                        product.discountBadge=offer.discountValue
                     }
                     await product.save()
                 }
@@ -223,26 +234,58 @@ offerManagementController.displayAddOffer=async(req,res)=>{
                 const productId=offer.selectedProducts
                 const product=await productSchema.findOne({_id:productId})
                 if(offer.isActive)
-                {
-                    product.price=product.originalPrice
+                {product.price=product.originalPrice
                     product.originalPrice=0
                     product.discount=0
                     product.priceDifference=0
+                    product.discountBadge=0
+                    
+                    
+                    
+
+                    
 
                 }
                 else
                 {
                     product.originalPrice=product.price;
-                    const discountedPrice=product.price-(product.price * offer.discountValue)/100
+                    const discountedPrice=Math.floor(product.price-(product.price * offer.discountValue)/100)
                     product.price=discountedPrice
-                    product.priceDifference=product.originalPrice-product.price
+                    product.priceDifference=Math.floor(product.originalPrice-product.price)
                     product.discount=offer.discountValue
+                    product.discountBadge=offer.discountValue
+ 
                 }
                 await product.save()
             }
+            else if(offer.discountOn==='All Products')
+            {
+                const allProducts=await productSchema.find()
+                for(const product of allProducts)
+                {
+                    if (offer.isActive) {
+                        product.price = product.originalPrice;
+                        product.originalPrice = 0;
+                        product.discount = 0;
+                        product.priceDifference = 0;
+                        product.discountBadge = 0;
+                    } else {
+                        product.originalPrice = product.price;
+                        const discountedPrice = Math.floor(product.price - (product.price * offer.discountValue) / 100);
+                        product.price = discountedPrice;
+                        product.priceDifference =Math.floor( product.originalPrice - product.price)
+                        product.discount = offer.discountValue;
+                        product.discountBadge = offer.discountValue;
+                    }
+                    await product.save()
+                }
+            }
+
+
+           
             offer.isActive=!offer.isActive
             await offer.save()
-            res.redirect('/offer-management')
+res.json({ status: "success", message: "Offer toggled successfully" });
         }
         else
         {
@@ -263,7 +306,6 @@ offerManagementController.displayAddOffer=async(req,res)=>{
     try {
         const offers=await offerSchema.findOne({_id:offerId})
         console.log("OFFERS",offers)
-        const formattedStartDate = offers.startDate.toISOString().split('T')[0];
         const formattedEndDate = offers.endDate.toISOString().split('T')[0];
         res.render('editOffer',{offers,products,categories,offerId,formattedStartDate,formattedEndDate})
     } catch (error) {
@@ -279,17 +321,46 @@ offerManagementController.displayAddOffer=async(req,res)=>{
         offerName,
         discountOn,
         discountValue,
-        startDate,
         endDate,
         selectedCategory,
         selectedProducts
     }=req.body
     try {
+        const exisitingOffer=await offerSchema.findOne({_id:offerId})
+        if(!exisitingOffer)
+        {
+            return res.json({status:"error",message:"Offer not found"})
+        }
+        if(exisitingOffer.discountOn==='category' && exisitingOffer.selectedCategory)
+        {
+            const categoryId=exisitingOffer.selectedCategory
+            const productsInCategory=await productSchema.find({category:categoryId})
+            for(const product of productsInCategory)
+            {
+                product.price=product.originalPrice
+                product.originalPrice=0
+                product.discount=0
+                product.discountBadge=0
+                await product.save()
+            }
+        }
+        else if(exisitingOffer.discount==='product' && exisitingOffer.selectedProducts)
+        {
+            const productId=exisitingOffer.selectedProducts
+            const product=await productSchema.findOne({_id:productId})
+            if(product)
+            {
+                product.price=product.originalPrice
+                product.originalPrice=0
+                product.discount=0
+                product.discountBadge=0
+                await product.save()
+            }
+        }
         console.log("in edit offer")
         const offers=await offerSchema.findOne({_id:offerId})
         const products=await productSchema.find()
         const categories=await categorySchema.find()
-        const formattedStartDate = offers.startDate.toISOString().split('T')[0];
         const formattedEndDate = offers.endDate.toISOString().split('T')[0];
         const trimmedOfferName = offerName.trim();
         if (!trimmedOfferName) {
@@ -312,10 +383,7 @@ offerManagementController.displayAddOffer=async(req,res)=>{
         {
             return res.json({status:"error",message:"End date must be in the future"})
         }
-        if(endDate<=startDate)
-        {
-            return res.json({status:"error",message:"End date must start after start date"})
-        }
+        
         if(offerName!==offers.offerName)
         {
             const exisitingOfferName=await offerSchema.findOne({offerName})
@@ -354,15 +422,28 @@ offerManagementController.displayAddOffer=async(req,res)=>{
         const product=await productSchema.findOne({_id:modifiedProductCategory})
         if(product)
         {
-            const discountedPrice=product.price-(product.price*discountValue)/100
+            const discountedPrice=Math.floor(product.price-(product.price*discountValue)/100)
             product.originalPrice=product.price
             product.discount=discountValue
             product.price=discountedPrice
+            product.discountBadge=discountValue
             await product.save()
         }
     }
+    else if(discountOn==="All Products")
+    {
+         const allProducts=await productSchema.find()
+         for(const product of allProducts)
+         {
+            const discountedPrice = Math.floor(product.originalPrice - (product.originalPrice * discountValue) / 100)
+            product.price = discountedPrice;
+            product.discount = discountValue;
+            product.discountBadge = discountValue;
+            await product.save();
+         }
+    }
     const updatedOffer=await offerSchema.findByIdAndUpdate(offerId,{
-        offerName,discountOn,discountValue,startDate,endDate,selectedCategory:modifiedSelectedCategory,selectedProducts:modifiedProductCategory
+        offerName,discountOn,discountValue,endDate,selectedCategory:modifiedSelectedCategory,selectedProducts:modifiedProductCategory
     })
     res.json({status:"success",message:"offer edited successfully"})
     } catch (error) {
@@ -378,36 +459,20 @@ offerManagementController.displayAddOffer=async(req,res)=>{
             if (!offer) {
                 return res.json({ status: "error", message: "Offer not found" });
             }
-            if(offer.discountOn==='category' && offer.selectedCategory)
+            if(offer.isActive===true)
             {
-                const categoryId=offer.selectedCategory
-                const productsInCategory=await productSchema.find({category:categoryId})
-                for(const product of productsInCategory)
-                {
-                    product.price=product.originalPrice
-                    product.originalPrice=0
-                    product.discount=0
-                    await product.save()
-                }
+                return  res.json({status:"error",message:"Offer is currently active deactivate if first"})
             }
-            else if(offer.disocuntOn==='products' && offer.selectedProducts)
-            {
-                const productId=offer.selectedProducts
-                const product=await productSchema.findOne({_id:productId})
-                if(product)
-                {
-                    product.price=product.originalPrice
-                    product.originalPrice=0
-                    product.disount=0
-                    await product.save()
-                }
-            }
+           
+            
+           
             await offer.deleteOne();
 
             return res.json({ status: "success", message: "Offer deleted" });
         } catch (error) {
-            console.error("Error deleting offer:", error);
-            return res.status(500).json({ status: "error", message: "Internal Server Error" });
+            console.error("Error deleting offer:", error);r
+            res.render('error')
+            // return res.status(500).json({ status: "error", message: "Internal Server Error" });
         }
     }
 
@@ -419,7 +484,7 @@ offerManagementController.displayAddOffer=async(req,res)=>{
     const user = await userSchema.findById(userId);
     const referralCode = user.referralCode;
     
-    // Rename the variable to avoid redeclaration
+    // 
     const referralLinkInfo = await User.findOne({ referralCode: user.referralCode });
     const isReferralLinkUsed = referralLinkInfo ? referralLinkInfo.used : false;
 

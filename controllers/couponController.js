@@ -1,6 +1,7 @@
 const coupon = require('../models/couponSchema')
 const couponSchema=require('../models/couponSchema')
 const cartSchema=require('../models/cartSchema')
+const { search } = require('../routes/adminRouter')
 
 const couponController={}
 couponController.showAdminCoupons=async(req,res)=>{
@@ -11,10 +12,23 @@ couponController.showAdminCoupons=async(req,res)=>{
         const offset=(page-1)*limit
         const totalCoupons=await couponSchema.countDocuments()
         const totalPages=Math.ceil(totalCoupons/productsPerPage)
-        const coupons=await couponSchema.find().skip().limit(productsPerPage)
-        res.render('adminCoupons',{coupons,totalPages,currentPage:page})
+        let query={}
+        let searchQuery=''
+        if(req.query.search)
+        {
+            const searchRegex=new RegExp(req.query.search,'i')
+            query={
+                $or:[
+                    {coupon:{$regex:searchRegex}},
+                ]
+            }
+            searchQuery=req.query.search
+        }
+        const coupons=await couponSchema.find(query).skip(offset).limit(productsPerPage)
+        res.render('adminCoupons',{coupons,totalPages,currentPage:page,searchQuery})
     } catch (error) {
         console.log("Error occured while showing adminCoupons")
+        res.render('error')
     }
 }
 
@@ -23,6 +37,7 @@ couponController.displayAddCoupon=async(req,res)=>{
         res.render('addCoupons')
     } catch (error) {
         console.log("Error showing add coupons")
+        res.render('error')
     }
 }
 couponController.addingCoupon = async (req, res) => {
@@ -93,7 +108,8 @@ couponController.addingCoupon = async (req, res) => {
   } catch (error) {
       console.log("Error occurred during adding Coupon", error);
       // Respond with an error message
-      res.json({ status: "error", message: "Error occurred during adding Coupon" });
+      res.render('error')
+    //   res.json({ status: "error", message: "Error occurred during adding Coupon" });
   }
 };
 
@@ -112,42 +128,50 @@ couponController.applyCoupon = async (req, res) => {
       }
 
       // Check if the user has already applied a coupon
-      const existingCoupon = await couponSchema.findOne({
-          usedBy: userId
+      const enteredCoupon = await couponSchema.findOne({
+          coupon:couponCode
       });
-
-      if (existingCoupon) {
-          return res.json({ status: "error", message: "You have already applied a coupon" });
-      }
-
-      const enteredCoupon = await couponSchema.findOne({ coupon: couponCode });
 
       if (!enteredCoupon) {
-          return res.json({ status: "error", message: "Coupon not available" });
+          return res.json({ status: "error", message: "Coupon is not correct" });
       }
 
-      const usedCoupon = await couponSchema.findOne({
-          coupon: couponCode,
-          usedBy: userId,
-      });
+      const usedCoupon = await couponSchema.findOne({ coupon: couponCode,usedBy:userId });
+
 
       if (usedCoupon) {
           return res.json({ status: "error", message: "Coupon already used" });
       }
 
-      const cart = await cartSchema.findOne({ userId: userId });
+      const cart = await cartSchema.findOne({ userId: userId }).populate('products.productId');
       const products = cart.products;
 
       // Calculate total in cart before applying discount
       cart.total = products.reduce((total, product) => {
-          return total + product.total;
+        const productTotal=product.quantity*product.productId.price
+          return total + productTotal;
       }, 0);
 
       const totalInCart = cart.total;
+      let deliveryCharges=0
+        if(totalInCart>1000 )
+        {
+            deliveryCharges=20
+        }
+        else if(totalInCart>1400 || totalInCart>1700)
+        {
+            deliveryCharges=50
+        }
+        else if(totalInCart >1700 || totalInCart >2000)
+        {
+            deliveryCharges=100
+        }
+      console.log("total IN CART",totalInCart)
 
       // Apply coupon discount and calculate new grand total
       const couponDiscount = enteredCoupon.discount;
-      const grandTotal = Math.ceil(totalInCart - totalInCart * couponDiscount / 100);
+      const grandTotal = Math.ceil(totalInCart - totalInCart * couponDiscount / 100)+deliveryCharges;
+      console.log('grandtotal',grandTotal)
       const couponId = enteredCoupon._id;
 
       // Mark the coupon as used by the current user
@@ -184,6 +208,29 @@ couponController.deleteCoupon=async(req,res)=>{
         return res.json({status:"success",message:"Coupon removed successfully"})
     } catch (error) {
         console.log("Error occured while removing coupon",error)
+        res.render('error')
+    }
+}
+couponController.removeCoupon=async(req,res)=>{
+    try {
+        const userId=req.session.userId
+        const couponCode=req.body.couponCode
+        const coupon=await couponSchema.findOne({coupon:couponCode})
+        const usedCoupon=await couponSchema.findOne({coupon:couponCode,usedBy:userId})
+        const usedCouponIndex=coupon.usedBy.indexOf(userId)
+        if(usedCouponIndex!==-1)
+        {
+            coupon.usedBy.splice(usedCouponIndex,1)
+            await coupon.save()
+            return res.json({status:"success",message:"Coupon removed successfuly"})
+        }
+        else
+        {
+            return res.json({status:"error",message:"Coupon unable to remove"})
+        }
+    } catch (error) {
+        console.log("Error occured while removing coupon",error)
+        res.render('error')
     }
 }
 
@@ -194,6 +241,7 @@ couponController.showeditCoupon=async(req,res)=>{
         res.render('editCoupon',{coupon})
     } catch (error) {
         console.log("Error occured during showing edit coupon",error)
+        res.render('error')
     }
 }
   
@@ -203,6 +251,7 @@ couponController.handleEditedCoupon = async (req, res) => {
         const couponId = req.params.id;
         const coupon = await couponSchema.findById(couponId);
         const { offerName, couponCode, priceRange, discountOffer, expire } = req.body;
+        console.log("REQ>Body",req.body)
 
         // Validate input fields
         if (!offerName && !couponCode && !priceRange && !discountOffer && !expire) {
@@ -257,11 +306,13 @@ couponController.handleEditedCoupon = async (req, res) => {
         };
 
         await couponSchema.updateOne({ _id: couponId }, { $set: updateFields });
+        console.log('UPDATEFIELDS',updateFields)
 
         res.json({ status: "success", message: "Coupon edited successfully" });
     } catch (error) {
         console.log("Error in editing a Coupon: ", error);
-        res.json({ status: 'error', message: 'Internal Error' });
+        res.render('error')
+        // res.json({ status: 'error', message: 'Internal Error' });
     }
 };
 

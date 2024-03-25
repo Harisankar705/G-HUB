@@ -3,7 +3,6 @@ const offerSchema=new mongoose.Schema({
     offerName:{type:String},
     discountOn:{type:String},
     discountValue:{type:Number},
-    startDate:{type:Date},
     endDate:{type:Date},
     selectedCategory:{
         type:mongoose.Schema.Types.ObjectId,
@@ -15,18 +14,17 @@ const offerSchema=new mongoose.Schema({
         },
     isActive:{
         type:Boolean,
-        deafult:true
     },
-    referralRewardValue:{
-        type:Number,
-        default:0
-    },
-    refreeRewardValue:{
-        type:Number,
-        default:0
-    },
-    referrer:{type:mongoose.Schema.Types.ObjectId,ref:"User"},
-    referee:[{type:mongoose.Schema.Types.ObjectId,ref:"User"}]
+    // referralRewardValue:{
+    //     type:Number,
+    //     default:0
+    // },
+    // refreeRewardValue:{
+    //     type:Number,
+    //     default:0
+    // },
+    // referrer:{type:mongoose.Schema.Types.ObjectId,ref:"User"},
+    // referee:[{type:mongoose.Schema.Types.ObjectId,ref:"User"}]
 })
 const offer=mongoose.model('offers',offerSchema)
 module.exports=offer

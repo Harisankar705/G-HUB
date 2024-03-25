@@ -18,6 +18,11 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <link href="/assets/css/dashboard.css" rel="stylesheet"/>
+    <!-- <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs4/dt-1.11.5/datatables.min.css"/> -->
+<!-- <script type="text/javascript" src="https://cdn.datatables.net/v/bs4/dt-1.11.5/datatables.min.js"></script> -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
+
+
 </head>
 
 <body>
@@ -68,9 +73,25 @@
                             <span class="text">Offer Management</span>
                         </a>
                     </li>
+                    <li class="menu-item has-submenu">
+                        <a class="menu-link" href="#"> <i class="icon material-icons md-star"></i>
+                            <span class="text">Best Selling</span>
+                        </a>
+                        <ul class="submenu">
+                            <li><a href="/bestSellingProducts">Best Selling Product </a></li>
+                            <li><a href="bestSellingCategory">Best Selling Category </a></li>
+                            <li><a href="/bestSellingBrands">Best Selling Brand </a></li>
+                        </ul>
+                    </li>
+                    
                     <li class="menu-item ">
                         <a class="menu-link" href='/admin-orders'> <i class="icon material-icons md-book"></i>
                             <span class="text">Orders</span>
+                        </a>
+                    </li>
+                    <li class="menu-item ">
+                        <a class="menu-link" href='/admin-brand'> <i class="icon material-icons md-comment"></i>
+                            <span class="text">Brand Management</span>
                         </a>
                     </li>
                     <li class="menu-item ">
@@ -174,6 +195,37 @@
 
 
 
+        
+            <div class="row">
+                <div class="col-lg-4">
+                    <div class="container">
+                        <div class="card mb-4">
+                            <article class="card-body">
+                                <h5 class="card-title">Order Statistics</h5>
+                                <canvas id="aChart"></canvas>
+                            </article>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="col-lg-6 mt-25">
+                    <div class="container">
+                        <h5 class="card-title">Sale Statistics</h5>
+                        <a class="mx-2" id="weekGraphBtn">
+                            <i class="text-muted material-icons md-show_chart"></i>Daily
+                        </a>
+                        <a class="mx-2" id="monthGraphBtn">
+                            <i class="text-muted material-icons md-show_chart"></i>Weekly Graph
+                        </a>
+                        <a class="mx-2" id="yearlyGraphBtn">
+                            <i class="text-muted material-icons md-show_chart"></i>Monthly Graph
+                        </a>
+                    </div>
+                    <canvas id="lineChart" height="120px"></canvas>
+                </div>
+            </div>
+            
+
             <div class="card mb-4">
                 <div class="card-header">
                     <div class="row gx-3">
@@ -270,7 +322,7 @@
                                         <td><%- new Date(ordersData[i].deliveredDate).toLocaleDateString('en-GB') %>
                                         </td>
                                         <td>&#x20B9; <%- ordersData[i].totalAmount %></td>
-                                        <td>₹<%- ordersData[i].couponDiscount || '0' %></td>
+                                        <td>₹<%- ordersData[i].discount !== undefined ? Number(ordersData[i].discount.toFixed()) : '0' %></td>
 
                                     </tr>
                                     <% } %>
@@ -279,6 +331,7 @@
                     </table> <!-- table-responsive.// -->
                 </div>
             </div>
+
 
 
 
@@ -307,6 +360,24 @@ body {
 }
 
 </style>
+<!-- DataTables Initialization -->
+<!-- DataTables Initialization -->
+<script>
+    $(document).ready(function () {
+        // Initialize DataTable with custom pagination
+        $('#salesTable').DataTable({
+            "paging": true, // Enable pagination
+            "pageLength": 5, // Set the number of rows per page
+            "lengthMenu": [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]], // Provide options for rows per page
+            "ordering": true, // Enable sorting
+            "info": true, // Enable the display of information about the table
+            "searching": true, // Enable search functionality
+            "responsive": true, // Enable responsiveness
+        });
+    });
+</script>
+
+
 <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 <script>
@@ -447,6 +518,13 @@ discount = parseFloat(discount.replace(/[^0-9]/g, ''), 10);
 
     })
 </script>
+<script>
+    var $j = jQuery.noConflict();
+
+    $j(document).ready(function () {
+        $j('#salesTable').DataTable();
+    });
+</script>   
 <!-- Filtering based on input date -->
 <script>
     document.getElementById('dateWiseFilterBtn').addEventListener('click', async (event) => {
@@ -501,7 +579,7 @@ discount = parseFloat(discount.replace(/[^0-9]/g, ''), 10);
         </td>
         <td>${new Date(order.deliveredDate).toLocaleDateString('en-GB')}</td>
         <td>₹${order.totalAmount}</td>
-        <td>₹${order.actualProductDiscount}</td>
+        <td>₹${order.discount.toFixed()}</td>
 
     </tr>
 `).join('') :
@@ -608,7 +686,7 @@ discount = parseFloat(discount.replace(/[^0-9]/g, ''), 10);
                 </td>
                 <td>${new Date(order.deliveredDate).toLocaleDateString('en-GB')}</td>
                 <td>₹${order.totalAmount}</td>
-                <td>₹${order.actualCouponDiscount}</td>
+                <td>₹${order.discount.toFixed()}</td>
             </tr>
         `).join('') :
         '<tr><td colspan="5" class="text-center" style="color:orange">OOPS! Orders are empty</td></tr>'
@@ -640,8 +718,8 @@ discount = parseFloat(discount.replace(/[^0-9]/g, ''), 10);
     document.addEventListener('DOMContentLoaded', function () {
         // Order data from backend count
         const pending = '<%- ordersPie.pending%>'
-        const shipped = '<%- ordersPie.shipped%>'
-        const processing = '<%- ordersPie.processing%>'
+        const confirmed = '<%- ordersPie.confirmed%>'
+        const cancelled = '<%- ordersPie.cancelled%>'
         const delivered = '<%- ordersPie.delivered%>'
         const returned = '<%- ordersPie.returned%>'
 
@@ -650,9 +728,9 @@ discount = parseFloat(discount.replace(/[^0-9]/g, ''), 10);
         const orderChart = new Chart(orderCtx, {
             type: 'doughnut',
             data: {
-                labels: ['Pending', 'Shipped', 'Processing', 'Delivered', 'Returned'],
+                labels: ['Pending', 'confirmed', 'cancelled', 'Delivered', 'Returned'],
                 datasets: [{
-                    data: [pending, shipped, processing, delivered, returned],
+                    data: [pending, confirmed, cancelled, delivered, returned],
                     backgroundColor: [
                         'rgba(255, 99, 132, 0.7)',
                         'rgba(255, 205, 86, 0.7)',
@@ -677,133 +755,77 @@ discount = parseFloat(discount.replace(/[^0-9]/g, ''), 10);
             },
         });
 
-        // Sales data for monthly sales
-        const months = ['Dec', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov'];
-
-        const labels = '<%- labels%>'.split(',') // Months
-        const count = '<%- count%>'.split(',')  // And its count of orders
-
-        // Initialize an array to store counts with null values
-        const countsWithNull = new Array(months.length).fill(null); // Set all values as null
-
-        // Map labels to their corresponding positions in the counts array
-        labels.forEach((label, index) => {
-            const monthIndex = months.indexOf(label);
-            if (monthIndex !== -1) {
-                countsWithNull[monthIndex] = count[index];
-            }
-        });
+        
 
 
-        // Create a line chart for monthly sales
-        const salesCtx = document.getElementById('bChart').getContext('2d');
-        const salesChart = new Chart(salesCtx, {
-            type: 'line',
-            data: {
-                labels: months,
-                datasets: [
-                    {
-                        label: 'Sales by Month',
-                        data: countsWithNull,
-                        borderColor: 'rgba(54, 162, 235, 1)',
-                        fill: false,
+    })
+
+    document.addEventListener('DOMContentLoaded', function () {
+    let lineChartCtx = document.getElementById('lineChart').getContext('2d');
+    let lineChartInstance = null;
+
+    function fetchAndRenderGraph(timeframe) {
+        console.log('IN FETCHANDRENDER', timeframe);
+        fetch(`/sales?timeframe=${timeframe}`)
+            .then(response => response.json())
+            .then(data => {
+                const labels = data.labels;
+                const values = data.values;
+                if (lineChartInstance) {
+                    lineChartInstance.destroy();
+                }
+                lineChartInstance = new Chart(lineChartCtx, {
+                    type: "line",
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'sales',
+                            data: values,
+                            borderColor: "rgb(75,192,192)",
+                            borderWidth: 1,
+                            fill: false,
+                        }]
                     },
-                ],
-            },
-            options: {
-                title: {
-                    display: true,
-                    text: 'Monthly Sales',
-                },
-                scales: {
-                    x: {
-                        type: 'category', // Use 'category' scale for non-numeric labels
-                        position: 'bottom',
-                    },
-                    y: {
-                        beginAtZero: true,
-                    },
-                },
-                plugins: {
-                    legend: {
-                        labels: {
-                            color: 'orange', // Set the font color to white
-                        },
-                    },
-                },
-            },
-        });
+                    options: {
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+            })
+            .catch(error => {
+                console.error("Error occurred while fetching data:", error);
+            });
+    }
 
-
-        // Sales data for monthly sales
-        const weeks = ['Week 1', 'Week 2', 'Week 3', 'Week 4'];
-
-        const week = '<%- weeks%>'.split(',') // Months
-        const data = '<%- weekCount%>'.split(',')  // And its count of orders
-
-        // Initialize an array to store counts with null values
-        const dataWithNull = new Array(weeks.length).fill(null); // Set all values as null
-
-        // Map labels to their corresponding positions in the counts array
-        week.forEach((label, index) => {
-            const weekIndex = weeks.indexOf(week);
-            if (weekIndex !== -1) {
-                dataWithNull[weekIndex] = data[index];
-            }
-        });
-
-
-        // Create a line chart for monthly sales
-        const weekCtx = document.getElementById('cChart').getContext('2d');
-        const weekChart = new Chart(weekCtx, {
-            type: 'bar',
-            data: {
-                labels: weeks,
-                datasets: [
-                    {
-                        label: 'Sales by Week',
-                        data: data,
-                        backgroundColor: 'rgba(54, 162, 235, 0.2)', // Set the fill color
-                        borderColor: 'rgba(54, 162, 235, 1)',
-                        borderWidth: 1, // Add a border width to make the border visible
-                    },
-                ],
-            },
-            options: {
-                title: {
-                    display: true,
-                    text: 'Weekly Sales',
-                },
-                scales: {
-                    x: {
-                        type: 'category',
-                        position: 'bottom',
-                    },
-                    y: {
-                        beginAtZero: true,
-                    },
-                },
-                plugins: {
-                    legend: {
-                        labels: {
-                            color: 'orange',
-                        },
-                    },
-                },
-            },
-        });
-
+    let weekGraphBtn = document.getElementById('weekGraphBtn');
+    weekGraphBtn.addEventListener('click', function () {
+        fetchAndRenderGraph('daily');
     });
+
+    let monthGraphBtn = document.getElementById('monthGraphBtn');
+    monthGraphBtn.addEventListener('click', function () {
+        fetchAndRenderGraph('weekly');
+    });
+
+    let yearlyGraphBtn = document.getElementById('yearlyGraphBtn');
+    yearlyGraphBtn.addEventListener('click', function () {
+        fetchAndRenderGraph('monthly');
+    });
+});
+
 </script>
 
 <!-- DataTables Initialization -->
-<!-- <script>
+<script>
     var $j = jQuery.noConflict();
 
     $j(document).ready(function () {
         $j('#salesTable').DataTable();
     });
-</script> -->
+</script>
     <script>
         $(document).ready(function(){
             $("#logoutLink").on('click',function(e){
@@ -830,4 +852,4 @@ discount = parseFloat(discount.replace(/[^0-9]/g, ''), 10);
     <script src="../assets/js/vendors/chart.js"></script>
     <!-- Main Script -->
     <script src="../assets/js/main.js" type="text/javascript"></script>
-    <script src="../assets/js/custom-chart.js" type="text/javascript"></script>
+    <script src="../assets/js/custom-chart.js"></script>

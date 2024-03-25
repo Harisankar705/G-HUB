@@ -66,15 +66,19 @@ userRouter.get('/checkout',userCartController.showcheckOut)
 
 //orders
 userRouter.post('/order-placed',userOrderController.placeOrder)
-userRouter.get('/initiate-return/:id',userOrderController.returnOrder)
+userRouter.post('/initiate-return/:orderid/:productId',userOrderController.returnOrder)
 // userRouter.get('/order-details',userOrderController.orderDetails)
 userRouter.get('/userorders',userOrderController.showOrders)
-userRouter.get('/cancel-order/:id',userOrderController.cancelOrder)
-userRouter.post('/payment-verification',userOrderController.verifyPayment)
+userRouter.get('/cancel-order/:orderid/:productId',userOrderController.cancelOrder)
 
 //apply coupon
 userRouter.post('/applycoupon',couponController.applyCoupon)
-
+userRouter.put('/removecoupon',couponController.removeCoupon)
+userRouter.post('/payment-verification',userOrderController.verifyPayment)
+//cancelled payment inititation
+userRouter.get('/continue-payment/:id',userOrderController.retryPayment)
+userRouter.post('/repayment/:id',userOrderController.failedOrderPlacing)
+// userRouter.post('/failedorder',userOrderController.refailed)
 
 //wishlist
 userRouter.get('/wishlist',userWishlistController.displayWishlist)
@@ -84,7 +88,9 @@ userRouter.get('/removefromwishlist',userWishlistController.removeProduct)
 //referandearn
 userRouter.get('/referandearn/:userId',offerManagementController.referAndEarn)
 
-//waller
-userRouter.get('/userWallet',walletController.displayWallet)
+//invoice download
+userRouter.post("/download-invoice",userOrderController.invoice)
+//wallet
+userRouter.get('/userWallet/:id',walletController.displayWallet)
 module.exports=userRouter
 

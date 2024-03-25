@@ -33,7 +33,7 @@ adminCategoriesController.showData= async (req, res) => {
                 });
             } catch (err) {
                 console.error("Error while showing category", err);
-                res.status(500).send("Internal Server Error");
+                res.render('error')
             }
         }
     
@@ -48,7 +48,7 @@ adminCategoriesController.showData= async (req, res) => {
         } catch (err) {
             console.log("Error while rendering addCategory page", err);
             // Handle the error or send an error response
-            return res.status(500).send("Internal Server Error");
+            res.render('error')
         }
     }
 
@@ -60,7 +60,7 @@ adminCategoriesController.showData= async (req, res) => {
     
         // Validation: Check if the name is not empty
         if (!name || name.trim() === "") {
-            return res.json({ status: "error", message: "Category name is required" });
+            return res.json({ status: "error", message: "Category name1 is required" });
         }
     
         const minNameLength = 3;
@@ -85,6 +85,7 @@ adminCategoriesController.showData= async (req, res) => {
             return res.json({ status: "success", message: "Category saved" });
         } catch (error) {
             console.log("Error during saving category to db", error);
+            res.render('error')
             return res.json({ status: "error", message: "Internal Server Error" });
         }
     };
@@ -99,7 +100,7 @@ adminCategoriesController.showData= async (req, res) => {
             res.render('editCategory', { category });
         } catch (error) {
             console.log("Error in Showing Category for Edit", error);
-            next(error); // Pass the error to the next middleware or error handler
+            res.render('error')// Pass the error to the next middleware or error handler
         }
     };
     
@@ -149,7 +150,8 @@ adminCategoriesController.showData= async (req, res) => {
             }
         } catch (error) {
             console.log("An error occurred", error.message);
-            return res.json({ status: 'error', message: 'An error occurred, please try again' });
+            res.render('error')
+            // return res.json({ status: 'error', message: 'An error occurred, please try again' });
         }
     };
     

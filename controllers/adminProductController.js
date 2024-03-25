@@ -4,6 +4,7 @@ const categorySchema=require('../models/category')
 const mongoose=require('mongoose')
 const path=require('path')
 const multer=require('multer')
+const brandSchema = require('../models/brandSchema')
 productController.showProduct = async (req, res) => {
     try {
         const productsPerPage = 10;
@@ -34,19 +35,22 @@ productController.showProduct = async (req, res) => {
 
         const totalProducts = await productSchema.countDocuments(query);
         const totalPages = Math.ceil(totalProducts / productsPerPage);
+        const brand=await brandSchema.find()
 
-        const products = await productSchema.find(query).populate('category').skip(offset).limit(limit);
+        const products = await productSchema.find(query).populate('category').populate('brand').skip(offset).limit(limit);
 
         res.render('adminProduct', {
             products,
             totalPages,
+            brand,
             currentPage: page,
             searchQuery,  // Pass the searchQuery to the template
             isPublished: req.query.isPublished, // Pass the isPublished value to the template
         });
     } catch (error) {
         console.log("Error occurred while loading products", error);
-        res.status(500).send("Internal Server Error"); // Send an error response to the client
+        res.render('error')
+        // res.status(500).send("Internal Server Error"); // Send an error response to the client
     }
 }
 
@@ -60,13 +64,14 @@ productController.showProduct = async (req, res) => {
 //add product page
 productController.addProduct=async(req,res)=>{
     try
-    {
+    {   const brand=await brandSchema.find()
         const categories=await categorySchema.find()
-        res.render('addProduct',{alert:null,categories  })
+        res.render('addProduct',{brand,categories  })
     }
     catch(error)
     {
-        console.log("Error occured while adding product",errorr)
+        console.log("Error occured while adding product",error)
+        res.render('error')
     }
 }
 const storage = multer.diskStorage({
@@ -90,10 +95,11 @@ productController.upload=multer({
 
 productController.handleProduct = async (req, res) => {
     try {
-        const { name, category, description, price,stock } = req.body;
+        const { name, category, description, price,stock,brand } = req.body;
         
 
         const categoryId = new mongoose.Types.ObjectId(category);
+        const brandId=new mongoose.Types.ObjectId(brand)
         const mainImagePath = req.files['mainimage'][0].path;
         const additionalImagePaths = req.files['additionalImage'].map(file => file.path);
 
@@ -104,6 +110,7 @@ productController.handleProduct = async (req, res) => {
             description,
             stock,
             price,
+            brand,
             mainimage: mainImagePath,
             additionalimages: additionalImagePaths,
             isPublished: true,
@@ -116,13 +123,18 @@ productController.handleProduct = async (req, res) => {
         await categorySchema.findByIdAndUpdate(categoryId, {
             $push: { products: savedProduct._id }
         });
+        await brandSchema.findByIdAndUpdate(brandId,
+        {
+            $push:{products:savedProduct._id}
+        })
 
         console.log("Product created Successfully");
         res.json({status:'success',message:"Product created"})
     } catch (error) {
         console.error(error.message);
-        res.json({status:'error',message:"Failed to create product"})
-        res.redirect('/admin/products')
+        res.render('error')
+        // res.json({status:'error',message:"Failed to create product"})
+        // res.redirect('/admin/products')
     }
 };
 
@@ -135,21 +147,23 @@ productController.showEditProduct=async(req,res)=>{
         const id=req.params.id
         const products=await productSchema.findById(id).populate('category')
         const category=await categorySchema.find()
-        res.render('editProduct',{products,category})
+        const brand=await brandSchema.find()
+        res.render('editProduct',{products,category,brand})
     }
     catch(error)
     {
         console.log("Error occured while showing editProduct",error)
+        res.render('error')
     }
 }
 //saving edit product
 productController.editProduct = async (req, res) => {
     try {
         const productId = req.params.id;
-        const { name, category, description, price ,stock} = req.body;
+        const { name, category, description, price ,stock,brand} = req.body;
 
         // Validate required fields
-        if (!name || !category || !description || !price || !stock) {
+        if (!name || !category || !description || !price || !stock ||!brand) {
             return res.status(400).send('All fields are required.');
         }
 
@@ -170,18 +184,22 @@ productController.editProduct = async (req, res) => {
 
         // Validate category
         const categoryName = await categorySchema.findOne({ name: category });
+        const brandName=await brandSchema.findOne({name:brand})
 
         if (!categoryName || !categoryName._id) {
             return res.status(400).send('Invalid category.');
         }
 
         const categoryID = categoryName._id;
+        const brandID=brandName._id
+        console.log('brandid',brandID)
 
         const updateFields = {
             name,
             description,
             price,
             stock,
+            brand:brandID,
             category: categoryID
         };
 
@@ -190,6 +208,11 @@ productController.editProduct = async (req, res) => {
         // }
 
         const updateProduct = await productSchema.findByIdAndUpdate(productId, { $set: updateFields });
+        if(updateProduct)
+        {
+            await brandSchema.findByIdAndUpdate(brandID,{$addToSet:{products:productId}})
+        }
+        
 
         if (updateProduct) {
             res.redirect('/admin/products');

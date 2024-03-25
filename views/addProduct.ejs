@@ -93,9 +93,25 @@
                             <span class="text">Offer Management</span>
                         </a>
                     </li>
+                    <li class="menu-item has-submenu">
+                        <a class="menu-link" href="#"> <i class="icon material-icons md-star"></i>
+                            <span class="text">Best Selling</span>
+                        </a>
+                        <ul class="submenu">
+                            <li><a href="/bestSellingProducts">Best Selling Product </a></li>
+                            <li><a href="/bestSellingCategory">Best Selling Category </a></li>
+                            <li><a href="/bestSellingBrands">Best Selling Brand </a></li>
+                        </ul>
+                    </li>
+                    
                     <li class="menu-item ">
                         <a class="menu-link" href='/admin-orders'> <i class="icon material-icons md-book"></i>
                             <span class="text">Orders</span>
+                        </a>
+                    </li>
+                    <li class="menu-item ">
+                        <a class="menu-link" href='/admin-brand'> <i class="icon material-icons md-comment"></i>
+                            <span class="text">Brand Management</span>
                         </a>
                     </li>
                     <li class="menu-item ">
@@ -142,6 +158,15 @@
                                             </select>
                                         </div>
                                         <div class="mb-4">
+                                            <label for="brand_name" class="form-label">Product Brand</label>
+                                            <select class="form-select mb-2" id="brand" name="brand" required>
+                                                <option value="" selected disabled>choose</option>
+                                                <% brand.forEach((brand) => { %>
+                                                    <option value="<%= brand._id %>"><%= brand.name %></option>
+                                                <% }) %>
+                                            </select>
+                                        </div>
+                                        <div class="mb-4">
                                             <label for="description">Product Description:</label>
         <textarea name="description" id="description" placeholder="Type here" class="form-control" rows="4" required></textarea>
         <ul id="pointList"></ul>
@@ -168,8 +193,7 @@
                                                         <div class="row gx-2">
                                                             <input type="file" class="form-control-file" id="main-img" name="mainimage" accept=".jpg, .jpeg, .png, .webp" required>
                                                             <div id="main-img-preview"></div>
-                                                            <button id="cropButton" class="btn btn-light rounded fotn-sm mr-2 text-body  hover" disabled>Crop</button>
-                                                            <button id="saveButton" class="btn btn-light rounded font-sm hover-up" disabled>Save</button>
+                                                            <button id="saveButton" class="btn btn-light rounded font-sm hover-up" >Save</button>
 
                                                         </div>
                                                     </div>
@@ -180,10 +204,9 @@
                                                 <div class="col-lg-4">
                                                     <div class="mb-4">
                                                         <label class="sr-only" for="additionalImage">Additional Image</label><br><br>
-                                                        <input type="file"  id="additional-img" name="additionalImage" accept=".jpg, .jpeg, .png, .webp" multiple required>
+                                                        <input type="file" id="additional-img" name="additionalImage" accept=".jpg, .jpeg, .png, .webp" multiple required onchange="limitFileSelection(this, 3)">
                                                         <div id="additional-img-preview"></div>
-                                                        <button id="addcropButton" class="btn btn-light rounded fotn-sm mr-2 text-body  hover" disabled>Crop</button>
-                                                        <button id="addsaveButton" class="btn btn-light rounded font-sm hover-up" disabled>Save</button>
+                                                        <!-- <button id="addsaveButton" class="btn btn-light rounded font-sm hover-up" disabled>Save</button> -->
                                                         
 
                                     
@@ -225,6 +248,8 @@
     <script src="../assets/js/vendors/chart.js"></script>
     <!-- Main Script -->
     <script src="../assets/js/custom-chart.js" type="text/javascript"></script>
+        <!-- Main Script -->
+        <script src="../assets/js/main.js" type="text/javascript"></script>
     <!-- Main Script -->
     
     <script>
@@ -345,10 +370,10 @@
 
     document.getElementById('additional-img').addEventListener('change', function (event) {
         const selectedFiles = event.target.files;
-        if (selectedFiles.length > 4) {
+        if (selectedFiles.length > 3) {
             Swal.fire({
                 icon: 'info',
-                title: "You can only choose a maximum of 4 files",
+                title: "You can only choose a maximum of 3 files",
                 showConfirmButton: true,
                 timer: 2000,
                 customClass: {
@@ -437,11 +462,11 @@ function initAdditionalCropper(file) {
         img.src = e.target.result;
 
         const previewContainer = document.getElementById('additional-img-preview');
-        const container=document.createElement('div')
-        container.className='additional-img-container'
+        const container = document.createElement('div');
+        container.className = 'additional-img-container';
         container.appendChild(img);
 
-       const additionalCropper = new Cropper(img, {
+        const additionalCropper = new Cropper(img, {
             aspectRatio: 1,
             viewMode: 1,
             autoCropArea: 1,
@@ -450,17 +475,19 @@ function initAdditionalCropper(file) {
 
         const saveButton = document.createElement('button');
         saveButton.textContent = 'Save';
+        saveButton.className = 'save-button'; // Add a class for styling
         saveButton.addEventListener('click', function () {
             saveAdditionalImage(additionalCropper);
         });
 
         container.appendChild(saveButton);
-        previewContainer.appendChild(container)
-        additionalCropper.push(additionalCropper)
+        previewContainer.appendChild(container);
+        additionalCropper.push(additionalCropper);
     };
 
     reader.readAsDataURL(file);
 }
+
 
 function saveAdditionalImage(cropper) {
     const croppedCanvas = cropper.getCroppedCanvas();
@@ -512,6 +539,22 @@ document.getElementById('addsaveButton').addEventListener('click', function () {
 
     
 </script>
+<style>
+    /* Add this to your existing styles or create a new section */
+.save-button {
+    padding: 10px 15px;
+    background-color: #4caf50; /* Green background color */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.save-button:hover {
+    background-color: #45a049; /* Darker green on hover */
+}
+
+</style>
 
 </body>
 

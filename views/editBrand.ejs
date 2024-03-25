@@ -1,0 +1,181 @@
+<!DOCTYPE HTML>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Evara Dashboard</title>
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta property="og:title" content="">
+    <meta property="og:type" content="">
+    <meta property="og:url" content="">
+    <meta property="og:image" content="">
+    <!-- Favicon -->
+    <link rel="shortcut icon" type="image/x-icon" href="assets/imgs/theme/favicon.svg">
+    <!-- Template CSS -->
+    <link href="/assets/css/dashboard.css" rel="stylesheet" />
+    <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10"> -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+    <style>
+        form {
+            position: absolute;
+            top: 32%;
+            left: 58%;
+            transform: translate(-50%, -50%);
+            width: 50%;
+            padding: 20px;
+            border: 1px solid #ccc;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+        }
+
+        #messageContainer {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            text-align: center;
+            padding: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="screen-overlay"></div>
+    <div id="messageContainer"></div>
+
+    <!-- <form action="/adminPanel" method="post"> -->
+    <aside class="navbar-aside" id="offcanvas_aside">
+        <div class="aside-top">
+            <a href="#" class="brand-wrap">
+                <h2>G-HUB</h2>
+                <h3>AdminPanel</h3>
+            </a>
+            <div>
+                <button class="btn btn-icon btn-aside-minimize"> <i class="text-muted material-icons md-menu_open"></i> </button>
+            </div>
+        </div>
+        <nav>
+            <ul class="menu-aside">
+                <li class="menu-item active">
+                    <a class="menu-link" href="/adminPanel"> <i class="icon material-icons md-home"></i>
+                        <span class="text">Dashboard</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a class="menu-link" href="/admin/category"> <i class="icon material-icons md-menu_open"></i>
+                        <span class="text">Categories</span>
+                    </a>
+                </li>
+                <li class="menu-item ">
+                    <a class="menu-link" href="/admin/products"> <i class="icon material-icons md-shopping_bag"></i>
+                        <span class="text">Products</span>
+                    </a>
+                    <li class="menu-item ">
+                        <a class="menu-link" href="/admin/add"> <i class="icon material-icons md-plus"></i>
+                            <span class="text">Add Product</span>
+                        </a>
+                    </li>
+                    <li class="menu-item ">
+                        <a class="menu-link" href="/admin/user-management"> <i class="icon material-icons md-person"></i>
+                            <span class="text">User Management</span>
+                        </a>
+                    </li>
+                    <li class="menu-item ">
+                        <a class="menu-link" href='/admin-orders'> <i class="icon material-icons md-book"></i>
+                            <span class="text">Orders</span>
+                        </a>
+                    </li>
+                    <li class="menu-item ">
+                        <a class="menu-link" href="/admin/logout"> <i class="icon material-icons md-exit_to_app"></i>
+                            <span class="text">Logout</span>
+                        </a>
+                    </li>
+                    
+
+                </li>
+            </ul>
+            <hr>
+            <br>
+            <br>
+        </nav>
+
+    </aside>
+
+    <form action="/save-edit/<%= brand._id %>" method="post" id="editCategoryForm">
+        <!-- Add input fields for editing category details -->
+        <div class="mb-4">
+            <h1>Edit Category</h1>
+            <input type="text" id="categoryId" value="<%=brand.id %>" hidden>
+
+            <label for="product_name" class="form-label"></label>
+            <input type="text" value="<%=brand.name %>" class="form-control" id="categoryName" name="name" />
+        </div>
+        <button type='submit' class="d-flex align-items-center justify-content-center">Save Category</button>
+    </form>
+
+    <style>
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+
+<script>
+    // Your fetch code goes here
+    document.getElementById('editCategoryForm').addEventListener('submit', async function (event) {
+        event.preventDefault();
+        const formData = { name: document.getElementById('categoryName').value };
+        try {
+            const categoryId = document.getElementById('categoryId').value;
+            const response = await fetch(`/save-edit/${categoryId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData),
+            });
+            const result = await response.json();
+            if (result.status === "success") {
+                Swal.fire({
+                    icon: 'success',
+                    title: result.message,
+                    timer: 3000,
+                    customClass: { title: 'swal' }
+                }).then(() => {
+                    window.location.href = '/admin/category';
+                });
+            } else if (result.status === 'error') {
+                Swal.fire({
+                    icon: 'error',
+                    title: result.message,
+                    timer: 3000,
+                    customClass: { title: "Swal" }
+                });
+            }
+        } catch (error) {
+            // Handle network or other errors
+            console.error('Error:', error);
+        }
+    });
+</script>
+
+
+
+</body>
+
+</html>

@@ -26,12 +26,11 @@
     <aside class="navbar-aside" id="offcanvas_aside">
         <div class="aside-top">
             <a href="#" class="brand-wrap">
-            <h2>    G-HUB</h2>            </a>
-            <div>
-                <!-- <button class="btn btn-icon btn-aside-minimize">
-                    <i class="text-muted material-icons md-menu_open"></i>
-                </button> -->
-            </div>
+                <h2>G-HUB</h2>
+                <h3>AdminPanel</h3>
+            </a>
+            <a href="#" onclick="goBack()"><img src="../public/back-button-removebg-preview.png" id="back-button"></a>
+
         </div>
         <nav>
             <ul class="menu-aside">
@@ -40,7 +39,7 @@
                         <span class="text">Dashboard</span>
                     </a>
                 </li>
-                <li class="menu-item active">
+                <li class="menu-item ">
                     <a class="menu-link" href="/admin/category"> <i class="icon material-icons md-menu_open"></i>
                         <span class="text">Categories</span>
                     </a>
@@ -70,26 +69,26 @@
                         </a>
                     </li>
                     <li class="menu-item has-submenu">
-                    <a class="menu-link" href="#"> <i class="icon material-icons md-star"></i>
-                        <span class="text">Best Selling</span>
-                    </a>
-                    <ul class="submenu">
-                        <li><a href="/bestSellingProducts">Best Selling Product </a></li>
-                        <li><a href="bestSellingCategory">Best Selling Category </a></li>
-                        <li><a href="/bestSellingBrands">Best Selling Brand </a></li>
-                    </ul>
-                </li>
-                
-                <li class="menu-item ">
-                    <a class="menu-link" href='/admin-orders'> <i class="icon material-icons md-book"></i>
-                        <span class="text">Orders</span>
-                    </a>
-                </li>
-                <li class="menu-item ">
-                    <a class="menu-link" href='/admin-brand'> <i class="icon material-icons md-comment"></i>
-                        <span class="text">Brand Management</span>
-                    </a>
-                </li>
+                        <a class="menu-link" href="#"> <i class="icon material-icons md-star"></i>
+                            <span class="text">Best Selling</span>
+                        </a>
+                        <ul class="submenu">
+                            <li><a href="/bestSellingProducts">Best Selling Product </a></li>
+                            <li><a href="bestSellingCategory">Best Selling Category </a></li>
+                            <li><a href="/bestSellingBrands">Best Selling Brand </a></li>
+                        </ul>
+                    </li>
+                    
+                    <li class="menu-item ">
+                        <a class="menu-link" href='/admin-orders'> <i class="icon material-icons md-book"></i>
+                            <span class="text">Orders</span>
+                        </a>
+                    </li>
+                    <li class="menu-item active">
+                        <a class="menu-link" href='/admin-brand'> <i class="icon material-icons md-comment"></i>
+                            <span class="text">Brand Management</span>
+                        </a>
+                    </li>
                     <li class="menu-item ">
                         <a class="menu-link" href="#" id="logoutLink"> <i class="icon material-icons md-exit_to_app"></i>
                             <span class="text">Logout</span>
@@ -108,14 +107,16 @@
         <div></div>
         <form action="/admin/category/add" method="post" id="addCategoryForm">
             <div class="mb-4">
-                <h1>Add Category</h1>
+                <h1>Add Brand</h1>
                 <label for="product_name" class="form-label"></label>
-                <input type="text" placeholder="Add category here" class="form-control" id="categoryName" name="name" />
+                <input type="text" placeholder="Add brand here" class="form-control" id="categoryName" name="name" />
             </div>
-                    <button type='submit' class="d-flex align-items-center justify-content-center">Add category</button>
+                    <button type='submit' class="d-flex align-items-center justify-content-center">Add Brand </button>
         </form>
         <style>
-       
+           #back-button {
+  width: 30px;
+}
 
         button {
             padding: 10px 20px;
@@ -143,7 +144,7 @@ document.getElementById('addCategoryForm').addEventListener('submit', async (eve
             };
 
             try {
-                const response = await fetch('/admin/category/add', {
+                const response = await fetch('/save-brand', {
                     method: 'post',
                     headers: {
                         "Content-Type": "application/json"
@@ -152,24 +153,22 @@ document.getElementById('addCategoryForm').addEventListener('submit', async (eve
                 });
 
                 const result = await response.json();
+                console.log("RESULT",result)
 
                 if (result.status === "success") {
                     Swal.fire({
                         icon: 'success',
                         title: result.message,
-                        showConfirmButton: false,
+                        showConfirmButton: true,
                         timer: 3000,
-                        customClass: { title: 'swal' }
                     }).then(() => {
-                        window.location.href = '/admin/category';
+                        window.location.href = '/admin-brand';
                     });
                 } else if (result.status === "error") {
                     Swal.fire({
                         title: result.message,
-                        showConfirmButton: false,
-                        timer: 2000,
-                        customClass: { title: 'swal' }
-                    });
+                        showConfirmButton: true,
+                                         });
                 }
             } catch (error) {
                 console.error('Error submitting form:', error);

@@ -16,6 +16,8 @@
     <link href="../assets/css/dashboard.css" rel="stylesheet" type="text/css" />
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 
+
+
 </head>
 
 <body>
@@ -51,7 +53,7 @@
                             <span class="text">Add Product</span>
                         </a>
                     </li>
-                    <li class="menu-item active">
+                    <li class="menu-item">
                         <a class="menu-link" href="/admin/user-management"> <i class="icon material-icons md-person"></i>
                             <span class="text">User Management</span>
                         </a>
@@ -66,7 +68,7 @@
                             <span class="text">Offer Management</span>
                         </a>
                     </li>
-                    <li class="menu-item has-submenu">
+                    <li class="menu-item has-submenu active">
                         <a class="menu-link" href="#"> <i class="icon material-icons md-star"></i>
                             <span class="text">Best Selling</span>
                         </a>
@@ -102,94 +104,169 @@
         </nav>
     </aside>
     <main class="main-wrap">
-        <header class="main-header navbar">
-            <div class="col-search">
-                <form class="searchform">
-                    <div class="input-group">
-                    </div>
-                    <datalist id="search_terms">
-                        <option value="Products">
-                        <option value="New orders">
-                        <option value="Apple iphone">
-                        <option value="Ahmed Hassan">
-                    </datalist>
-                </form>
-            </div>
-        </header>
-        <div class="search-bar">
-            <form action="/admin/user-management" method="get" class="flex-container" id="searchForm">
-                <input type="text" placeholder="Search Users" name="search" id="searchQuery" class="search-input">
-                <button type="submit" class="sea">Search</button>
-                <select name="status" class="statusFilter" onchange="this.form.submit()">
-                    <option value="All">All</option>
-                    <option value="active" <% if (statusFilter === 'active') { %>selected<% } %>>Active</option>
-                    <option value="blocked" <% if (statusFilter === 'blocked') { %>selected<% } %>>Blocked</option>
-
-                </select>
-            </form>
-        </div>
+        
+       
         
         <section class="content-main">
-            <div class="content-header">
-                <h2 class="content-title">Customers</h2>
-                <div>
-                </div>
-            </div>
             <div class="card mb-4">
                 <header class="card-header">
-                    <div class="row gx-3">
-                        <div class="col-lg-4 col-md-6 me-auto">
-                            <!-- <input type="text" placeholder="Search..." class="form-control"> -->
-                        </div>
-                        <div class="col-lg-2 col-md-3 col-6">
-                        </div>
-                    </div>
+                    <h2>Best selling Products</h2>
+
                 </header> <!-- card-header end// -->
                 <div class="card-body">
                     <div class="table-responsive">
-                        <table class="table table-bordered table-striped mb-0">
-                            <thead>
-                                <tr>
-                                  <th>  </th>
-                                  <th>Email</th>
-                                  <th></th>
+            <table id="bestSellingProducts" class="display">
+                <thead>
+                    <tr>
+                        <th>Product ID</th>
+                        <th>Product Title</th>
+                        <th>Quantity Sold</th>
+                    </tr>
+                </thead>
+                <tbody>
 
-                                  <th>Status</th>
-                                  <th>Actions</th>
-                                </tr>
-                              </thead>
-                              <% users.forEach(user=> { %>
-                                <tr>
-                                    <td>
-                                        <%= user.name %>
-                                    </td>
-                                    <td>
-                                        <%= user.email %>
-                                    </td>
-                                    <td>
-                                        <%= user.phone %>
-                                    </td>
-                                      <td>
-                                                    <%= user.isBlocked ? 'Blocked' : 'Active' %>
-                                                </td>
+                    <%bestSellingProducts.forEach(product=>{%>
+                        <tr>
+                            <td><%=product._id%></td>
+                            <td><%=product.productTitle%></td>
+                            <td><%=product.totalQuantity%></td>
+                        </tr>
+                        <%})%>
+                </tbody>
+            </table>
+                    </div>
+                </div> <!-- card-body end// -->
+            </div> <!-- card end// -->
+        </section> <!-- content-main end// -->
+        <footer class="main-footer font-xs">
+            <div class="row pb-30 pt-15">
+                </div>
+            </div>
+        </footer>
+    </main>
+   
+    
+            </div>
+        </div>
 
-                                                <td class="iconss">
-                                                    <a class="edit" href="/admin/user-management/block/<%= user._id %>"
-                                                        title="<%= user.isBlocked ? 'Unblock' : 'Block' %>"
-                                                        data-toggle="tooltip">
-                                                        <%= user.isBlocked ? 'Unblock' : 'Block' %>
-                                                    </a>
+    <style>
+          #back-button {
+      width: 30px;
+    }
+                .pagination {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+        margin-left: 200px;
+    }
+    
+    .pagination a {
+        margin: 0 5px;
+        padding: 8px 12px;
+        text-decoration: none;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        color: #333;
+    }
+    
+    .pagination a.active {
+        background-color: #007bff;
+        color: #fff;
+        border-color: #007bff;
+    }
+    .search-bar {
+    display: flex;
+    margin-bottom: 20px;
+    justify-content: flex-end;
+    margin-top: 10px;
+    margin-right: 10px;
+}
 
-                                                </td>
-                                                <% if (!searchQuery && users.length === 0) { %>
-                                                    <tr>
-                                                        <td colspan="5">No results found.</td>
-                                                    </tr>
-                                                <% } %>
+.search-input, .statusFilter {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-right: 5px;
+    flex-grow: 1;
+}
 
-                                </tr>
-                                <% }); %>      
-                                                </table>
+.sea {
+    padding: 8px 12px;
+    border: 1px solid #007bff;
+    border-radius: 5px;
+    background-color: #007bff;
+    color: #fff;
+    cursor: pointer;
+}
+
+.sea:hover {
+    background-color: #0056b3;
+}
+
+.sort-category {
+    display: flex;
+    margin-bottom: 20px;
+    justify-content: flex-end;
+    margin-right: 10px;
+    margin-top: 20px;
+}
+
+.category-select {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-right: 5px;
+} /* Add custom styles for the table */
+        #bestSellingProducts {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        #bestSellingProducts th,
+        #bestSellingProducts td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        #bestSellingProducts th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+
+        #bestSellingProducts tbody tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        #bestSellingProducts tbody tr:hover {
+            background-color: #f2f2f2;
+        }
+
+    </style>
+    <script>
+        function goBack()
+    {
+      window.history.back()
+    }
+    </script>
+    <script src="../assets/js/vendors/jquery-3.6.0.min.js"></script>
+    <script src="../assets/js/vendors/bootstrap.bundle.min.js"></script>
+    <script src="../assets/js/vendors/select2.min.js"></script>
+    <script src="../assets/js/vendors/perfect-scrollbar.js"></script>
+    <script src="../assets/js/vendors/jquery.fullscreen.min.js"></script>
+    <!-- Main Script -->
+    <script src="../assets/js/main.js" type="text/javascript"></script>
+    <script src="../assets/js/custom-chart.js"></script>
+
+    <script>
+        function toggleUser(link) {
+            link.onclick = null; // Disable the link to prevent multiple clicks
+        }
+    </script>
+</body>
+
+</html>
                            <!-- table-responsive.// -->
                     </div>
                 </div> <!-- card-body end// -->
@@ -201,15 +278,17 @@
             </div>
         </footer>
     </main>
-    <div class="pagination">
-        <% for(let i = 1; i <= totalPages; i++) { %>
-            <a href="/admin/user-management?page=<%= i %>" class="<%= i === currentPage ? 'active' : '' %>"><%= i %></a>
-        <% } %>
-    </div>
+    
     
             </div>
         </div>
+        <script>
+            // Ensure the bestSellingProducts table is initialized as a DataTable
+    
 
+
+        </script>
+        
     <style>
           #back-button {
       width: 30px;
@@ -291,10 +370,8 @@
     <script src="../assets/js/vendors/select2.min.js"></script>
     <script src="../assets/js/vendors/perfect-scrollbar.js"></script>
     <script src="../assets/js/vendors/jquery.fullscreen.min.js"></script>
-    <script src="../assets/js/vendors/chart.js"></script>
     <!-- Main Script -->
     <script src="../assets/js/main.js" type="text/javascript"></script>
-    <script src="../assets/js/custom-chart.js"></script>
     <script>
         function toggleUser(link) {
             link.onclick = null; // Disable the link to prevent multiple clicks

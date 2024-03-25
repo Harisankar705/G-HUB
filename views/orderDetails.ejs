@@ -37,7 +37,7 @@
                     <li><a class="nav-link" href="/userprofile/<%= user._id %>"><i class="fa fa-user"></i></a></li>
                     <li><a class="nav-link" href="/cart"><i class="fa fa-shopping-cart"></i></a></li>
                     <li><a class="nav-link" href="/wishlist"><i class="fa fa-heart" aria-hidden="true"></i></a></li>
-                    <li><a class="nav-link" href="/userWallet"><i class="fa-solid fa-wallet"></i></a></li>
+                    <li><a class="nav-link" href="/userWallet/<%=user._id%>"><i class="fa-solid fa-wallet"></i></a></li>
                     <li><a class="nav-link" href=""><i></i></a></li>
 					<form action="/logout" method="POST">
 						<button type="submit" class="nav-link" style="border: none; background: none; cursor: pointer;">
@@ -54,13 +54,15 @@
 
         <% if (orderDetails && orderDetails.products && orderDetails.products.length > 0) { %>
             <% orderDetails.products.forEach(product => { %>
+                <%if(product.orderStatus!=="Return Accepted")%>
                 <div class="product-details">
                     <img src="/<%= product.productId && product.productId.mainimage %>" alt="<%= product.productId && product.productId.name %>" class="product-image">
                     <div class="product-info">
                         <p class="product-name">Order Id: <%= orderDetails._id %></p>
                         <p class="order-date">Order Date:<%=orderDetails.date.toLocaleString()%></p>
-                        <p class="product-name">Product: <%= product.productId && product.productId.name %></p>
                         <p class="payment-method">Payment Method:<%=orderDetails.paymentMethod%></p>
+                        <p class="product-name">Product Price: <%= product.productId && product.productId.price %></p>
+                        <p class="delivery-charge">Delivery Charge: <%= orderDetails.deliveryCharges %></p>
                         <p class='coupon-discount'> Discount:<%=orderDetails.couponDiscount%></p>
                         <p class="product-quantity">Quantity: <%= product.quantity %></p>
                         <p class="product-price">Total Price: <%= product.total %></p>
@@ -69,15 +71,36 @@
                             <p>Username: <%= orderDetails.addresstoDeliver.username || 'Not specified' %></p>
                             <p>Phone Number: <%= orderDetails.addresstoDeliver.phonenumber || 'Not specified' %></p>
                             <p>Address: <%= orderDetails.addresstoDeliver.houseaddress %>, <%= orderDetails.addresstoDeliver.city %>, <%= orderDetails.addresstoDeliver.state %>, <%= orderDetails.addresstoDeliver.district %> - <%= orderDetails.addresstoDeliver.pincode %></p>
+                            <p class="order-status mt-4">Order Status: <%= product.orderStatus %></p>
+
                         <% } %>
+                       
                     </div>
+                    <%if(product.orderStatus==='Pending'){%>
+                        <div class="container">
+                            <button class="btn btn-primary cancelBtn" id="cancelBtn" data-order-id="<%= orderDetails._id %>" data-product-id="<%= product.productId._id %>">Cancel Order</button>
+                        </div>
+                        <%}%>
+
+                        <%if(product.orderStatus==="Delivered"){%>
+                            <div class="container">
+                                <button class="btn btn-success returnBtn" id="returnBtn"data-order-id="<%= orderDetails._id %>" data-product-id="<%= product.productId._id %>">Return Order</button>
+                            </div>
+                            <%}%>
+
                 </div>
             <% }); %>
+
         <% } else { %>
             <p>No products found in the order.</p>
         <% } %>
 
-        <p class="order-status mt-4">Order Status: <%= orderDetails && orderDetails.orderStatus %></p>
+        <!-- <p class="order-status mt-4">Order Status: <%= orderDetails && orderDetails.orderStatus %></p> -->
+        <%if(orderDetails.orderStatus==="Delivered"){%>
+            <div class='container'>
+                <button id="invoiceBtn" class="btn btn-danger">Download Invoice</button>
+            </div>
+            <%}%>
     </div>
 
 
@@ -149,5 +172,181 @@
     {
       window.history.back()
     }
+    document.addEventListener('DOMContentLoaded',function(){
+        document.getElementById('invoiceBtn').addEventListener('click', async function (event) {
+    event.preventDefault();
+    console.log("button clicked")
+    const orderData = {
+        orderId: "<%=orderDetails._id%>",
+        deliveryCharges:"<%=orderDetails.deliveryCharges%>",
+        orderDate: "<%=orderDetails.date.toLocaleString()%>",
+        address: {
+            name: "<%=orderDetails.addresstoDeliver.username%>",
+            phonenumber: "<%=orderDetails.addresstoDeliver.phonenumber%>", // Corrected typo here
+            houseaddress:"<%=orderDetails.addresstoDeliver.houseaddress%>",
+            district:"<%=orderDetails.addresstoDeliver.district%>",
+            state:"<%=orderDetails.addresstoDeliver.state%>",
+            city:"<%=orderDetails.addresstoDeliver.city%>",
+            pincode:"<%=orderDetails.addresstoDeliver.pincode%>",
+
+        }, 
+        // price: "<%=orderDetails.total%>", // Corrected variable name here
+        paymentMethod: "<%=orderDetails.paymentMethod%>",
+        discount: "<%=orderDetails.couponDiscountDifference%>",
+        deliveredDate:"<%=orderDetails.deliveredDate%>",
+        products:[
+            '<%for(let i=0;i<orderDetails.products.length;i++){%>',
+            {
+                productname:"<%=orderDetails.products[i].productId.name%>",
+                quantity:"<%=orderDetails.products[i].quantity%>",
+                total:"<%=orderDetails.products[i].total%>"
+
+            },
+            '<%}%>'
+        ]
+    };
+    try {
+    const response=await fetch("/download-invoice",{
+        method:'post',
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify(orderData)
+    })
+    if(response.ok)
+    {   
+        console.log("response of")
+        const blob=await response.blob()
+        const url=window.URL.createObjectURL(blob)
+        const a=document.createElement('a')
+        a.href=url
+        a.download='invoice.pdf'
+        document.body.appendChild(a)
+        a.click()
+        document.body.removeChild(a)
+    }
+    else
+    {
+        console.error("Error occured while downloading pdf",Error)
+    }
+} catch (error) {
+    console.log("Error occured",error)
+}
+});
+    })
+    
+
+document.addEventListener('DOMContentLoaded', async function () {
+    console.log("DOMContentLoaded event triggered");
+
+    const cancelButtons = document.querySelectorAll('.cancelBtn');
+    console.log(cancelButtons.length + " cancel buttons found");
+    cancelButtons.forEach(cancelButton => {
+        cancelButton.addEventListener('click', async function (event) {
+            event.preventDefault();
+            console.log('BUTTON CLICKED');
+            const confirmation = await Swal.fire({
+                title: "Cancel Order",
+                text: "Are you sure you want to cancel the order?",
+                icon: "question",
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: "Yes, Cancel it"
+            });
+            if (confirmation.isConfirmed) {
+                const orderId = this.getAttribute('data-order-id');
+                const productId = this.getAttribute('data-product-id');
+                const response = await fetch(`/cancel-order/${orderId}/${productId}`, {
+                    method: "get"
+                });
+                const data = await response.json();
+                if (data.status === "success") {
+                    Swal.fire({
+                        icon: "success",
+                        title: "Order cancelled",
+                        text: data.message
+                    })
+                    .then(()=>{
+                        window.location.reload()
+                    })
+                } else {
+                    Swal.fire({
+                        icon: "error",
+                        title: "Error occurred",
+                        text: data.message
+                    });
+                }
+            }
+        });
+    });
+});
+
+document.addEventListener('DOMContentLoaded', async function () {
+    console.log("DOMContentLoaded event triggered");
+
+    const returnButtons = document.querySelectorAll('.returnBtn');
+    returnButtons.forEach(returnButton => {
+        returnButton.addEventListener('click', async function (event) {
+            event.preventDefault();
+            console.log('BUTTON CLICKED');
+            const confirmation = await Swal.fire({
+                title: "Return Order",
+                text: "Are you sure you want to return the order?",
+                icon: "question",
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: "Yes, Return  it"
+            });
+            if (confirmation.isConfirmed) {
+                const {value:returnReason}=await Swal.fire({
+                    title:"Enter the return reason",
+                    input:'text',
+                    inputLabel:"Reason",
+                    inputPlaceholder:"Enter the reason for returning order",
+                    showCancelButton:true,
+                    inputValidator:(value)=>{
+                        if(!value)
+                        {
+                            return 'You need to enter a reason'
+                        }
+                    }
+                })
+                if (returnReason) {
+                    // If a reason is provided, initiate the return
+                    const orderId = this.getAttribute('data-order-id');
+                    const productId = this.getAttribute('data-product-id');
+                    const response = await fetch(`/initiate-return/${orderId}/${productId}`, {
+                        method: "post",
+                        body: JSON.stringify({ reason: returnReason }), // Pass reason in the request body
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                    const data = await response.json();
+                    if (data.status === "success") {
+                        Swal.fire({
+                            icon: "success",
+                            title: "Return Initiated",
+                            text: "Your return request has been initiated successfully. Thank you for your feedback!"
+                        }).then(() => {
+                            window.location.reload();
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: "error",
+                            title: "Error occurred",
+                            text: data.message
+                        });
+                    }
+                }
+            }
+        });
+    });
+});
+
+
+
+    
+    
 </script>
 </html>

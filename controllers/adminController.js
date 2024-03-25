@@ -1,4 +1,4 @@
-  const adminSchema = require('../models/adminSchema');
+   const adminSchema = require('../models/adminSchema');
   const bcrypt = require('bcrypt');
   const adminController = {};
   const userSchema=require('../models/User')
@@ -8,6 +8,8 @@
   const pdf=require('pdfkit')
   const fs=require('fs')
   const exceljs=require('exceljs');
+const { order } = require('paypal-rest-sdk');
+const { start } = require('repl');
 
   //adminlogin
   adminController.showAdminLogin = async (req, res) => {
@@ -36,7 +38,7 @@
       res.redirect('/adminpanel');
     } catch (error) {
       console.error('Error in admin login:', error);
-      res.status(500).send('Internal server error');
+      res.render('error')
     }
   };
 
@@ -54,8 +56,8 @@
           });
       } catch (error) {
           console.log("Error during logout", error);
-          res.status(500).send("Internal Server Error");
-      }
+          res.render('error')
+        }
   };
     
 
@@ -66,29 +68,29 @@
       const ordersPie=await orderSchema.find()
       const ordersCount={
         pending:0,
-        shipped:0,
-        processing:0,
+        confirmed:0,
         delivered:0,
-        retuned:0,
+        returned:0,
+        cancelled:0
       }
       ordersPie.forEach((order)=>{
         if(order.orderStatus==='Pending')
         {
           ordersCount.pending++
         }
-        else if(order.orderStatus=== 'Shipped')
+        else if(order.orderStatus=== 'Confirmed')
         {
-          ordersCount.shipped++
+          ordersCount.confirmed++
         }
-        else if(order.orderStatus==="Processing")
-        {
-          ordersCount.processing++
-        }
-        else if(order.orderStatus==="delivered")
+        else if(order.orderStatus==="Delivered")
         {
           ordersCount.delivered++
+        }
+        else if(order.orderStatus==="returned")
+        {
+          ordersCount.returned++
         }else{
-          ordersCount.retuned++
+          ordersCount.cancelled++
         }
       })
       return ordersCount
@@ -100,6 +102,7 @@
   //count of orders based on month
   async function graph() {
     try {
+      console.log("IN BAR GRAP")
       const orderCountofMonth = await orderSchema.aggregate([
         {
           $project: {
@@ -116,7 +119,7 @@
           $sort: { _id: 1 }
         }
       ]);
-
+      console.log("ORDERCOUNTOFMONTH",orderCountofMonth)
       const months = ["Jan", "Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sep", "Oct", "Nov", "Dec"];
       //getting numeric month id
       const orderCountofMonthwithNames=orderCountofMonth.map(entry=>({
@@ -124,7 +127,10 @@
         count:entry.count
       }))
       const labels=orderCountofMonthwithNames.map((val=>val.month))
+      console.log('LABELS',labels)
       const count=orderCountofMonthwithNames.map((val)=>val.count)
+      console.log('COUNT',count)
+
       return {
         labels: labels,
         count: count
@@ -132,9 +138,10 @@
       
     } catch (error) {
       console.error("Error in graph function:", error);
+      res.render('error')
     }
   }
-  //current month weekly sale
+  // current month weekly sale
   async function barGraph()
   {
     try {
@@ -186,8 +193,171 @@
 
     } catch (error) {
       console.log("Error occured during week orders in bargraph",error)
+      res.render('error')
     }
   }
+  const formatDate = (date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+  adminController.sales = async (req, res) => {
+    console.log("IN sales");
+    console.log("REQ", req.query);
+    try {
+      const { timeframe } = req.query;
+      console.log("TIMEFRAME", timeframe);
+      let startDate, endDate;
+  
+      if (timeframe === 'daily') {
+        startDate = new Date();
+        startDate.setDate(startDate.getDate() - 6);
+        endDate = new Date();
+      } else if (timeframe === 'weekly') {
+        startDate = new Date();
+        startDate.setMonth(startDate.getMonth() - 1);
+        endDate = new Date();
+      } else if (timeframe === 'monthly') {
+        startDate = new Date();
+        startDate.setFullYear(startDate.getFullYear(), 0, 1);
+        endDate = new Date();
+      }
+      else if (timeframe === 'yearly') {
+        const today = new Date();
+        startDate = new Date(today.getFullYear(), 0, 1); // January 1st of the current year
+        endDate = new Date(today.getFullYear(), 11, 31, 23, 59, 59, 999); // December 31st of the current year
+    } 
+       else {
+        return res.json({ status: "error", message: 'Invalid time frame' });
+      }
+  
+      const orders = await orderSchema.find({
+        date: { $gte: startDate, $lte: endDate }
+      });
+  
+      const salesData = {};
+          if(timeframe==='daily')
+      {
+        for(let i=0;i<6;i++)
+        {
+          const date=formatDate(new Date(startDate.getTime()+(i*24*60*60*1000)))
+          salesData[date]=0
+        }
+      }
+      else if(timeframe==='weekly')
+      {
+        for(let i=0;i<6;i++)
+        {
+          const date = formatDate(new Date(startDate.getTime() + (i * 7 * 24 * 60 * 60 * 1000)));
+          salesData[date]=0
+        }
+      }
+       else if (timeframe === 'monthly') {
+        for (let i = 0; i < 12; i++) {
+          const monthStartDate = new Date(startDate.getFullYear(), i, 1);
+          const monthEndDate = new Date(startDate.getFullYear(), i + 1, 0);
+          const monthSales = orders.filter(order => order.date >= monthStartDate && order.date <= monthEndDate);
+          const monthTotalSales = monthSales.reduce((total, order) => total + order.totalAmount, 0);
+          salesData[monthStartDate.toISOString()] = monthTotalSales;
+        }
+      }
+  
+      orders.forEach(order => {
+        const date = formatDate(order.date);
+        salesData[date] +=order.totalAmount;
+      });
+      
+  
+      const labels=Object.keys(salesData).map(date=>formatDate(new Date(date)))
+      const values=Object.values(salesData)
+      res.json({labels,values})
+      
+    } catch (error) {
+      console.log("Error occurred in sales", error);
+      // res.status(500).json({ status: "error", message: "Internal server error" });
+      res.render('error')
+    }
+
+  };
+  
+
+adminController.topSellingProducts=async(req,res)=>{
+  try {
+      const bestSellingProducts=await orderSchema.aggregate([
+        { $match: { orderStatus: "Delivered" } }, // Filter orders with orderStatus "Delivered"
+        {$unwind:'$products'},
+        {$group:{_id:"$products.productId",totalQuantity:{$sum:"$products.quantity"}}},
+        {$sort:{totalQuantity:-1}},
+        {$limit:6},
+        {$lookup:{from:"products",localField:"_id",foreignField:"_id",as:"product"}},
+        {$unwind:"$product"},
+        {$project:{_id:"$product._id",productTitle:"$product.name",totalQuantity:1}}
+      ])
+
+      console.log("BESTSELLING",bestSellingProducts)
+      res.render('bestSellingProduct',{bestSellingProducts})
+  } catch (error) {
+    console.log("Error occured during topselling products",error)
+    res.render('error')
+  }
+}
+
+adminController.topSellingCategory = async (req, res) => {
+  try {
+    const orderCount = await orderSchema.countDocuments();
+    console.log('ORDERCOUNT', orderCount);
+
+    const bestSellingCategory = await orderSchema.aggregate([
+      { $unwind: "$products" },
+      { $lookup: { from: "products", localField: "products.productId", foreignField: "_id", as: "product" } },
+      { $unwind: "$product" },
+      { $lookup: { from: "categories", localField: "product.category", foreignField: "_id", as: "category" } },
+      { $unwind: "$category" },
+      { $group: { _id: "$category._id", categoryName: { $first: "$category.name" }, totalQuantity: { $sum: "$products.quantity" } } },
+      { $sort: { totalQuantity: -1 } },
+      { $limit: 6 },
+      { $project: { _id: 1, categoryName: 1, totalQuantity: 1 } }
+    ]);
+
+    res.render('bestSellingCategory', { bestSellingCategory });
+    console.log('bestsellingcategory', bestSellingCategory);
+  } catch (error) {
+    console.log("Error occurred during topsellingCategory", error);
+    res.render('error')
+  }
+};
+
+adminController.topSellingBrands=async(req,res)=>{
+  try
+  {
+    const bestSellingBrands=await orderSchema.aggregate([
+      {$unwind:"$products"},
+      {$lookup:{from:"products",localField:'products.productId',foreignField:"_id",as:"product"}},
+      {$unwind:"$product"},
+      {$lookup:{from:"brands",localField:'product.brand',foreignField:"_id",as:"brand"}},
+      {$unwind:"$brand"},
+      { $group: { _id: "$brand._id", brandName: { $first: "$brand.name" }, totalQuantity: { $sum: "$products.quantity" } } },
+      {$sort:{totalQuantity:-1}},
+      {$limit:6},
+      { $project: { _id: 1, brandName: 1, totalQuantity: 1 } }
+    ])
+    res.render('bestSellingBrands',{bestSellingBrands})
+    console.log('BESTSELLINGBRANDS',bestSellingBrands)
+  }catch(error)
+  {
+    console.log("Error occured",error)
+    res.render('error')
+  }
+  
+}
+
+
+
+
+
+
+
   adminController.showAdminPanel = async (req, res) => {
     try {
       if (req.session.AdminLogin) {
@@ -213,7 +383,11 @@
           totalUsers,
           ordersPie,
           ordersGraph,
-          ordersBarGraph
+          bestsellingCategory,
+          bestsellingProducts,
+          bestSellingCategory,
+          ordersBarGraph,
+        
         ] = await Promise.all([
           orderSchema.find({ orderStatus: { $in: ['Delivered', 'Cancelled'] } }).populate('products.productId'),
           orderSchema.countDocuments({ orderStatus: { $in: ['Delivered', 'Cancelled'] } }),
@@ -224,11 +398,6 @@
           graph(),
           barGraph()
         ]);
-        console.log("ORDERSDATA",ordersData)
-        const labels = [...ordersGraph.labels]; // months
-        const count = [...ordersGraph.count];
-        const weeks = [...ordersBarGraph.labels];
-        const weekCount = [...ordersBarGraph.count];
 
         const totalRevenue = orders.length > 0 ? orders[0].totalRevenue : 0;
 
@@ -239,10 +408,6 @@
           totalProducts,
           totalUsers,
           ordersPie,
-          labels,
-          count,
-          weeks,
-          weekCount,
           ordersData,
         });
       } else {
@@ -250,7 +415,7 @@
       }
     } catch (error) {
       console.error('Error in showing admin panel:', error);
-      res.status(500).render('error');
+      res.render('error');
     }
   };
 
@@ -259,7 +424,7 @@
     try {
         const value = req.query.by;
         const today = Date.now();
-
+      let discount=0
       
 
         if(value==='all')
@@ -270,11 +435,43 @@
             },
             {
               $sort:{deliveredDate:-1}
-            }
+            },
+            {
+              $unwind: "$products" // Unwind the products array
+          },
+          {
+              $lookup: {
+                  from: "products", // The name of the product collection
+                  localField: "products.productId",
+                  foreignField: "_id",
+                  as: "productInfo"
+              }
+          },
+          {
+              $unwind: "$productInfo" // Unwind the productInfo array
+          },
+          {
+              $project: {
+                  deliveredDate: 1,
+                  totalAmount: 1,
+                  addresstoDeliver: 1,
+                  _id: 1,
+                  // Calculate the sum of priceDifference and couponDiscountDifference for each order
+                  discount: {
+                    $add: [
+                        { $ifNull: ["$productInfo.priceDifference", 0] },
+                        { $ifNull: ["$couponDiscountDifference", 0] }
+                    ]
+                }
+                ,
+              }
+          },
           ])
           res.json({orders})
+          console.log(orders)
         }
         else if (value === 'today') {
+          let discount=0
             const startDate = new Date(today);
             startDate.setHours(0, 0, 0, 0);
             const endDate = new Date(today);
@@ -294,12 +491,18 @@
                 totalAmount:1,
                 products:1,
                 productDifference:1,
-                _id:1
-              }
+                addresstoDeliver:1,
+                _id:1,
+                discount: {
+                  $add: [
+                      { $ifNull: ["$productInfo.priceDifference", 0] },
+                      { $ifNull: ["$couponDiscountDifference", 0] }
+                  ]
+              }              }
             },
             {$sort:{deliveredDate:-1}}
             ])
-            res.json(({orders}))
+            res.json({orders})
         } else if (value === 'weekly') {
             const today = new Date();
             const currentDay = today.getDay();
@@ -323,8 +526,13 @@
                 totalAmount:1,
                 products:1,
                 addresstoDeliver:1,
-                priceDifference:1,
-                _id:1
+                _id:1,
+                discount: {
+                  $add: [
+                      { $ifNull: ["$productInfo.priceDifference", 0] },
+                      { $ifNull: ["$couponDiscountDifference", 0] }
+                  ]
+              }
               }
             }
             ])
@@ -349,8 +557,12 @@
                   deliveredDate:1,
                   totalAmount:1,
                   products:1,
-                  priceDifference:1,
-                  addresstoDeliver:1,
+                  discount: {
+                    $add: [
+                        { $ifNull: ["$productInfo.priceDifference", 0] },
+                        { $ifNull: ["$couponDiscountDifference", 0] }
+                    ]
+                } ,                 addresstoDeliver:1,
                   trackingId:1
                 }
               }
@@ -378,8 +590,13 @@
                   priceDifference:1,
                   addresstoDeliver:1,
                   _id:1,
-                  products:1
-                }
+                  products:1,
+                  discount: {
+                    $add: [
+                        { $ifNull: ["$productInfo.priceDifference", 0] },
+                        { $ifNull: ["$couponDiscountDifference", 0] }
+                    ]
+                }                }
               },
               {
                 $sort:{deliveredDate:-1}
@@ -392,10 +609,10 @@
         };
 
     } catch (error) {
-        res.status(500).json({ error: 'Internal Server Error' });
         console.error("An error occurred", error);
+        res.render('error')
     }
-};
+}
 
 
 
@@ -406,34 +623,55 @@ adminController.filterByDate = async (req, res) => {
       endingDate = new Date(endingDate);
 
       const orders = await orderSchema.aggregate([
-          {
-              $match: {
-                  orderStatus: { $in: ["Delivered"] },
-                  deliveredDate: {
-                      $gte: startingDate,
-                      $lte: endingDate
-                  }
-              }
-          },
-          {
-              $project: {
-                  deliveredDate: 1,
-                  totalAmount: 1,
-                  priceDifference: 1,
-                  addresstoDeliver: 1,
-                  _id: 1
-              }
-          },
-          {
-              $sort: { deliveredDate: -1 }
-          }
-      ]);
+        {
+            $match: {
+                orderStatus: { $in: ["Delivered"] },
+                deliveredDate: {
+                    $gte: startingDate,
+                    $lte: endingDate
+                }
+            }
+        },
+        {
+            $unwind: "$products" // Unwind the products array
+        },
+        {
+            $lookup: {
+                from: "products", // The name of the product collection
+                localField: "products.productId",
+                foreignField: "_id",
+                as: "productInfo"
+            }
+        },
+        {
+            $unwind: "$productInfo" // Unwind the productInfo array
+        },
+        {
+            $project: {
+                deliveredDate: 1,
+                totalAmount: 1,
+                addresstoDeliver: 1,
+                _id: 1,
+                // Calculate the sum of priceDifference and couponDiscountDifference for each order
+                discount: {
+                  $add: [
+                      { $ifNull: ["$productInfo.priceDifference", 0] },
+                      { $ifNull: ["$couponDiscountDifference", 0] }
+                  ]
+              },
+            }
+        },
+        {
+            $sort: { deliveredDate: -1 }
+        }
+    ]);
+    
 
       res.json({ orders });
   } catch (error) {
       console.error("An error occurred", error);
-      res.status(500).json({ error: 'Internal Server Error' });
-  }
+    res.render('error')
+    }
 };
 
 
@@ -511,12 +749,13 @@ adminController.generatePDF = async (req, res) => {
           pdfDoc.text(entry.date, tableX + 20, tableY + 5, { width: 150, align: 'left' });
           tableX += 120;
           const cleanedDiscount = entry.discount.replace(/[^0-9.]/g, '');
+          
 
           pdfDoc.text(`Rs:${cleanedDiscount}`, tableX + 20, tableY + 5, { width: 150, align: 'left' });
 
           totalOrders += 1;
           totalAmount += entry.totalAmount;
-          totalDiscount += entry.discount;
+          totalDiscount += parseFloat(cleanedDiscount);
 
           // Move to the next row
           tableY += 20;
@@ -601,8 +840,8 @@ adminController.generateSalesExcel = async (req, res) => {
       res.end();
   } catch (error) {
       console.log("An error occurred while downloading Excel report", error.message);
-      res.status(500).json({ error: 'Internal Server Error' });
-  }
+    res.render('error')
+    }
 };
 
   module.exports = adminController;

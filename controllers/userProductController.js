@@ -1,4 +1,5 @@
 const userProductController={}
+const brandSchema = require('../models/brandSchema')
 const categorySchema=require('../models/category')
 const productSchema=require('../models/product')
 const User = require('../models/User')
@@ -35,11 +36,12 @@ userProductController.productDetails = async (req, res) => {
         const userId=req.session.userId
         const user=await userSchema.findById(userId)
         const productId = req.query.productId;
+        const brand=await brandSchema.find()
         // console.log("id founded", productid);
-        const product = await productSchema.findById(productId).populate('category');
+        const product = await productSchema.findById(productId).populate('category').populate('brand');
         const categories = await categorySchema.find();
         if (product && product.isPublished) {
-            res.render('product-details', { product, categories ,productId,userId,user});
+            res.render('product-details', { product, categories ,productId,userId,user,brand});
             // console.log(categories);
 
         } else {

@@ -16,7 +16,11 @@
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </head>
-
+<style>
+    #back-button {
+width: 30px;
+}
+    </style>
 <body>
     <nav class="custom-navbar navbar navbar-expand-md navbar-dark bg-dark" aria-label="Furni navigation bar">
         <a href="#" onclick="goBack()"><img src="../public/back-button-removebg-preview.png" id="back-button"></a>
@@ -46,7 +50,7 @@
                     <li><a class="nav-link" href="/userprofile/<%= user._id %>"><i class="fa fa-user"></i></a></li>
                     <li><a class="nav-link" href="/cart"><i class="fa fa-shopping-cart"></i></a></li>
                     <li><a class="nav-link" href="/wishlist"><i class="fa fa-heart" aria-hidden="true"></i></a></li>
-                    <li><a class="nav-link" href="/userWallet"><i class="fa-solid fa-wallet"></i></a></li>
+                    <li><a class="nav-link" href="/userWallet/<%=user._id%>"><i class="fa-solid fa-wallet"></i></a></li>
                     <li><a class="nav-link" href=""><i></i></a></li>
 					<form action="/logout" method="POST">
 						<button type="submit" class="nav-link" style="border: none; background: none; cursor: pointer;">
@@ -104,9 +108,8 @@
                                 <div class="col-md-12"><label class="labels">Email</label><input type="email"
                                         class="form-control" name="email" id="email" placeholder="email"
                                         value="<%=user.email%>"></div>
-                                <div class="col-md-12"><label class="labels">Mobile Number</label><input type="number"
-                                        class="form-control" placeholder="enter phone number" name="phonenumber" id="phonenumber"
-                                        value="<%=user.phonenumber%>"></div>
+                                <div class="col-md-12"><label class="labels">Mobile Number</label>
+                                    <input type="number"class="form-control" placeholder="enter phone number" name="phonenumber" id="phonenumber"value="<%=user.phonenumber%>"></div>
                             </div>
                             <div class="mt-5 text-center">
                                 <button id="editProfileButton" class="btn btn-danger profile-button" type="submit">Edit Profile</button>
@@ -118,11 +121,11 @@
                 </div>
             </div>
         </div>
-             <style>
-        #back-button {
-  width: 30px;
-}
-        </style>
+    </div>
+    <%-include('partials/userfooter.ejs')%>
+
+
+          
         <script>
             function goBack()
     {

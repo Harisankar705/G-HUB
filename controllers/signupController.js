@@ -27,7 +27,7 @@ const sendOTP = async (email, otp) => {
         console.log("OTP sent", info);
     } catch (error) {
         console.log("Error sending in OTP", error);
-        throw error;
+        res.render('error')
     }
 }
 //signup
@@ -62,7 +62,7 @@ signupController.signuphandle = async (req, res) => {
         const referrer = await User.findOne({ referralCode:referralLink });
 
         // If referrer found, save referrer ID in session
-        if (referrer && !referrer.isReferralLinkUsed) {
+        if (referrer ) {
             console.log("Referrer found", referrer);
             generatedOTP = otpGenerator.generate(6, { digits: true, alphabets: false, upperCase: false, specialChars: false });
             req.session.signupData = {
@@ -74,7 +74,6 @@ signupController.signuphandle = async (req, res) => {
                 referrer: referrer._id
                
             };
-            referrer.isReferralLinkUsed=true;
             await referrer.save()
         } else {
             console.log("No referrer found with the given referral code");
@@ -99,7 +98,8 @@ signupController.signuphandle = async (req, res) => {
         res.redirect(`/signup-otp?email=${encodeURIComponent(email)}&username=${encodeURIComponent(username)}`);
     } catch (err) {
         console.log("Error happened during OTP", err);
-        res.redirect('/signup');
+        res.render('error')
+        // res.redirect('/signup');
     }
 }
 
@@ -147,7 +147,7 @@ signupController.OTPverification = async (req, res) => {
         });
 
         try {
-            const existingUserWithReferralCode = await User.findOne({ referralCode });
+            const existingUserWithReferralCode = await User.findOne({ referralCode:referralCode });
             if (existingUserWithReferralCode) {
                 // If the referral code is not unique, regenerate it and retry
                 const newReferralCode = generateCode();
@@ -156,44 +156,44 @@ signupController.OTPverification = async (req, res) => {
             let storedUser = await newUser.save();
             
             // Fix here: Change 'referrer' to 'signupData.referrer'
-            if (signupData.referrer) {
-                const referralRewardAmount = 100;
-                const referrerWallet = await walletSchema.findOne({ userId: signupData.referrer });
-                if (!referrerWallet) {
-                    referrerWallet = new walletSchema({ userId: storedUser._id });
-                    await referrerWallet.save();
-                }
-                referrerWallet.amount += referralRewardAmount;
-                if(referralRewardAmount)
-                {
-                    referrerWallet.transactionHistory.push({
-                        type:"Credit-Earned by refering",
-                        amount: referralRewardAmount,
-                        date:new Date()
-                    })
-                }
+            // if (signupData.referrer) {
+            //     const referralRewardAmount = 100;
+            //     const referrerWallet = await walletSchema.findOne({ userId: signupData.referrer });
+            //     if (!referrerWallet) {
+            //         referrerWallet = new walletSchema({ userId: storedUser._id });
+            //         await referrerWallet.save();
+            //     }
+            //     referrerWallet.amount += referralRewardAmount;
+            //     if(referralRewardAmount)
+            //     {
+            //         referrerWallet.transactionHistory.push({
+            //             type:"Credit-Earned by refering",
+            //             amount: referralRewardAmount,
+            //             date:new Date()
+            //         })
+            //     }
                 
-                await referrerWallet.save();
-            }
+            //     await referrerWallet.save();
+            // }
 
-            const signupRewardAmount = signupData.referrer ? 50 : 0; // 50 if there is a referrer, 0 otherwise
-            let newUserWallet = await walletSchema.findOne({ userId: storedUser._id });
+            // const signupRewardAmount = signupData.referrer ? 50 : 0; // 50 if there is a referrer, 0 otherwise
+            // let newUserWallet = await walletSchema.findOne({ userId: storedUser._id });
             
-            if (!newUserWallet) {
-                newUserWallet = new walletSchema({ userId: storedUser._id });
+            // if (!newUserWallet) {
+            //     newUserWallet = new walletSchema({ userId: storedUser._id });
                 
-            }
-            newUserWallet.amount += signupRewardAmount;
-            if(signupRewardAmount)
-            {
-                newUserWallet.transactionHistory.push({
-                    type:"Credit-Earned by referall",
-                    amount:signupRewardAmount,
-                    date:new Date()
-                })
-            }
+            // }
+            // newUserWallet.amount += signupRewardAmount;
+            // if(signupRewardAmount)
+            // {
+            //     newUserWallet.transactionHistory.push({
+            //         type:"Credit-Earned by referall",
+            //         amount:signupRewardAmount,
+            //         date:new Date()
+            //     })
+            // }
            
-            await newUserWallet.save();
+            // await newUserWallet.save();
             
             req.session.userLogin = true;
             req.session.userId = storedUser._id;
@@ -202,7 +202,14 @@ signupController.OTPverification = async (req, res) => {
             req.session.save();
         } catch (err) {
             console.log("Error saving the user", err);
-            res.status(500).json({ success: false, message: "Internal Server Error" });
+/* The line `res.status(500).json({ success: false, message: "Internal Server Error" });` is used to
+send a response back to the client with a status code of 500 (Internal Server Error) and a JSON
+object containing information about the error. This response is typically sent when there is an
+unexpected error on the server side that prevents the request from being processed successfully. The
+`success` property is set to `false` to indicate that the operation was not successful, and the
+`message` property provides a description of the error that occurred. */
+            res.render('error')
+            // res.status(500).json({ success: false, message: "Internal Server Error" });
         }
     } else {
         res.status(400).json({ success: false, message: "Incorrect OTP, Try again!!" });
@@ -246,7 +253,8 @@ signupController.resendOTP = async (req, res) => {
         res.json({ success: true, message: "OTP sent successfully" });
     } catch (err) {
         console.error("Error during resend", err);
-        res.json({ success: false, message: "OTP sending failed" });
+        res.render('error')
+        // res.json({ success: false, message: "OTP sending failed" });
     }
 }
 

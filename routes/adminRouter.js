@@ -11,31 +11,34 @@ const adminCouponController=require('../controllers/couponController')
 const offerManagementController=require('../controllers/offerManagementController')
 const offer = require('../models/offerSchema')
 const couponController = require('../controllers/couponController')
+const adminAuth=require('../middleware/adminAuth')
+const userOrderController = require('../controllers/userOrderController')
+const brandController=require('../controllers/brandController')
 
 adminRouter.get('/admin',adminController.showAdminLogin)
 adminRouter.post('/admin',adminController.handleAdminLogin)
-adminRouter.get('/adminPanel',adminController.showAdminPanel)
+adminRouter.get('/adminPanel',adminAuth,adminController.showAdminPanel)
 adminRouter.post('/admin/logout',adminController.logout)
 //user management
-adminRouter.get('/admin/user-management',adminUserController.displayUsers)
-adminRouter.get('/admin/user-management/block/:id',adminUserController.blockuser);
-adminRouter.get('/admin/user-management/unblock/:id',adminUserController.unblockuser);
+adminRouter.get('/admin/user-management',adminAuth,adminUserController.displayUsers)
+adminRouter.get('/admin/user-management/block/:id',adminAuth,adminUserController.blockuser);
+adminRouter.get('/admin/user-management/unblock/:id',adminAuth,adminUserController.unblockuser);
 //prroduct
-adminRouter.get('/admin/products',adminProductController.showProduct)
-adminRouter.get('/admin/add',adminProductController.addProduct)
-adminRouter.post('/admin/add', adminProductController.upload.fields([{ name: 'mainimage', maxCount: 1 }, { name: 'additionalImage', maxCount: 5 }]), adminProductController.handleProduct);
-adminRouter.get('/admin/products/edit/:id',adminProductController.showEditProduct)
-adminRouter.post('/admin/products/edit/:id',adminProductController.upload.fields([{ name: 'mainimage', maxCount: 1 }, { name: 'additionalImage', maxCount: 5 }]), adminProductController.editProduct)
-adminRouter.get('/admin/products/restrict/:id',adminProductController.toggleManage)
+adminRouter.get('/admin/products',adminAuth,adminProductController.showProduct)
+adminRouter.get('/admin/add',adminAuth,adminProductController.addProduct)
+adminRouter.post('/admin/add', adminAuth,adminProductController.upload.fields([{ name: 'mainimage', maxCount: 1 }, { name: 'additionalImage', maxCount: 5 }]), adminProductController.handleProduct);
+adminRouter.get('/admin/products/edit/:id',adminAuth,adminProductController.showEditProduct)
+adminRouter.post('/admin/products/edit/:id',adminAuth,adminProductController.upload.fields([{ name: 'mainimage', maxCount: 1 }, { name: 'additionalImage', maxCount: 5 }]), adminProductController.editProduct)
+adminRouter.get('/admin/products/restrict/:id',adminAuth,adminProductController.toggleManage)
 
 
 //category
-adminRouter.get('/admin/category',adminCategoriesController.showData)
-adminRouter.get('/admin/category/add',adminCategoriesController.addCategory)
-adminRouter.post('/admin/category/add',adminCategoriesController.handleCategory)
-adminRouter.get('/admin/category/edit/:id',adminCategoriesController.ShowCategoryEdit)
-adminRouter.post('/admin/category/edit/:id',adminCategoriesController.handleEditCategory)
-adminRouter.get('/admin/category/restrict/:id',adminCategoriesController.manageToggle)
+adminRouter.get('/admin/category',adminAuth,adminCategoriesController.showData)
+adminRouter.get('/admin/category/add',adminAuth,adminCategoriesController.addCategory)
+adminRouter.post('/admin/category/add',adminAuth,adminCategoriesController.handleCategory)
+adminRouter.get('/admin/category/edit/:id',adminAuth,adminCategoriesController.ShowCategoryEdit)
+adminRouter.post('/admin/category/edit/:id',adminAuth,adminCategoriesController.handleEditCategory)
+adminRouter.get('/admin/category/restrict/:id',adminAuth,adminCategoriesController.manageToggle)
 
 
 //adminorder 
@@ -64,6 +67,23 @@ adminRouter.get('/dashboard/filter-sales',adminController.filterSales)
 adminRouter.post('/dashboard/filter-by-date',adminController.filterByDate)
 adminRouter.post('/dashboard/generate-report',adminController.generatePDF)
 adminRouter.post('/dashboard/generate-excel-report',adminController.generateSalesExcel)
+adminRouter.get('/sales',adminController.sales)
+adminRouter.get('/bestSellingProducts',adminController.topSellingProducts)
+adminRouter.get('/bestSellingCategory',adminController.topSellingCategory)
+adminRouter.get('/bestSellingBrands',adminController.topSellingBrands)
 
+
+adminRouter.get('/admin-brand',brandController.showBrands)
+adminRouter.get('/add-brand',brandController.addBrandPage)
+adminRouter.post('/save-brand',brandController.handleData)
+adminRouter.get('/edit-brand/:id',brandController.showEditBrand)
+adminRouter.put('/save-edit/:id',brandController.handleEditedBrand)
+adminRouter.get('/toogle-status/:id',brandController.manageToggle)
+
+//return
+adminRouter.post('/allow-return/:orderId/:productId',adminOrderController.allowReturn)
+adminRouter.post('/decline-return/:orderId/:productId',adminOrderController.declineReturn)
+
+adminRouter.get('/admin-order-details/:orderId',adminOrderController.orderDetails)
 module.exports=adminRouter
     

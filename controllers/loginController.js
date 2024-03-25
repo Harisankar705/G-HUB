@@ -5,6 +5,7 @@ const bcrypt = require('bcryptjs');
 const productSchema=require('../models/product')
 const categorySchema=require('../models/category')
 const session = require('express-session');
+const brandSchema = require('../models/brandSchema');
 
 
 const loginController = {};
@@ -71,7 +72,8 @@ loginController.loginHandle = async (req, res) => {
     } catch (error) {
         console.error("Error in loginHandle:", error);
         const errorMessage = "Internal server error";
-        res.redirect('/login?error=' + encodeURIComponent(errorMessage));
+        res.render('error')
+        // res.redirect('/login?error=' + encodeURIComponent(errorMessage));
     }
 };
 
@@ -112,6 +114,7 @@ loginController.homeRender = async (req, res) => {
         const totalPages = Math.ceil(totalProducts / productsPerPage);
         const user = await User.findById(userId);
         const categories = await categorySchema.find();
+        const brand=await brandSchema.find()
         const products = await productSchema.find(query).populate('category').skip(offset).limit(limit);
         
 
@@ -122,7 +125,7 @@ loginController.homeRender = async (req, res) => {
         }
     } catch (error) {
         console.error('Error occurred during rendering', error.message);
-        res.status(500).send('Internal Server Error');
+        res.render('error')
     }
 };
 
@@ -142,7 +145,7 @@ loginController.logOut = async (req, res) => {
         });
     } catch (error) {
         console.error('Error occurred during logout:', error);
-        res.status(500).send('Internal Server Error');
+        res.render('error')
     }
 };
 
