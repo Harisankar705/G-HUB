@@ -1,6 +1,6 @@
-const userSchema=require('../models/User')
-const walletSchema=require('../models/walletSchema')
-const walletController={}
+const userSchema = require('../models/User')
+const walletSchema = require('../models/walletSchema')
+const walletController = {}
 
 walletController.displayWallet = async (req, res) => {
   try {
@@ -25,4 +25,4 @@ walletController.displayWallet = async (req, res) => {
   }
 }
 
-module.exports=walletController
+module.exports = walletController

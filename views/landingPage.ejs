@@ -1,0 +1,501 @@
+	<!DOCTYPE html>
+	<html lang="en">
+	<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta name="author" content="Untree.co">
+	<!-- <link rel="shortcut icon" href="favicon.png"> -->
+	<meta name="description" content="" />
+	<meta name="keywords" content="bootstrap, bootstrap4" />
+
+	<!-- Bootstrap CSS -->
+	<link href="../assets/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+	<link href="../assets/css/tiny-slider.css" rel="stylesheet">
+	<link href="../assets/css/stylee.css" rel="stylesheet">
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" /><body>
+
+	<nav class="custom-navbar navbar navbar-expand-md navbar-dark bg-dark" aria-label="Furni navigation bar">
+		<!-- <a href="#" onclick="goBack()"><img src="../public/back-button-removebg-preview.png" id="back-button"></a> -->
+
+		<div class="container">
+		<a class="navbar-brand" href="#">G-HUB<span>.</span></a>
+	
+
+		<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsFurni" aria-controls="navbarsFurni" aria-expanded="false" aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+		
+		<div class="collapse navbar-collapse" id="navbarsFurni">
+			<ul class="custom-navbar-nav navbar-nav ms-auto mb-2 mb-md-0">
+			<li class="nav-item">
+				<a class="nav-link" href="/">Home</a>
+			</li>
+			
+			<li class="nav-item">
+				<a class="nav-link" href="/home">Shop</a>
+			</li>
+			</ul>
+
+			<ul class="custom-navbar-cta navbar-nav mb-2 mb-md-0 ms-5">
+			<!-- <li><a class="nav-link" href="/userprofile/<%= user._id %>"><i class="fa fa-user"></i></a></li>
+			<li><a class="nav-link" href="/cart"><i class="fa fa-shopping-cart"></i></a></li>
+			<li><a class="nav-link" href="/wishlist"><i class="fa fa-heart" aria-hidden="true"></i></a></li>
+			<li><a class="nav-link" href="/userWallet/<%=user._id%>"><i class="fa-solid fa-wallet"></i></a></li> -->
+			<li><a class="nav-link" href=""><i></i></a></li>
+
+		</ul>
+		</div>
+		</div>
+	</nav>
+			<!-- End Header/Navigation -->
+
+			<!-- Start Hero Section -->
+				<div class="hero">
+					<div class="container">
+						<div class="row justify-content-between">
+							<div class="col-lg-5">
+								<div class="intro-excerpt">
+									<h1>The Complete <span clsas="d-block">SmartPhone Store</span></h1>
+									<p class="mb-4">Explore our latest collection of cutting-edge smartphones designed to elevate your digital experience. Whether you're seeking flagship performance, stunning displays, or innovative features, we have the perfect device to match your lifestyle. Shop now and stay ahead with the latest in mobile technology.</p>
+									<p><a href="/home" class="btn btn-secondary me-2">Shop Now</a></p>
+								</div>
+							</div>
+							<div class="col-lg-7">
+								<div class="hero-img-wrap">
+									<img src="../public/product-images/iphone.png" class="img-fluid">
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			<!-- End Hero Section -->
+
+			<!-- Start Product Section -->
+			<div class="product-section">
+				<div class="container">
+					<div class="row">
+
+						<!-- Start Column 1 -->
+						<div class="col-md-12 col-lg-3 mb-5 mb-lg-0">
+							<h2 class="mb-4 section-title">Explore Our Premium Selection</h2>
+	<p class="mb-4">Discover top-quality products crafted with precision and care. Whether you're looking for stylish apparel, innovative gadgets, or elegant accessories, our curated collection has something for everyone.</p>
+
+							<p><a href="/home" class="btn">Explore</a></p>
+						</div> 
+						<!-- End Column 1 -->
+
+						<!-- Start Column 2 -->
+						<div class="col-12 col-md-4 col-lg-3 mb-5 mb-md-0">
+							<% if (product && product.length > 0) { %>
+								<% const productItem = product[0]; %>
+								<a class="product-item" href="cart.html">
+									<img src="<%= productItem.mainimage %>" class="img-fluid product-thumbnail" alt="<%= productItem.name %>">
+									<!-- <h3 class="product-title"><%= productItem.name %></h3>
+									<strong class="product-price">₹<%= productItem.price.toFixed() %></strong> -->
+									<span class="icon-cross">
+										<img src="images/cross.svg" class="img-fluid">
+									</span>
+								</a>
+							<% } else { %>
+								<p>No product available</p>
+							<% } %>
+						</div>
+						
+						<!-- End Column 2 -->
+
+						<div class="col-12 col-md-4 col-lg-3 mb-5 mb-md-0">
+							<% if (producttwo && producttwo.length > 0) { %>
+								<% const productTwoItem = producttwo[0]; %>
+								<a class="product-item" href="cart.html">
+									<img src="<%= productTwoItem.mainimage %>" class="img-fluid product-thumbnail" alt="<%= productTwoItem.name %>">
+									<!-- <h3 class="producttwo-title"><%= productTwoItem.name %></h3>
+									<strong class="product-price">₹<%= productTwoItem.price.toFixed() %></strong> -->
+									<span class="icon-cross">
+										<img src="images/cross.svg" class="img-fluid">
+									</span>
+								</a>
+							<% } else { %>
+								<p>No product available</p>
+							<% } %>
+						</div>
+						
+						<!-- End Column 3 -->
+
+						<!-- Start Column 4 -->
+						
+						<div class="col-12 col-md-4 col-lg-3 mb-5 mb-md-0">
+							<% if (productThree&& productThree.length > 0) { %>
+								<% const productThreeItem= productThree[0]; %>
+								<a class="product-item" href="cart.html">
+									<img src="<%= productThreeItem.mainimage %>" class="img-fluid product-thumbnail" alt="<%= productThreeItem.name %>">
+									<!-- <h3 class="producttwo-title"><%= productThreeItem.name %></h3>
+									<strong class="product-price">₹<%= productThreeItem.price.toFixed() %></strong> -->
+									<span class="icon-cross">
+										<img src="images/cross.svg" class="img-fluid">
+									</span>
+								</a>
+							<% } else { %>
+								<p>No product available</p>
+							<% } %>
+						</div>
+						<!-- End Column 4 -->
+
+					</div>
+				</div>
+			</div>
+			<!-- End Product Section -->
+
+			<!-- Start Why Choose Us Section -->
+			<div class="why-choose-section">
+				<div class="container">
+					<div class="row justify-content-between">
+						<div class="col-lg-6">
+							<h2 class="section-title">Why Choose Us</h2>
+							<p>Donec vitae odio quis nisl dapibus malesuada. Nullam ac aliquet velit. Aliquam vulputate velit imperdiet dolor tempor tristique.</p>
+
+							<div class="row my-5">
+								<div class="col-6 col-md-6">
+									<div class="feature">
+										<div class="icon">
+											<img src="../public/images/return.svg" alt="Image" class="imf-fluid">
+										</div>
+										<h3>Fast & Speed Delivery</h3>
+										<p>Experience lightning-fast delivery services tailored to meet your needs. With our efficient logistics network, we ensure your orders reach you promptly and securely. Say goodbye to waiting and hello to swift delivery right at your doorstep.</p>
+										
+									</div>
+								</div>
+
+								<div class="col-6 col-md-6">
+									<div class="feature">
+										<div class="icon">
+											<img src="../public/images/bag.svg" alt="Image" class="imf-fluid">
+										</div>
+										<h3>Easy to Shop</h3>
+	<p>Shopping made effortless! Explore our user-friendly platform designed to streamline your shopping experience. With intuitive navigation and hassle-free checkout, finding and purchasing your desired products has never been easier. Enjoy a seamless shopping journey from start to finish.</p>
+
+									</div>
+								</div>
+
+								<div class="col-6 col-md-6">
+									<div class="feature">
+										<div class="icon">
+											<img src="../public/images/support.svg" alt="Image" class="imf-fluid">
+										</div>
+										<h3>24/7 Support</h3>
+										<p>Need assistance anytime, anywhere? Our dedicated support team is here for you around the clock. Whether you have questions, concerns, or need help with your order, we're just a message or call away. Count on us for prompt and reliable support whenever you need it.</p>
+										
+									</div>
+								</div>
+
+								<div class="col-6 col-md-6">
+									<div class="feature">
+										<div class="icon">
+											<img src="../public/images/return.svg" alt="Image" class="imf-fluid">
+										</div>
+										<h3>Hassle-Free Returns</h3>
+	<p>Not satisfied with your purchase? No worries. Our hassle-free returns policy ensures a smooth and easy return process. Simply reach out to us, and we'll guide you through the steps to return your item. Your satisfaction is our priority, and we're committed to making the return experience as seamless as possible.</p>
+
+									</div>
+								</div>
+
+							</div>
+						</div>
+
+						<div class="col-lg-5">
+							<div class="img-wrap">
+								<img src="../public/product-images/15promax-removebg-preview.png" alt="Image" class="img-fluid">
+							</div>
+						</div>
+
+					</div>
+				</div>
+			</div>
+			<!-- End Why Choose Us Section -->
+
+			<!-- Start We Help Section -->
+			<div class="we-help-section">
+				<div class="container">
+					<div class="row justify-content-between">
+						<div class="col-lg-7 mb-5 mb-lg-0">
+							<div class="imgs-grid">
+								<div class="grid grid-1"><img src="../public/product-images/zfold51-removebg-preview.png" alt="Untree.co"></div>
+								<div class="grid grid-2"><img src="../public/product-images/1706169134362.png" alt="Untree.co"></div>
+								<div class="grid grid-3"><img src="../public/product-images/pixel 8 pro1.jpg" alt="Untree.co"></div>
+							</div>
+						</div>
+						<div class="col-lg-5 ps-lg-5">
+							<h2 class="section-title mb-4">Explore the Latest in Smartphone Technology</h2>
+							<p>Discover cutting-edge smartphones that redefine mobile technology. Whether you're a tech enthusiast or a casual user, our extensive collection offers the perfect device to suit your needs.</p>
+						
+							<ul class="list-unstyled custom-list my-4">
+								<li>Experience lightning-fast performance and seamless multitasking</li>
+								<li>Capture stunning photos and videos with advanced camera systems</li>
+								<li>Stay connected on-the-go with reliable network connectivity</li>
+								<li>Unlock new possibilities with innovative features and intuitive interfaces</li>
+							</ul>
+							<p><a href="/home" class="btn">Shop Now</a></p>
+						</div>
+						
+					</div>
+				</div>
+			</div>
+			<!-- End We Help Section -->
+
+			<!-- Start Popular Product -->
+			<div class="popular-product">
+				<div class="container">
+					<div class="row">
+
+						<div class="col-12 col-md-6 col-lg-4 mb-4 mb-lg-0">
+							<div class="product-item-sm d-flex">
+								<div class="thumbnail">
+									<img src="../public/product-images/xiamoi 13 pro.jpeg" alt="Image" class="img-fluid">
+								</div>
+								<div class="pt-3">
+									<h3>Xiaomi Smartphone</h3>
+	<p>Experience the pinnacle of mobile innovation with Xiaomi smartphones. From sleek designs to powerful performance, Xiaomi devices redefine the smartphone experience. Explore our range today and stay ahead with cutting-edge technology.</p>
+
+								</div>
+							</div>
+						</div>
+
+						<div class="col-12 col-md-6 col-lg-4 mb-4 mb-lg-0">
+							<div class="product-item-sm d-flex">
+								<div class="thumbnail">
+									<img src="../public/product-images/iphone.png" alt="Image" class="img-fluid">
+								</div>
+								<div class="pt-3">
+									<h3>iPhone Series</h3>
+	<p>Experience unparalleled innovation with the iPhone series. Crafted with precision and powered by cutting-edge technology, iPhones redefine the smartphone landscape. Elevate your mobile experience with the latest iPhone models and enjoy seamless performance, stunning design, and advanced features.</p>
+
+								</div>
+							</div>
+						</div>
+
+						<div class="col-12 col-md-6 col-lg-4 mb-4 mb-lg-0">
+							<div class="product-item-sm d-flex">
+								<div class="thumbnail">
+									<img src="../public/product-images/vivo v29.jpeg" alt="Image" class="img-fluid">
+								</div>
+								<div class="pt-3">
+									<h3>Vivo Smartphone Collection</h3>
+	<p>Experience superior design and performance with Vivo smartphones. Designed for those who demand more from their devices, Vivo offers a stunning range of smartphones packed with innovative features. Elevate your mobile experience and stay connected with Vivo's cutting-edge technology.</p>
+
+								</div>
+							</div>
+						</div>
+
+					</div>
+				</div>
+			</div>
+			<!-- End Popular Product -->
+
+			<!-- Start Testimonial Slider -->
+			
+			<!-- End Testimonial Slider -->
+
+			<!-- Start Blog Section -->
+			<!-- <div class="blog-section">
+				<div class="container">
+					<div class="row mb-5">
+						<div class="col-md-6">
+							<h2 class="section-title">Recent Blog</h2>
+						</div>
+						<div class="col-md-6 text-start text-md-end">
+							<a href="#" class="more">View All Posts</a>
+						</div>
+					</div>
+
+					<div class="row">
+
+						<div class="col-12 col-sm-6 col-md-4 mb-4 mb-md-0">
+							<div class="post-entry">
+								<a href="#" class="post-thumbnail"><img src="images/post-1.jpg" alt="Image" class="img-fluid"></a>
+								<div class="post-content-entry">
+									<h3><a href="#">First Time Home Owner Ideas</a></h3>
+									<div class="meta">
+										<span>by <a href="#">Kristin Watson</a></span> <span>on <a href="#">Dec 19, 2021</a></span>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<div class="col-12 col-sm-6 col-md-4 mb-4 mb-md-0">
+							<div class="post-entry">
+								<a href="#" class="post-thumbnail"><img src="images/post-2.jpg" alt="Image" class="img-fluid"></a>
+								<div class="post-content-entry">
+									<h3><a href="#">How To Keep Your Furniture Clean</a></h3>
+									<div class="meta">
+										<span>by <a href="#">Robert Fox</a></span> <span>on <a href="#">Dec 15, 2021</a></span>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<div class="col-12 col-sm-6 col-md-4 mb-4 mb-md-0">
+							<div class="post-entry">
+								<a href="#" class="post-thumbnail"><img src="images/post-3.jpg" alt="Image" class="img-fluid"></a>
+								<div class="post-content-entry">
+									<h3><a href="#">Small Space Furniture Apartment Ideas</a></h3>
+									<div class="meta">
+										<span>by <a href="#">Kristin Watson</a></span> <span>on <a href="#">Dec 12, 2021</a></span>
+									</div>
+								</div>
+							</div>
+						</div>
+
+					</div>
+				</div>
+			</div> -->
+			<!-- End Blog Section -->	
+
+			<!-- Start Footer Section -->
+			<footer class="footer-section">
+				<div class="container relative">
+
+					<div class="sofa-img">
+						<!-- <img src="images/sofa.png" alt="Image" class="img-fluid"> -->
+					</div>
+
+					<!-- <div class="row">
+						<div class="col-lg-8">
+							<div class="subscription-form">
+								<h3 class="d-flex align-items-center"><span class="me-1"><img src="images/envelope-outline.svg" alt="Image" class="img-fluid"></span><span>Subscribe to Newsletter</span></h3>
+
+								<form action="#" class="row g-3">
+									<div class="col-auto">
+										<input type="text" class="form-control" placeholder="Enter your name">
+									</div>
+									<div class="col-auto">
+										<input type="email" class="form-control" placeholder="Enter your email">
+									</div>
+									<div class="col-auto">
+										<button class="btn btn-primary">
+											<span class="fa fa-paper-plane"></span>
+										</button>
+									</div>
+								</form>
+
+							</div>
+						</div>
+					</div> -->
+
+					<div class="row g-5 mb-5">
+						<div class="col-lg-4">
+							<div class="mb-4 footer-logo-wrap"><a href="#" class="footer-logo">G-HUB<span>.</span></a></div>
+							<p class="mb-4">Explore the endless possibilities of collaboration and innovation with GitHub. GitHub empowers developers worldwide by providing a platform for hosting, reviewing, and sharing code. Whether you're contributing to open-source projects or building your own, GitHub facilitates seamless collaboration and development. Join the vibrant community of developers and unleash your potential with GitHub.</p>
+
+							<ul class="list-unstyled custom-social">
+								<li><a href="www.facebook.com"><span class="fa fa-brands fa-facebook-f"></span></a></li>
+								<li><a href="www.twitter.com"><span class="fa fa-brands fa-twitter"></span></a></li>
+								<li><a href="www.instagram.com"><span class="fa fa-brands fa-instagram"></span></a></li>
+								<li><a href="www.linkedin.com"><span class="fa fa-brands fa-linkedin"></span></a></li>
+							</ul>
+						</div>
+
+						<!-- <div class="col-lg-8">
+							<div class="row links-wrap">
+								<div class="col-6 col-sm-6 col-md-3">
+									<ul class="list-unstyled">
+										<li><a href="#">About us</a></li>
+										<li><a href="#">Services</a></li>
+										<li><a href="#">Blog</a></li>
+										<li><a href="#">Contact us</a></li>
+									</ul>
+								</div>
+
+								<div class="col-6 col-sm-6 col-md-3">
+									<ul class="list-unstyled">
+										<li><a href="#">Support</a></li>
+										<li><a href="#">Knowledge base</a></li>
+										<li><a href="#">Live chat</a></li>
+									</ul>
+								</div>
+
+								<div class="col-6 col-sm-6 col-md-3">
+									<ul class="list-unstyled">
+										<li><a href="#">Jobs</a></li>
+										<li><a href="#">Our team</a></li>
+										<li><a href="#">Leadership</a></li>
+										<li><a href="#">Privacy Policy</a></li>
+									</ul>
+								</div>
+
+								<div class="col-6 col-sm-6 col-md-3">
+									<ul class="list-unstyled">
+										<li><a href="#">Nordic Chair</a></li>
+										<li><a href="#">Kruzo Aero</a></li>
+										<li><a href="#">Ergonomic Chair</a></li>
+									</ul>
+								</div>
+							</div>
+						</div> -->
+
+					</div>
+
+					<div class="border-top copyright">
+						<div class="row pt-4">
+							<div class="col-lg-6">
+								<p class="mb-2 text-center text-lg-start">Copyright &copy;<script>document.write(new Date().getFullYear());</script>. All Rights Reserved. &mdash; Designed with love by <a href="https://untree.co">Untree.co</a> <!-- License information: https://untree.co/license/ -->
+				</p>
+							</div>
+
+							<div class="col-lg-6 text-center text-lg-end">
+								<ul class="list-unstyled d-inline-flex ms-auto">
+									<li class="me-4"><a href="#">Terms &amp; Conditions</a></li>
+									<li><a href="#">Privacy Policy</a></li>
+								</ul>
+							</div>
+
+						</div>
+					</div>
+
+				</div>
+			</footer>
+			<style>
+				.product-item {
+					display: block;
+					text-decoration: none;
+					text-align: center;
+					margin-bottom: 20px;
+				}
+			
+				.product-thumbnail {
+					width: 200px; /* Fixed width for the product thumbnail */
+					height: auto; /* Maintain aspect ratio */
+				}
+			
+				.product-title {
+					margin-top: 10px;
+					font-size: 18px;
+				}
+			
+				.product-price {
+					display: block;
+					margin-top: 5px;
+					font-weight: bold;
+					color: #333;
+				}
+			
+				.icon-cross {
+					display: block;
+					margin-top: 5px;
+				}
+			
+				.icon-cross img {
+					width: 20px;
+					height: 20px;
+				}
+			</style>
+			<!-- End Footer Section -->	
+
+
+			<script src="../js/bootstrap.bundle.min.js"></script>
+			<script src="../js/tiny-slider.js"></script>
+			<script src="../js/custom.js"></script>
+		</body>
+
+	</html>

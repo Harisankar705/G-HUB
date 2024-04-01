@@ -15,11 +15,17 @@
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" type="text/css"
+        href="https://cdn.jsdelivr.net/npm/starability-basic/css/starability-basic.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/starability-basic/js/starability.min.js"></script>
+
 </head>
 
 <body>
     <nav class="custom-navbar navbar navbar-expand-md navbar-dark bg-dark" aria-label="Furni navigation bar">
-        <a href="#" onclick="goBack()"><img src="../public/back-button-removebg-preview.png" id="back-button"></a>
+        <a href="#" onclick="goBack()"><img src="../public/back-button-removebg-preview.png" style="width: 30px;"
+                id="back-button"></a>
+
 
         <div class="container">
             <a class="navbar-brand" href="#">G-HUB<span>.</span></a>
@@ -30,20 +36,30 @@
             <div class="collapse navbar-collapse" id="navbarsFurni">
                 <ul class="custom-navbar-nav navbar-nav ms-auto mb-2 mb-md-0">
                     <li class="nav-item">
-                        <a class="nav-link" href="/home">Home</a>
+                        <a class="nav-link" href="/">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/home">Shop</a>
                     </li>
                 </ul>
                 <ul class="custom-navbar-cta navbar-nav mb-2 mb-md-0 ms-5">
+                    <link rel="stylesheet" type="text/css" href="../css/starablility.css" />
+                    <script src="path/to/starability.js" defer></script>
+                    <script src="https://cdn.jsdelivr.net/npm/starability-basic/js/starability.min.js"></script>
+                    <link rel="stylesheet" type="text/css"
+                        href="https://cdn.jsdelivr.net/npm/starability-basic/css/starability-basic.min.css">
+
+
                     <li><a class="nav-link" href="/userprofile/<%= user._id %>"><i class="fa fa-user"></i></a></li>
                     <li><a class="nav-link" href="/cart"><i class="fa fa-shopping-cart"></i></a></li>
                     <li><a class="nav-link" href="/wishlist"><i class="fa fa-heart" aria-hidden="true"></i></a></li>
                     <li><a class="nav-link" href="/userWallet/<%=user._id%>"><i class="fa-solid fa-wallet"></i></a></li>
                     <li><a class="nav-link" href=""><i></i></a></li>
-					<form action="/logout" method="POST">
-						<button type="submit" class="nav-link" style="border: none; background: none; cursor: pointer;">
-							<i class="fa fa-sign-out"></i>
-						</button>
-					</form>
+                    <form action="/logout" method="POST">
+                        <button type="submit" class="nav-link" style="border: none; background: none; cursor: pointer;">
+                            <i class="fa fa-sign-out"></i>
+                        </button>
+                    </form>
                 </ul>
             </div>
         </div>
@@ -52,63 +68,174 @@
     <div class="container mt-4">
         <h1>Order Details</h1>
 
-        <% if (orderDetails && orderDetails.products && orderDetails.products.length > 0) { %>
-            <% orderDetails.products.forEach(product => { %>
+        <% if (orderDetails && orderDetails.products && orderDetails.products.length> 0) { %>
+            <% orderDetails.products.forEach(product=> { %>
                 <%if(product.orderStatus!=="Return Accepted")%>
-                <div class="product-details">
-                    <img src="/<%= product.productId && product.productId.mainimage %>" alt="<%= product.productId && product.productId.name %>" class="product-image">
-                    <div class="product-info">
-                        <p class="product-name">Order Id: <%= orderDetails._id %></p>
-                        <p class="order-date">Order Date:<%=orderDetails.date.toLocaleString()%></p>
-                        <p class="payment-method">Payment Method:<%=orderDetails.paymentMethod%></p>
-                        <p class="product-name">Product Price: <%= product.productId && product.productId.price %></p>
-                        <p class="delivery-charge">Delivery Charge: <%= orderDetails.deliveryCharges %></p>
-                        <p class='coupon-discount'> Discount:<%=orderDetails.couponDiscount%></p>
-                        <p class="product-quantity">Quantity: <%= product.quantity %></p>
-                        <p class="product-price">Total Price: <%= product.total %></p>
-                        <% if (orderDetails.addresstoDeliver) { %>
-                            <h5>Delivery Address</h5>
-                            <p>Username: <%= orderDetails.addresstoDeliver.username || 'Not specified' %></p>
-                            <p>Phone Number: <%= orderDetails.addresstoDeliver.phonenumber || 'Not specified' %></p>
-                            <p>Address: <%= orderDetails.addresstoDeliver.houseaddress %>, <%= orderDetails.addresstoDeliver.city %>, <%= orderDetails.addresstoDeliver.state %>, <%= orderDetails.addresstoDeliver.district %> - <%= orderDetails.addresstoDeliver.pincode %></p>
-                            <p class="order-status mt-4">Order Status: <%= product.orderStatus %></p>
+                    <div class="product-details">
+                        <img src="/<%= product.productId && product.productId.mainimage %>"
+                            alt="<%= product.productId && product.productId.name %>" class="product-image">
+                        <div class="product-info">
+                            <p class="product-name">Order Id: <%= orderDetails._id %>
+                            </p>
+                            <p class="order-date">Order Date:<%=orderDetails.date.toLocaleString()%>
+                            </p>
+                            <p class="payment-method">Payment Method:<%=orderDetails.paymentMethod%>
+                            </p>
+                            <p class="product-name">Product Name: <%= product.productId && product.productId.name %>
+                            </p>
+                            <p class="product-name">Product Price: <%= product.productId && product.productId.price %>
+                            </p>
+                            <p class="delivery-charge">Delivery Charge: <%= orderDetails.deliveryCharges %>
+                            </p>
+                            <p class='coupon-discount'> Discount:<%=orderDetails.couponDiscount%>
+                            </p>
+                            <p class="product-quantity">Quantity: <%= product.quantity %>
+                            </p>
+                            <p class="product-price">Total Price: <%= product.total %>
+                            </p>
+                            <% if (orderDetails.addresstoDeliver) { %>
+                                <h5>Delivery Address</h5>
+                                <p>Username: <%= orderDetails.addresstoDeliver.username || 'Not specified' %>
+                                </p>
+                                <p>Phone Number: <%= orderDetails.addresstoDeliver.phonenumber || 'Not specified' %>
+                                </p>
+                                <p>Address: <%= orderDetails.addresstoDeliver.houseaddress %>, <%=
+                                            orderDetails.addresstoDeliver.city %>, <%=
+                                                orderDetails.addresstoDeliver.state %>, <%=
+                                                    orderDetails.addresstoDeliver.district %> - <%=
+                                                        orderDetails.addresstoDeliver.pincode %>
+                                </p>
+                                <p class="order-status mt-4">Order Status: <%= product.orderStatus %>
+                                </p>
 
-                        <% } %>
-                       
-                    </div>
-                    <%if(product.orderStatus==='Pending'){%>
-                        <div class="container">
-                            <button class="btn btn-primary cancelBtn" id="cancelBtn" data-order-id="<%= orderDetails._id %>" data-product-id="<%= product.productId._id %>">Cancel Order</button>
+                                <% } %>
+
                         </div>
-                        <%}%>
-
-                        <%if(product.orderStatus==="Delivered"){%>
+                        <%if(product.orderStatus==='Pending'){%>
                             <div class="container">
-                                <button class="btn btn-success returnBtn" id="returnBtn"data-order-id="<%= orderDetails._id %>" data-product-id="<%= product.productId._id %>">Return Order</button>
+                                <button class="btn btn-primary cancelBtn" id="cancelBtn"
+                                    data-order-id="<%= orderDetails._id %>"
+                                    data-product-id="<%= product.productId._id %>">Cancel Order</button>
                             </div>
                             <%}%>
 
-                </div>
-            <% }); %>
+                                <%if(product.orderStatus==="Delivered"){%>
+                                    <div class="container">
+                                        <button class="btn btn-success returnBtn" id="returnBtn"
+                                            data-order-id="<%= orderDetails._id %>"
+                                            data-product-id="<%= product.productId._id %>">Return Order</button>
+                                    </div>
+                                    <!-- <h2>Write a review so that it help other Users!!</h2> -->
+                                    <div class="review_form_container">
+                                        <form id="reviewForm" class="review-form" method="post" action="/user-reviews">
+                                            <input type="hidden" id="userId" name="userId" value="<%= user._id %>"
+                                                required>
+                                            <input type="hidden" id="productId" name="productId"
+                                                value="<%= product.productId._id %>" required>
+                                            <div class="starability-basic">
+                                                <input type="radio" id="rating5" name="rating" value="5" />
+                                                <label for="rating5" title="Amazing"></label>
 
-        <% } else { %>
-            <p>No products found in the order.</p>
-        <% } %>
+                                                <input type="radio" id="rating4" name="rating" value="4" />
+                                                <label for="rating4" title="Very good"></label>
 
-        <!-- <p class="order-status mt-4">Order Status: <%= orderDetails && orderDetails.orderStatus %></p> -->
-        <%if(orderDetails.orderStatus==="Delivered"){%>
-            <div class='container'>
-                <button id="invoiceBtn" class="btn btn-danger">Download Invoice</button>
-            </div>
-            <%}%>
+                                                <input type="radio" id="rating3" name="rating" value="3" />
+                                                <label for="rating3" title="Average"></label>
+
+                                                <input type="radio" id="rating2" name="rating" value="2" />
+                                                <label for="rating2" title="Not good"></label>
+
+                                                <input type="radio" id="rating1" name="rating" value="1" />
+                                                <label for="rating1" title="Terrible"></label>
+                                            </div>
+                                            <textarea name="reviewText" id="reviewText"
+                                                placeholder="Your feedback is valuable!!" required
+                                                style="width: 100%; padding: 10px; box-sizing: border-box;"></textarea>
+                                            <button type="submit" id="reviewBtn"
+                                                style="width: 100%; padding: 10px; box-sizing: border-box;">Submit
+                                                Review</button>
+
+                                        </form>
+                                    </div>
+                                    <%}%>
+
+                    </div>
+                    <% }); %>
+
+                        <% } else { %>
+                            <p>No products found in the order.</p>
+                            <% } %>
+
+                                <!-- <p class="order-status mt-4">Order Status: <%= orderDetails && orderDetails.orderStatus %></p> -->
+                                <%if(orderDetails.orderStatus==="Delivered"){%>
+                                    <div class='container'>
+                                        <button id="invoiceBtn" class="btn btn-danger">Download Invoice</button>
+                                    </div>
+
+                                    <%}%>
     </div>
 
 
 </body>
 <style>
-    #back-button {
-  width: 30px;
-}
+    h2 {
+        text-align: right;
+        font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+        font-size: 20px;
+    }
+
+    .review-form {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .review_form_container {
+        text-align: center;
+        /* Center the form horizontally */
+        margin-top: 20px;
+        /* Add some top margin for spacing */
+    }
+
+    .review-form {
+        display: inline-block;
+        /* Ensure the form is displayed as a block element */
+        text-align: center;
+        /* Reset text alignment for form elements */
+    }
+
+    .review-form label {
+        font-weight: bold;
+        color: #343a40;
+        margin-bottom: 5px;
+    }
+
+    .review-form textarea,
+    .review-form input {
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        padding: 5px;
+    }
+
+    .review-form textarea {
+        resize: vertical;
+        min-height: 120px;
+    }
+
+    .review-form button {
+        background-color: #14a467;
+        color: #fff;
+        border-color: transparent;
+        padding: 10px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    .review-form button:hover {
+        background-color: #0c7956;
+    }
+
     body {
         font-family: 'Arial', sans-serif;
         background-color: #f8f9fa;
@@ -167,170 +294,217 @@
         margin-top: 20px;
     }
 </style>
+<style>
+    .starability-basic {
+        margin: 0 auto;
+        display: inline-block;
+        unicode-bidi: bidi-override;
+        direction: rtl;
+    }
+
+    .starability-basic input {
+        position: absolute !important;
+        clip: rect(1px 1px 1px 1px);
+        height: 1px;
+        width: 1px;
+        overflow: hidden;
+        clip-path: inset(50%);
+        white-space: nowrap;
+    }
+
+    .starability-basic label {
+        float: right;
+        padding: 0.25em;
+        padding-right: 0;
+        cursor: pointer;
+        font-size: 20px;
+    }
+
+    .starability-basic label::before {
+        content: '★';
+    }
+
+    .starability-basic input:checked~label,
+    .starability-basic input:checked~label:hover,
+    .starability-basic label:hover~label {
+        color: #ffa500;
+    }
+
+    .starability-basic input:checked+label:hover,
+    .starability-basic label:hover~input:checked~label,
+    .starability-basic input:checked~label:hover~label {
+        color: #ffa500;
+    }
+</style>
+
 <script>
-    function goBack()
-    {
-      window.history.back()
-    }
-    document.addEventListener('DOMContentLoaded',function(){
-        document.getElementById('invoiceBtn').addEventListener('click', async function (event) {
-    event.preventDefault();
-    console.log("button clicked")
-    const orderData = {
-        orderId: "<%=orderDetails._id%>",
-        deliveryCharges:"<%=orderDetails.deliveryCharges%>",
-        orderDate: "<%=orderDetails.date.toLocaleString()%>",
-        address: {
-            name: "<%=orderDetails.addresstoDeliver.username%>",
-            phonenumber: "<%=orderDetails.addresstoDeliver.phonenumber%>", // Corrected typo here
-            houseaddress:"<%=orderDetails.addresstoDeliver.houseaddress%>",
-            district:"<%=orderDetails.addresstoDeliver.district%>",
-            state:"<%=orderDetails.addresstoDeliver.state%>",
-            city:"<%=orderDetails.addresstoDeliver.city%>",
-            pincode:"<%=orderDetails.addresstoDeliver.pincode%>",
-
-        }, 
-        // price: "<%=orderDetails.total%>", // Corrected variable name here
-        paymentMethod: "<%=orderDetails.paymentMethod%>",
-        discount: "<%=orderDetails.couponDiscountDifference%>",
-        deliveredDate:"<%=orderDetails.deliveredDate%>",
-        products:[
-            '<%for(let i=0;i<orderDetails.products.length;i++){%>',
-            {
-                productname:"<%=orderDetails.products[i].productId.name%>",
-                quantity:"<%=orderDetails.products[i].quantity%>",
-                total:"<%=orderDetails.products[i].total%>"
-
-            },
-            '<%}%>'
-        ]
-    };
-    try {
-    const response=await fetch("/download-invoice",{
-        method:'post',
-        headers:{"Content-Type":"application/json"},
-        body:JSON.stringify(orderData)
-    })
-    if(response.ok)
-    {   
-        console.log("response of")
-        const blob=await response.blob()
-        const url=window.URL.createObjectURL(blob)
-        const a=document.createElement('a')
-        a.href=url
-        a.download='invoice.pdf'
-        document.body.appendChild(a)
-        a.click()
-        document.body.removeChild(a)
-    }
-    else
-    {
-        console.error("Error occured while downloading pdf",Error)
-    }
-} catch (error) {
-    console.log("Error occured",error)
-}
-});
-    })
-    
-
-document.addEventListener('DOMContentLoaded', async function () {
-    console.log("DOMContentLoaded event triggered");
-
-    const cancelButtons = document.querySelectorAll('.cancelBtn');
-    console.log(cancelButtons.length + " cancel buttons found");
-    cancelButtons.forEach(cancelButton => {
-        cancelButton.addEventListener('click', async function (event) {
+    document.addEventListener('DOMContentLoaded', function () {
+        document.getElementById('reviewForm').addEventListener('submit', async function (event) {
             event.preventDefault();
-            console.log('BUTTON CLICKED');
-            const confirmation = await Swal.fire({
-                title: "Cancel Order",
-                text: "Are you sure you want to cancel the order?",
-                icon: "question",
-                showCancelButton: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#3085d6',
-                confirmButtonText: "Yes, Cancel it"
-            });
-            if (confirmation.isConfirmed) {
-                const orderId = this.getAttribute('data-order-id');
-                const productId = this.getAttribute('data-product-id');
-                const response = await fetch(`/cancel-order/${orderId}/${productId}`, {
-                    method: "get"
+
+            // Get selected rating value
+            const rating = document.querySelector('input[name="rating"]:checked').value;
+
+            // Get other form data
+            const reviewText = document.getElementById('reviewText').value;
+            const userId = document.getElementById('userId').value;
+            const productId = document.getElementById('productId').value;
+
+            // Validate form fields
+            if (!reviewText.trim() || !rating) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error occurred',
+                    text: 'Please enter both review text and select a rating.'
                 });
-                const data = await response.json();
-                if (data.status === "success") {
+                return;
+            }
+
+            // Prepare data for submission
+            const data = {
+                productId: productId,
+                reviewText: reviewText,
+                userId: userId,
+                rating: rating
+            };
+
+            try {
+                // Submit form data to server
+                const response = await fetch('/user-reviews', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (response.ok) {
+                    // Show success message
                     Swal.fire({
-                        icon: "success",
-                        title: "Order cancelled",
-                        text: data.message
-                    })
-                    .then(()=>{
-                        window.location.reload()
-                    })
+                        icon: 'success',
+                        title: 'Review submitted successfully',
+                        text: 'Thank you for your feedback!'
+                    }).then(() => {
+                        // Optionally, you can redirect the user or reload the page after successful submission
+                        window.location.reload();
+                    });
                 } else {
+                    // Handle error response from server
                     Swal.fire({
-                        icon: "error",
-                        title: "Error occurred",
-                        text: data.message
+                        icon: 'error',
+                        title: 'Error occurred',
+                        text: 'Failed to submit review. Please try again later.'
                     });
                 }
+            } catch (error) {
+                console.error('Error occurred:', error);
+                // Handle network or other errors
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error occurred',
+                    text: 'Failed to submit review. Please try again later.'
+                });
             }
         });
     });
-});
 
-document.addEventListener('DOMContentLoaded', async function () {
-    console.log("DOMContentLoaded event triggered");
-
-    const returnButtons = document.querySelectorAll('.returnBtn');
-    returnButtons.forEach(returnButton => {
-        returnButton.addEventListener('click', async function (event) {
+    function goBack() {
+        window.history.back()
+    }
+    document.addEventListener('DOMContentLoaded', function () {
+        document.getElementById('invoiceBtn').addEventListener('click', async function (event) {
             event.preventDefault();
-            console.log('BUTTON CLICKED');
-            const confirmation = await Swal.fire({
-                title: "Return Order",
-                text: "Are you sure you want to return the order?",
-                icon: "question",
-                showCancelButton: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#3085d6',
-                confirmButtonText: "Yes, Return  it"
-            });
-            if (confirmation.isConfirmed) {
-                const {value:returnReason}=await Swal.fire({
-                    title:"Enter the return reason",
-                    input:'text',
-                    inputLabel:"Reason",
-                    inputPlaceholder:"Enter the reason for returning order",
-                    showCancelButton:true,
-                    inputValidator:(value)=>{
-                        if(!value)
-                        {
-                            return 'You need to enter a reason'
-                        }
-                    }
+            console.log("button clicked")
+            const orderData = {
+                orderId: "<%=orderDetails._id%>",
+                deliveryCharges: "<%=orderDetails.deliveryCharges%>",
+                orderDate: "<%=orderDetails.date.toLocaleString()%>",
+                address: {
+                    name: "<%=orderDetails.addresstoDeliver.username%>",
+                    phonenumber: "<%=orderDetails.addresstoDeliver.phonenumber%>", // Corrected typo here
+                    houseaddress: "<%=orderDetails.addresstoDeliver.houseaddress%>",
+                    district: "<%=orderDetails.addresstoDeliver.district%>",
+                    state: "<%=orderDetails.addresstoDeliver.state%>",
+                    city: "<%=orderDetails.addresstoDeliver.city%>",
+                    pincode: "<%=orderDetails.addresstoDeliver.pincode%>",
+
+                },
+                // price: "<%=orderDetails.total%>", // Corrected variable name here
+                paymentMethod: "<%=orderDetails.paymentMethod%>",
+                discount: "<%=orderDetails.couponDiscountDifference%>",
+                deliveredDate: "<%=orderDetails.deliveredDate%>",
+                products: [
+                    '<%for(let i=0;i<orderDetails.products.length;i++){%>',
+                    {
+                        productname: "<%=orderDetails.products[i].productId.name%>",
+                        quantity: "<%=orderDetails.products[i].quantity%>",
+                        total: "<%=orderDetails.products[i].total%>"
+
+                    },
+                    '<%}%>'
+                ]
+            };
+            try {
+                const response = await fetch("/download-invoice", {
+                    method: 'post',
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(orderData)
                 })
-                if (returnReason) {
-                    // If a reason is provided, initiate the return
+                if (response.ok) {
+                    console.log("response of")
+                    const blob = await response.blob()
+                    const url = window.URL.createObjectURL(blob)
+                    const a = document.createElement('a')
+                    a.href = url
+                    a.download = 'invoice.pdf'
+                    document.body.appendChild(a)
+                    a.click()
+                    document.body.removeChild(a)
+                }
+                else {
+                    console.error("Error occured while downloading pdf", Error)
+                }
+            } catch (error) {
+                console.log("Error occured", error)
+            }
+        });
+    })
+
+
+    document.addEventListener('DOMContentLoaded', async function () {
+        console.log("DOMContentLoaded event triggered");
+
+        const cancelButtons = document.querySelectorAll('.cancelBtn');
+        console.log(cancelButtons.length + " cancel buttons found");
+        cancelButtons.forEach(cancelButton => {
+            cancelButton.addEventListener('click', async function (event) {
+                event.preventDefault();
+                console.log('BUTTON CLICKED');
+                const confirmation = await Swal.fire({
+                    title: "Cancel Order",
+                    text: "Are you sure you want to cancel the order?",
+                    icon: "question",
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: "Yes, Cancel it"
+                });
+                if (confirmation.isConfirmed) {
                     const orderId = this.getAttribute('data-order-id');
                     const productId = this.getAttribute('data-product-id');
-                    const response = await fetch(`/initiate-return/${orderId}/${productId}`, {
-                        method: "post",
-                        body: JSON.stringify({ reason: returnReason }), // Pass reason in the request body
-                        headers: {
-                            'Content-Type': 'application/json'
-                        }
+                    const response = await fetch(`/cancel-order/${orderId}/${productId}`, {
+                        method: "get"
                     });
                     const data = await response.json();
                     if (data.status === "success") {
                         Swal.fire({
                             icon: "success",
-                            title: "Return Initiated",
-                            text: "Your return request has been initiated successfully. Thank you for your feedback!"
-                        }).then(() => {
-                            window.location.reload();
-                        });
+                            title: "Order cancelled",
+                            text: data.message
+                        })
+                            .then(() => {
+                                window.location.reload()
+                            })
                     } else {
                         Swal.fire({
                             icon: "error",
@@ -339,14 +513,77 @@ document.addEventListener('DOMContentLoaded', async function () {
                         });
                     }
                 }
-            }
+            });
         });
     });
-});
+
+    document.addEventListener('DOMContentLoaded', async function () {
+        console.log("DOMContentLoaded event triggered");
+
+        const returnButtons = document.querySelectorAll('.returnBtn');
+        returnButtons.forEach(returnButton => {
+            returnButton.addEventListener('click', async function (event) {
+                event.preventDefault();
+                console.log('BUTTON CLICKED');
+                const confirmation = await Swal.fire({
+                    title: "Return Order",
+                    text: "Are you sure you want to return the order?",
+                    icon: "question",
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: "Yes, Return  it"
+                });
+                if (confirmation.isConfirmed) {
+                    const { value: returnReason } = await Swal.fire({
+                        title: "Enter the return reason",
+                        input: 'text',
+                        inputLabel: "Reason",
+                        inputPlaceholder: "Enter the reason for returning order",
+                        showCancelButton: true,
+                        inputValidator: (value) => {
+                            if (!value) {
+                                return 'You need to enter a reason'
+                            }
+                        }
+                    })
+                    if (returnReason) {
+                        // If a reason is provided, initiate the return
+                        const orderId = this.getAttribute('data-order-id');
+                        const productId = this.getAttribute('data-product-id');
+                        const response = await fetch(`/initiate-return/${orderId}/${productId}`, {
+                            method: "post",
+                            body: JSON.stringify({ reason: returnReason }), // Pass reason in the request body
+                            headers: {
+                                'Content-Type': 'application/json'
+                            }
+                        });
+                        const data = await response.json();
+                        if (data.status === "success") {
+                            Swal.fire({
+                                icon: "success",
+                                title: "Return Initiated",
+                                text: "Your return request has been initiated successfully. Thank you for your feedback!"
+                            }).then(() => {
+                                window.location.reload();
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: "error",
+                                title: "Error occurred",
+                                text: data.message
+                            });
+                        }
+                    }
+                }
+            });
+        });
+    });
 
 
 
-    
-    
+
+
 </script>
+
 </html>

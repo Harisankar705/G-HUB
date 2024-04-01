@@ -3,7 +3,7 @@ require('dotenv').config();
 
 let db = async () => {
     try {
-        const mongodbUri = process.env.MONGODB_URI || 'mongodb://localhost:27017/Ecommerce';
+        const mongodbUri = process.env.MONGODB_URI ;
         await mongoose.connect(mongodbUri);
         console.log("Database connection established");
     } catch (err) {

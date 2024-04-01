@@ -1,0 +1,209 @@
+<!DOCTYPE HTML>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Evara Dashboard</title>
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta property="og:title" content="">
+    <meta property="og:type" content="">
+    <meta property="og:url" content="">
+    <meta property="og:image" content="">
+    <!-- Favicon -->    
+    <script src="/assets/js/vendors/jquery-3.6.0.min.js"></script>
+
+    <!-- Template CSS -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+    <link href="/assets/css/dashboard.css" rel="stylesheet"/>
+    <!-- <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs4/dt-1.11.5/datatables.min.css"/> -->
+<!-- <script type="text/javascript" src="https://cdn.datatables.net/v/bs4/dt-1.11.5/datatables.min.js"></script> -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
+
+
+</head>
+
+<body>
+    <div class="screen-overlay"></div>
+    <aside class="navbar-aside" id="offcanvas_aside">
+        <div class="aside-top">
+            <a href="#" class="brand-wrap">
+                <h2>G-HUB</h2>
+                <h3>AdminPanel</h3>
+            </a>
+            <div>
+            </div>
+        </div>
+        <nav>
+            <ul class="menu-aside">
+                <li class="menu-item active">
+                    <a class="menu-link" href="/adminPanel"> <i class="icon material-icons md-home"></i>
+                        <span class="text">Dashboard</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a class="menu-link" href="/admin/category"> <i class="icon material-icons md-menu_open"></i>
+                        <span class="text">Categories</span>
+                    </a>
+                </li>
+                <li class="menu-item ">
+                    <a class="menu-link" href="/admin/products"> <i class="icon material-icons md-shopping_bag"></i>
+                        <span class="text">Products</span>
+                    </a>
+                    <li class="menu-item ">
+                        <a class="menu-link" href="/admin/add"> <i class="icon material-icons md-plus"></i>
+                            <span class="text">Add Product</span>
+                        </a>
+                    </li>
+                    <li class="menu-item ">
+                        <a class="menu-link" href="/admin/user-management"> <i class="icon material-icons md-person"></i>
+                            <span class="text">User Management</span>
+                        </a>
+                    </li>
+                    <li class="menu-item ">
+                        <a class="menu-link" href="/admincoupons"> <i class="icon material-icons md-check_box"></i>
+                            <span class="text">Coupon Management</span>
+                        </a>
+                    </li>
+                    <li class="menu-item ">
+                        <a class="menu-link" href="/offer-management"> <i class="icon material-icons md-redeem"></i>
+                            <span class="text">Offer Management</span>
+                        </a>
+                    </li>
+                    <li class="menu-item has-submenu">
+                        <a class="menu-link" href="#"> <i class="icon material-icons md-star"></i>
+                            <span class="text">Best Selling</span>
+                        </a>
+                        <ul class="submenu">
+                            <li><a href="/bestSellingProducts">Best Selling Product </a></li>
+                            <li><a href="bestSellingCategory">Best Selling Category </a></li>
+                            <li><a href="/bestSellingBrands">Best Selling Brand </a></li>
+                        </ul>
+                    </li>
+                    
+                    <li class="menu-item ">
+                        <a class="menu-link" href='/admin-orders'> <i class="icon material-icons md-book"></i>
+                            <span class="text">Orders</span>
+                        </a>
+                    </li>
+                    <li class="menu-item ">
+                        <a class="menu-link" href='/admin-brand'> <i class="icon material-icons md-comment"></i>
+                            <span class="text">Brand Management</span>
+                        </a>
+                    </li>
+                    <li class="menu-item ">
+                        <a class="menu-link" href='/customer-care'> <i class="icon material-icons md-headset"></i>
+                            <span class="text">Customer Care</span>
+                        </a>
+                    </li>
+                   
+                    <li class="menu-item ">
+                        <a class="menu-link" href="#" id="logoutLink"> <i class="icon material-icons md-exit_to_app"></i>
+                            <span class="text">Logout</span>
+                        </a>
+                    </li>
+                    
+
+                </li>
+            </ul>
+            <hr>
+            <br>
+            <br>
+        </nav>
+    </aside>
+    <body>
+        <h1 style="margin-left: 300px;">Complaint Details</h1>
+        <div class="complaint-details">
+            <p>User: <%= complaint._id %></p>
+            <p>Email: <%= complaint.email %></p>
+            <p>Phone Number: <%= complaint.phonenumber %></p>
+            <p>Subject: <%= complaint.subject %></p>
+            <p>Message: <%= complaint.message %></p>
+            <!-- <p>Action: <a href="/admin/edit-complaint/<%= complaint._id %>">Edit</a> | <a href="/admin/delete-complaint/<%= complaint._id %>">Delete</a></p> -->
+        </div>
+        <div class="reply-form">
+            <h2>Reply to Complaint</h2>
+            <form id="replyForm" action="/admin/reply-to-complaint/<%= complaint._id %>" method="post">
+                <textarea name="reply" id="replyText" rows="4" cols="50" placeholder="Enter your reply here"></textarea>
+                <button type="submit" id="replyButton">Submit Reply</button>
+            </form>
+        </div>
+    </body>
+<style>
+    
+    .content-container {
+        margin-left: 200px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.complaint-details,
+.reply-form {
+    margin-left: 350px;
+    width: 45%; /* Adjust the width as needed */
+    margin-right: 20px; /* Add some space between the sections */
+}
+
+</style>    
+</body>
+</html>
+<script>
+    // Handle form submission using Fetch API
+    document.getElementById('replyForm').addEventListener('submit', async function(event) {
+        event.preventDefault(); // Prevent default form submission
+
+        // Extract the reply text from the form
+        const replyText = document.getElementById('replyText').value;
+        if(replyText.trim()==='')
+        {
+            Swal.fire({
+            
+                title:"Error occured",
+                text:"Field shouldnot be empty"
+            })
+            return
+        }
+
+        try {
+            const response = await fetch(this.action, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ reply: replyText }) // Convert reply text to JSON format
+            });
+
+            // Parse the JSON response
+            const data = await response.json();
+
+            // Display SweetAlert based on the response status
+            if (data.status === 'success') {
+                Swal.fire({
+                 
+                    title: 'Success',
+                    text: "Reply sended Successfully"
+                }).then(()=>{
+                    window.location.href='/customer-care'
+                })
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: data.message
+                });
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            // Display error message using SweetAlert
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Something went wrong!'
+            });
+        }
+    });
+</script>

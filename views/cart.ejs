@@ -28,7 +28,10 @@
             <div class="collapse navbar-collapse" id="navbarsFurni">
                 <ul class="custom-navbar-nav navbar-nav ms-auto mb-2 mb-md-0">
                     <li class="nav-item">
-                        <a class="nav-link" href="/home">Home</a>
+                        <a class="nav-link" href="/">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/home">Shop</a>
                     </li>
                 </ul>
                 <ul class="custom-navbar-cta navbar-nav mb-2 mb-md-0 ms-5">
@@ -543,7 +546,6 @@ if(!response.ok)
                     event.preventDefault();
 
                     const productId = event.currentTarget.getAttribute('data-productId');
-                    const size = event.currentTarget.getAttribute('data-productSize');
                     console.log(productId)
                     if (productId) {
                         const response = await Swal.fire({
@@ -560,9 +562,7 @@ if(!response.ok)
                         if (response.isConfirmed) {
                             let url = `/cart/itemtoremove/?productId=${productId}`;
 
-                            if (size) {
-                                url += `&size=${size}`;
-                            }
+                           
                             const response = await fetch(url);
                             const result = await response.json();
 

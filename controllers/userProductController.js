@@ -4,6 +4,7 @@ const categorySchema=require('../models/category')
 const productSchema=require('../models/product')
 const User = require('../models/User')
 const userSchema=require('../models/User')
+const reviewSchema=require('../models/reviewSchema')
 
 //displaying products
 userProductController.productDisplay=async(req,res)=>{
@@ -37,11 +38,12 @@ userProductController.productDetails = async (req, res) => {
         const user=await userSchema.findById(userId)
         const productId = req.query.productId;
         const brand=await brandSchema.find()
+        const reviews=await reviewSchema.find({product:productId}).populate('user')
         // console.log("id founded", productid);
         const product = await productSchema.findById(productId).populate('category').populate('brand');
         const categories = await categorySchema.find();
         if (product && product.isPublished) {
-            res.render('product-details', { product, categories ,productId,userId,user,brand});
+            res.render('product-details', { product, categories ,productId,userId,user,brand,reviews});
             // console.log(categories);
 
         } else {
@@ -53,6 +55,29 @@ userProductController.productDetails = async (req, res) => {
     }
 }
 
+userProductController.writeReviews=async(req,res)=>{
+    try {
+        console.log("in reviewsceham")
+        const {userId,rating,reviewText,productId}=req.body
+        console.log("IN REQ.body",req.body)
+        const newReview=new reviewSchema({
+            user:userId,
+            rating:rating,
+            reviewText:reviewText,
+            product:productId
+        })
+        await newReview.save()
+        console.log('SAVED')
+        return res.json({status:"success",message:"Review Saved Successfully"})
+        
+        
+
+    } catch (error) {
+        console.log("error occured while saving reviews",error)
+        return res.status(500).json({ status: "error", message: "Internal server error" });
+
+    }
+}
 
 
   

@@ -1,0 +1,161 @@
+<!DOCTYPE HTML>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Evara Dashboard</title>
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta property="og:title" content="">
+    <meta property="og:type" content="">
+    <meta property="og:url" content="">
+    <meta property="og:image" content="">
+    <!-- Favicon -->    
+    <script src="../assets/js/vendors/jquery-3.6.0.min.js"></script>
+
+    <!-- Template CSS -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <link href="/assets/css/dashboard.css" rel="stylesheet"/>
+    <!-- <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs4/dt-1.11.5/datatables.min.css"/> -->
+<!-- <script type="text/javascript" src="https://cdn.datatables.net/v/bs4/dt-1.11.5/datatables.min.js"></script> -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
+
+
+</head>
+
+<body>
+    <div class="screen-overlay"></div>
+    <form action="adminPanel" method="post">
+    <aside class="navbar-aside" id="offcanvas_aside">
+        <div class="aside-top">
+            <a href="#" class="brand-wrap">
+                <h2>G-HUB</h2>
+                <h3>AdminPanel</h3>
+            </a>
+            <div>
+            </div>
+        </div>
+        <nav>
+            <ul class="menu-aside">
+                <li class="menu-item active">
+                    <a class="menu-link" href="/adminPanel"> <i class="icon material-icons md-home"></i>
+                        <span class="text">Dashboard</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a class="menu-link" href="/admin/category"> <i class="icon material-icons md-menu_open"></i>
+                        <span class="text">Categories</span>
+                    </a>
+                </li>
+                <li class="menu-item ">
+                    <a class="menu-link" href="/admin/products"> <i class="icon material-icons md-shopping_bag"></i>
+                        <span class="text">Products</span>
+                    </a>
+                    <li class="menu-item ">
+                        <a class="menu-link" href="/admin/add"> <i class="icon material-icons md-plus"></i>
+                            <span class="text">Add Product</span>
+                        </a>
+                    </li>
+                    <li class="menu-item ">
+                        <a class="menu-link" href="/admin/user-management"> <i class="icon material-icons md-person"></i>
+                            <span class="text">User Management</span>
+                        </a>
+                    </li>
+                    <li class="menu-item ">
+                        <a class="menu-link" href="/admincoupons"> <i class="icon material-icons md-check_box"></i>
+                            <span class="text">Coupon Management</span>
+                        </a>
+                    </li>
+                    <li class="menu-item ">
+                        <a class="menu-link" href="/offer-management"> <i class="icon material-icons md-redeem"></i>
+                            <span class="text">Offer Management</span>
+                        </a>
+                    </li>
+                    <li class="menu-item has-submenu">
+                        <a class="menu-link" href="#"> <i class="icon material-icons md-star"></i>
+                            <span class="text">Best Selling</span>
+                        </a>
+                        <ul class="submenu">
+                            <li><a href="/bestSellingProducts">Best Selling Product </a></li>
+                            <li><a href="bestSellingCategory">Best Selling Category </a></li>
+                            <li><a href="/bestSellingBrands">Best Selling Brand </a></li>
+                        </ul>
+                    </li>
+                    
+                    <li class="menu-item ">
+                        <a class="menu-link" href='/admin-orders'> <i class="icon material-icons md-book"></i>
+                            <span class="text">Orders</span>
+                        </a>
+                    </li>
+                    <li class="menu-item ">
+                        <a class="menu-link" href='/admin-brand'> <i class="icon material-icons md-comment"></i>
+                            <span class="text">Brand Management</span>
+                        </a>
+                    </li>
+                    <li class="menu-item ">
+                        <a class="menu-link" href='/customer-care'> <i class="icon material-icons md-headset"></i>
+                            <span class="text">Customer Care</span>
+                        </a>
+                    </li>
+                   
+                    <li class="menu-item ">
+                        <a class="menu-link" href="#" id="logoutLink"> <i class="icon material-icons md-exit_to_app"></i>
+                            <span class="text">Logout</span>
+                        </a>
+                    </li>
+                    
+
+                </li>
+            </ul>
+            <hr>
+            <br>
+            <br>
+        </nav>
+    </aside>
+    <body>
+        <h1>Customer Complaints</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th style="padding: 10px;">Complaint ID</th>
+                    <th style="padding: 10px">Email</th>
+                    <th style="padding: 10px;">Phone Number</th>
+                    <th style="padding: 10px;">Subject</th>
+                    <th style="padding: 10px;">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% complaints.forEach(complaint => { %>
+                    <tr>
+                        <td style="padding: 10px;"><%= complaint._id %></td>
+                        <td style="padding:10px;"><%= complaint.email %></td>
+                        <td style="padding: 10px;"><%= complaint.phonenumber %></td>
+                        <td style="padding: 10px;"><%= complaint.subject %></td>
+                        <td style="padding: 10px;"><a href="/admin/view-complaint/<%= complaint._id %>">View Details</a></td>
+                    </tr>
+    
+                <% }); %>
+            </tbody>
+        </table>
+    </body>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            position: relative; /* Set body position to relative */
+        }
+        
+        h1 {
+            text-align: left; /* Align h1 to the left */
+            margin-left: 350px; /* Add margin to the left of h1 */
+            margin-top: 20px; /* Add margin to the top of h1 */
+        }
+        
+        table {
+            margin-left: 350px; /* Add margin to the left of the table */
+            margin-top: 20px; /* Add margin to the top of the table */
+        }
+       
+    </style>

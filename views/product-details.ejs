@@ -31,9 +31,12 @@
     
     <div class="collapse navbar-collapse" id="navbarsFurni">
         <ul class="custom-navbar-nav navbar-nav ms-auto mb-2 mb-md-0">
+          <li class="nav-item">
+            <a class="nav-link" href="/">Home</a>
+        </li>
           
         <li class="nav-item">
-            <a class="nav-link" href="/home">Home</a>
+            <a class="nav-link" href="/home">Shop</a>
         </li>
         <!-- <li class="nav-item">
             <a class="nav-link" href="shop.html">Shop</a>
@@ -128,18 +131,19 @@
             </div>
 
             <!-- Additional Images -->
-            <div class="additional-images-container d-flex justify-content-between">
-              <% product.additionalimages.forEach((img, index) => { %>
-              <% if (img !== null) { %>
-              <div class="additional-image-item">
-                <a href="/<%= img %>" class="MagicZoom" data-options="zoomWidth:100%" onclick="changeMainImage('<%= img %>')">
-                  <img id="additionalImage<%= index %>" class="img-fluid"
-                    style="height: 90px; width: 90px; object-fit: contain;" src="/<%= img %>" alt="additional-image">
-                </a>
-              </div>
-              <% } %>
-              <% }) %>
-            </div>
+         <div class="additional-images-container d-flex justify-content-between">
+    <% product.additionalimages.forEach((img, index) => { %>
+    <% if (img !== null) { %>
+    <div class="additional-image-item">
+        <a href="#" class="MagicZoom" data-options="zoomWidth:100%" onclick="changeMainImage('<%= img %>')">
+            <img id="additionalImage<%= index %>" class="img-fluid"
+                style="height: 90px; width: 90px; object-fit: contain;" src="/<%= img %>" alt="additional-image">
+        </a>
+    </div>
+    <% } %>
+    <% }) %>
+</div>
+
           </div>
         </div>
 
@@ -147,14 +151,15 @@
           <div class="s_product_text">
             <h3><%- product.name %></h3>
             <% if (product.discount > 0) { %>
-                <h4>
-                    Original Price: <span style="text-decoration: line-through;">&#8377;&nbsp;<%= product.originalPrice.toFixed() %></span>
-                </h4>
-                <h4>Discounted Price: &#8377;&nbsp;<%= product.price.toFixed() %></h4>
-                <h4>Discount: <%= product.discount %>%</h4>
-            <% } else { %>
-                <h4>&#8377;&nbsp;<%= product.price.toFixed() %></h4>
-            <% } %>
+              <h4>
+                  Original Price: <span style="text-decoration: line-through;">&#8377;&nbsp;<%= product.originalPrice.toFixed() %></span>
+              </h4>
+              <h4 class="discounted-price">Discounted Price: &#8377;&nbsp;<%= product.price.toFixed() %></h4>
+              <h4>Discount: <%= product.discount %>%</h4>
+          <% } else { %>
+              <h4>&#8377;&nbsp;<%= product.price.toFixed() %></h4>
+          <% } %>
+          
             <!-- Other product details... -->
         </div>
         
@@ -186,16 +191,52 @@
               </form>
             </div>
           </div>
+          
         </div>
+        
       </div>
+      
     </div>
-  </div>
-  <section class="product_description_area">
+    
 
-  </section>
-  <%-include('partials/userfooter.ejs')%>
+  
+
+    <section class="product_reviews">
+      <h2>Customer Reviews</h2>
+      <div class="reviews_container" style="text-align: center;">
+        <% reviews.forEach(review => { %>
+        <div class="review_item" style="display: inline-block; text-align: center;">
+            <p class="user-name">User: <%= review.user.email %></p>
+            <div class="star-ratings">
+                <% for (let i = 0; i < review.rating; i++) { %>
+                <i class="fas fa-star"></i>
+                <% } %>
+                <% for (let i = review.rating; i < 5; i++) { %>
+                <i class="far fa-star"></i>
+                <% } %>
+            </div>
+            <p class="review-text"><%= review.reviewText %></p>
+        </div>
+        <% }) %>
+    </div>
+    
+
+    
+    </form>
+  </section>  
+  <style>
+    .discounted-price {
+        color: red; /* Change the color to your preferred highlight color */
+        font-weight: bold;
+    }
+</style>
 
   <script>
+  
+      
+
+
+    
     function goBack()
     {
       window.history.back()
@@ -317,6 +358,8 @@ addToWishlistForm.addEventListener('submit', async function (event) {
     window.addEventListener('load', function () {
       document.querySelector('.s_Product_carousel').style.display = 'block';
     });
+
+    
   </script>
   <!-- Add to Cart and Size selecting functions -->
   <!-- Add the following styles within the <head> section -->
@@ -333,7 +376,7 @@ addToWishlistForm.addEventListener('submit', async function (event) {
     .custom-navbar {
       background-color: #343a40;
     }
-
+    
     .navbar-brand {
       color: #fff;
       font-size: 1.5rem;
@@ -367,6 +410,45 @@ addToWishlistForm.addEventListener('submit', async function (event) {
     .additional-images-container {
       margin-top: 10px;
     }
+    .product_reviews {
+  padding: 30px;
+  background-color: #f5f5f5;
+  margin-top: 50px;
+}
+
+.product_reviews h2 {
+  text-align: center;
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 30px;
+  color: #343a40;
+}
+
+.reviews_container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.review_item {
+  padding: 15px;
+  background-color: #fff;
+  border-radius: 5px;
+}
+
+.review_item .user-name {
+  font-weight: bold;
+  color: #343a40;
+  margin-bottom: 5px;
+}
+
+.star-ratings {
+  color: #ffc107;
+  margin-bottom: 10px;
+  display: inline-block;
+  font-size: 18px;
+}
+
 
     .additional-image-item {
       margin-right: 10px;
@@ -433,6 +515,8 @@ addToWishlistForm.addEventListener('submit', async function (event) {
       transition: background-color 0.3s;
     }
   </style>
+  
+  <%-include('partials/userfooter.ejs')%>
 
 </body>
 </html>

@@ -16,13 +16,14 @@ const userWishlistController=require('../controllers/userWishlistController')
 const walletController=require('../controllers/walletController')
 const offerManagementController=require('../controllers/offerManagementController')
 const offer = require('../models/offerSchema')
+const adminUserController = require('../controllers/adminUserController')
 
 
 
 
 
 
-userRouter.get('/',loginController.showHome)
+userRouter.get('/',loginController.showLandingPage)
 userRouter.get('/login',loginController.loginForm)
 userRouter.post('/login',userAuth,isBlocked,loginController.loginHandle)
 userRouter.get('/home',isBlocked,loginController.homeRender)
@@ -42,7 +43,7 @@ userRouter.post('/resendOTP',signupController.resendOTP)
 //cart 
 userRouter.get('/cart', isBlocked, userCartController.showCart);
 userRouter.post('/addtocart/:id',isBlocked,userCartController.addProductToCart)
-userRouter.get('/cart/itemtoremove',isBlocked, userCartController.removeProduct);
+userRouter.delete('/cart/itemtoremove',isBlocked, userCartController.removeProduct);
 userRouter.post('/cart/updatequantity/:productId',isBlocked,userCartController.updateQuantity )
 userRouter.post('/cart/updatquantity/:productId',isBlocked,userCartController.updateQuantity )
 userRouter.post('/cart/decreasequantity/:productId',isBlocked,userCartController.decreaseQuantity)
@@ -92,5 +93,8 @@ userRouter.get('/referandearn/:userId',offerManagementController.referAndEarn)
 userRouter.post("/download-invoice",userOrderController.invoice)
 //wallet
 userRouter.get('/userWallet/:id',walletController.displayWallet)
+userRouter.post('/user-reviews',userProductController.writeReviews)
+userRouter.get('/customer-support',adminUserController.customerSupport)
+userRouter.post('/submit-msg',userProfileController.customerCare)
 module.exports=userRouter
 

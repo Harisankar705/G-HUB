@@ -11,10 +11,10 @@ const adminCouponController=require('../controllers/couponController')
 const offerManagementController=require('../controllers/offerManagementController')
 const offer = require('../models/offerSchema')
 const couponController = require('../controllers/couponController')
-const adminAuth=require('../middleware/adminAuth')
+const adminAuth = require('../middleware/adminAuth');
 const userOrderController = require('../controllers/userOrderController')
 const brandController=require('../controllers/brandController')
-
+// adminRouter.use(adminAuth)
 adminRouter.get('/admin',adminController.showAdminLogin)
 adminRouter.post('/admin',adminController.handleAdminLogin)
 adminRouter.get('/adminPanel',adminAuth,adminController.showAdminPanel)
@@ -42,48 +42,52 @@ adminRouter.get('/admin/category/restrict/:id',adminAuth,adminCategoriesControll
 
 
 //adminorder 
-adminRouter.get('/admin-orders',adminOrderController.showOrders)
-adminRouter.post('/admin-changeOrderStatus', adminOrderController.changeOrderStatus);
+adminRouter.get('/admin-orders',adminAuth,adminOrderController.showOrders)
+adminRouter.post('/admin-changeOrderStatus', adminAuth,adminOrderController.changeOrderStatus);
 
 //coupons
-adminRouter.get('/admincoupons',adminCouponController.showAdminCoupons)
-adminRouter.get('/admincoupons/add',adminCouponController.displayAddCoupon)
-adminRouter.post('/admincoupons/addcoupons',adminCouponController.addingCoupon)
-adminRouter.put('/deletecoupons/:id',couponController.deleteCoupon)
-adminRouter.get('/editcoupon/:id',couponController.showeditCoupon)
-adminRouter.post('/saveEditedCoupon/:id',couponController.handleEditedCoupon)
+adminRouter.get('/admincoupons',adminAuth,adminCouponController.showAdminCoupons)
+adminRouter.get('/admincoupons/add',adminAuth,adminCouponController.displayAddCoupon)
+adminRouter.post('/admincoupons/addcoupons',adminAuth,adminCouponController.addingCoupon)
+adminRouter.put('/deletecoupons/:id',adminAuth,couponController.deleteCoupon)
+adminRouter.get('/editcoupon/:id',adminAuth,couponController.showeditCoupon)
+adminRouter.post('/saveEditedCoupon/:id',adminAuth,couponController.handleEditedCoupon)
 
 //offermanagement
-adminRouter.get('/offer-management',offerManagementController.showOffers)
-adminRouter.get('/admin/addoffer',offerManagementController.displayAddOffer)
-adminRouter.post('/admin/saveoffer',offerManagementController.manageaddOffer)
-adminRouter.get("/offer-management/toggle/:offerId",offerManagementController.toogleListOffer)
-adminRouter.get("/editOffer/:offerId",offerManagementController.showEditOffer)
-adminRouter.get('/deleteOffer/:offerId',offerManagementController.deleteOffer)
-adminRouter.post('/saveeditoffer/:offerId',offerManagementController.handleEditOffer)
+adminRouter.get('/offer-management',adminAuth,offerManagementController.showOffers)
+adminRouter.get('/admin/addoffer',adminAuth,offerManagementController.displayAddOffer)
+adminRouter.post('/admin/saveoffer',adminAuth,offerManagementController.manageaddOffer)
+adminRouter.get("/offer-management/toggle/:offerId",adminAuth,offerManagementController.toogleListOffer)
+adminRouter.get("/editOffer/:offerId",adminAuth,offerManagementController.showEditOffer)
+adminRouter.get('/deleteOffer/:offerId',adminAuth,offerManagementController.deleteOffer)
+adminRouter.post('/saveeditoffer/:offerId',adminAuth,offerManagementController.handleEditOffer)
 
 //sales report
-adminRouter.get('/dashboard/filter-sales',adminController.filterSales)
-adminRouter.post('/dashboard/filter-by-date',adminController.filterByDate)
-adminRouter.post('/dashboard/generate-report',adminController.generatePDF)
-adminRouter.post('/dashboard/generate-excel-report',adminController.generateSalesExcel)
-adminRouter.get('/sales',adminController.sales)
-adminRouter.get('/bestSellingProducts',adminController.topSellingProducts)
-adminRouter.get('/bestSellingCategory',adminController.topSellingCategory)
-adminRouter.get('/bestSellingBrands',adminController.topSellingBrands)
+adminRouter.get('/dashboard/filter-sales',adminAuth,adminController.filterSales)
+adminRouter.post('/dashboard/filter-by-date',adminAuth,adminController.filterByDate)
+adminRouter.post('/dashboard/generate-report',adminAuth,adminController.generatePDF)
+adminRouter.post('/dashboard/generate-excel-report',adminAuth,adminController.generateSalesExcel)
+adminRouter.get('/sales',adminAuth,adminController.sales)
+adminRouter.get('/bestSellingProducts',adminAuth,adminController.topSellingProducts)
+adminRouter.get('/bestSellingCategory',adminAuth,adminController.topSellingCategory)
+adminRouter.get('/bestSellingBrands',adminAuth,adminController.topSellingBrands)
 
 
-adminRouter.get('/admin-brand',brandController.showBrands)
-adminRouter.get('/add-brand',brandController.addBrandPage)
-adminRouter.post('/save-brand',brandController.handleData)
-adminRouter.get('/edit-brand/:id',brandController.showEditBrand)
-adminRouter.put('/save-edit/:id',brandController.handleEditedBrand)
-adminRouter.get('/toogle-status/:id',brandController.manageToggle)
+adminRouter.get('/admin-brand',adminAuth,brandController.showBrands)
+adminRouter.get('/add-brand',adminAuth,brandController.addBrandPage)
+adminRouter.post('/save-brand',adminAuth,brandController.handleData)
+adminRouter.get('/edit-brand/:id',adminAuth,brandController.showEditBrand)
+adminRouter.put('/save-edit/:id',adminAuth,brandController.handleEditedBrand)
+adminRouter.get('/toogle-status/:id',adminAuth,brandController.manageToggle)
 
 //return
-adminRouter.post('/allow-return/:orderId/:productId',adminOrderController.allowReturn)
-adminRouter.post('/decline-return/:orderId/:productId',adminOrderController.declineReturn)
+adminRouter.post('/allow-return/:orderId/:productId',adminAuth,adminOrderController.allowReturn)
+adminRouter.post('/decline-return/:orderId/:productId',adminAuth,adminOrderController.declineReturn)
 
-adminRouter.get('/admin-order-details/:orderId',adminOrderController.orderDetails)
+adminRouter.get('/customer-care',adminAuth,adminController.customerComplaints)
+adminRouter.get('/admin/view-complaint/:id',adminAuth,adminController.complaintDetails)
+adminRouter.post('/admin/reply-to-complaint/:id',adminAuth,adminController.replyConcern)
+
+adminRouter.get('/admin-order-details/:orderId',adminAuth,adminOrderController.orderDetails)
 module.exports=adminRouter
     
