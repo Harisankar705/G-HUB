@@ -43,7 +43,7 @@ userRouter.post('/resendOTP',signupController.resendOTP)
 //cart 
 userRouter.get('/cart', isBlocked, userCartController.showCart);
 userRouter.post('/addtocart/:id',isBlocked,userCartController.addProductToCart)
-userRouter.delete('/cart/itemtoremove',isBlocked, userCartController.removeProduct);
+userRouter.get('/cart/itemtoremove',isBlocked, userCartController.removeProduct);
 userRouter.post('/cart/updatequantity/:productId',isBlocked,userCartController.updateQuantity )
 userRouter.post('/cart/updatquantity/:productId',isBlocked,userCartController.updateQuantity )
 userRouter.post('/cart/decreasequantity/:productId',isBlocked,userCartController.decreaseQuantity)
