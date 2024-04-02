@@ -458,7 +458,7 @@ adminController.showAdminPanel = async (req, res) => {
 
       const totalRevenue = orders.length > 0 ? orders[0].totalRevenue : 0;
 
-      res.render("adminPanel", {
+      res.render("adminpanel", {
         totalRevenue,
         totalOrders,
         totalCategory,
