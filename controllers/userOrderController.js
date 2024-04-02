@@ -285,7 +285,7 @@ userOrderController.showOrders = async (req, res) => {
       .sort({ date: -1, _id: -1 })
       .skip(offset)
       .limit(limit);
-    res.render("userorders", {
+    res.render("userOrders", {
       userOrders,
       user,
       totalPages,
