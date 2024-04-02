@@ -280,12 +280,12 @@ userOrderController.showOrders = async (req, res) => {
     const userId = req.session.userId;
 
     const user = await User.findById(userId);
-    const userOrders = await orderSchema
+    const userOrder = await orderSchema
       .find({ userId: userId })
       .sort({ date: -1, _id: -1 })
       .skip(offset)
       .limit(limit);
-      res.render("userOrders", { userOrders, user, totalPages, currentPage: page });
+      res.render("userOrders", { userOrder, user, totalPages, currentPage: page });
 
   } catch (error) {
     console.log("Error occured while showing userorders", error);
