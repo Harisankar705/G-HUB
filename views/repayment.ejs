@@ -188,6 +188,15 @@
       </label>
     </div>
   </div>
+  <div class="payment-methoxd">
+    <div class="input-radio">
+      <input type="radio" name="payment" id="payment-3">
+      <label for="wallet">
+        <span></span>
+        Wallet
+      </label>
+    </div>
+  </div>
   <a href="#" class="primary-btn order-submit" id="place-order">Place order</a>
 </div>
 </div>
@@ -394,16 +403,18 @@ if (radioButton.checked) {
 
 const paymentMethodRadio1 = document.getElementById('payment-1');
 const paymentMethodRadio2=document.getElementById('payment-2')
+const paymentMethodRadio3=document.getElementById('payment-3')
+
 
 
 let paymentMethod;
 if
-(!paymentMethodRadio1.checked && !paymentMethodRadio2.checked)
+(!paymentMethodRadio1.checked && !paymentMethodRadio2.checked && !paymentMethodRadio3.checked)
 {
 Swal.fire({icon:'error',message:"Payment not selected",text:"Please select any of the payment methods"})
 return
 }
-paymentMethod = paymentMethodRadio1.checked ? 'Cash On Delivery' : "Razorpay"; // Set the value based on the selected payment method
+paymentMethod = paymentMethodRadio1.checked ? 'Cash On Delivery' : (paymentMethodRadio2.checked ? 'RazorPay' :"Wallet") // Set the value based on the selected payment method
 const isCashOnDeliverySelected = paymentMethodRadio1.checked ? 'Cash On Delivery'   :"Razorpay"
 const couponDiscountPercentage=document.getElementById('couponDiscount').innerHTML
 const deliveryCharges=document.getElementById('deliveryCharges').innerHTML

@@ -496,6 +496,7 @@ userOrderController.failedOrderPlacing = async (req, res) => {
     const orderId = req.params.id;
     const userId = req.session.userId;
     console.log("IN RETYRPAYMENT");
+    const paymentMethod=req.body.paymentMethod
     const order = await orderSchema.findById(orderId);
     order.orderStatus = "Pending";
     for (const product of order.products) {
@@ -576,9 +577,9 @@ userOrderController.invoice = async (req, res) => {
     pdfDoc.fontSize(10).text(`Order ID: ${orderDetails.orderId}`);
     const deliveredDate = new Date(orderDetails.deliveredDate);
     const formattedDeliveredDate = deliveredDate.toLocaleDateString("en-GB");
-    pdfDoc.fontSize(10).text(`Delivered Date: ${formattedDeliveredDate}`);
-    pdfDoc.moveDown();
-    pdfDoc.moveDown();
+    pdfDoc.fontSize(10).text(`Delivered Date: ${formattedDeliveredDate}`)
+    
+
 
     // Product details
     // Product details
