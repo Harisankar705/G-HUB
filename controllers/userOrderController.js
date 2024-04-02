@@ -636,9 +636,10 @@ userOrderController.invoice = async (req, res) => {
 
     pdfDoc.end();
   } catch (error) {
-    console.log("Error occurred while downloading invoice", error);
-    res.status(500).json({ status: "error", message: "Internal Server Error" });
     res.render("error");
+
+    // console.log("Error occurred while downloading invoice", error);
+    // res.status(500).json({ status: "error", message: "Internal Server Error" });
   }
 };
 
