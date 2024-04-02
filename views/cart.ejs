@@ -41,6 +41,8 @@
                     <li><a class="nav-link" href="/cart"><i class="fa fa-shopping-cart"></i></a></li>
                     <li><a class="nav-link" href="/wishlist"><i class="fa fa-heart" aria-hidden="true"></i></a></li>
                     <li><a class="nav-link" href="/userWallet/<%=user._id%>"><i class="fa-solid fa-wallet"></i></a></li>
+                    <li><a class="nav-link" href="/customer-support"><i class="fa-solid fa-headphones"></i></a></li>
+
                     <li><a class="nav-link" href=""><i></i></a></li>
 					<form action="/logout" method="POST">
 						<button type="submit" class="nav-link" style="border: none; background: none; cursor: pointer;">
@@ -103,7 +105,7 @@
                                                 <td>
                                                     <div class="product_count">
                                                        <!-- Inside the loop where you display products -->
-                                                       <input type="number" name="qty" id="sst" maxlength="10" data-product-id="<%= products[i].productId._id %>" value="<%= products[i].quantity %>" title="Quantity:" class="input-text qty">
+                                                       <input type="number" name="qty" id="sst" maxlength="10" data-product-id="<%= products[i].productId._id %>" value="<%= products[i].quantity %>" title="Quantity:" class="input-text qty" readonly>
 
 
         
