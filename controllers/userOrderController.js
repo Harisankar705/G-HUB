@@ -578,6 +578,7 @@ userOrderController.invoice = async (req, res) => {
     const formattedDeliveredDate = deliveredDate.toLocaleDateString("en-GB");
     pdfDoc.fontSize(10).text(`Delivered Date: ${formattedDeliveredDate}`);
     pdfDoc.moveDown();
+    pdfDoc.moveDown();
 
     // Product details
     // Product details
