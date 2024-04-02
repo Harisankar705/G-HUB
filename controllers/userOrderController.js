@@ -493,6 +493,7 @@ function calculateDeliveryCharges(total) {
 
 userOrderController.failedOrderPlacing = async (req, res) => {
   try {
+    console.log("IN failedorderplacing")
     const orderId = req.params.id;
     const userId = req.session.userId;
     console.log("IN RETYRPAYMENT");
