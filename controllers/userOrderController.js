@@ -538,8 +538,8 @@ userOrderController.invoice = async (req, res) => {
 
     // Set font
     pdfDoc.font("Helvetica");
-    const logoPath =
-      "C:/Users/HP/Documents/Ecommerce/images/LogoMakerCa-1711860095659-removebg-preview.png";
+    const logoPath = "public/LogoMakerCa-1711860095659-removebg-preview.png";
+
     pdfDoc.image(logoPath, 60, 50, { width: 100 });
     // Add invoice title
     pdfDoc
