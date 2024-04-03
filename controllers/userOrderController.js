@@ -496,14 +496,31 @@ userOrderController.failedOrderPlacing = async (req, res) => {
     console.log("IN failedorderplacing")
     const orderId = req.params.id;
     const userId = req.session.userId;
+    const order = await orderSchema.findById(orderId);
+
     console.log("IN RETYRPAYMENT");
     const paymentMethod=req.body.paymentMethod
-    const order = await orderSchema.findById(orderId);
+    if(paymentMethod==="Wallet")
+    {
+      const userWallet=await walletSchema.findOne({userId:userId})
+      if(userWallet.amount<order.grandTotal)
+      {
+        return res.status(400).json({error:"Insufficient wallet balance"})
+      }
+      userWallet.amount-=order.grandTotal
+      userWallet.transactionHistory.push({
+        orderId:order._id,
+        amount:order.grandTotal,
+        description:"Order repayment"
+      })
+      await userWallet.save()
+    }
+    
     order.orderStatus = "Pending";
+    order.paymentMethod = paymentMethod
     for (const product of order.products) {
       product.orderStatus = "Pending";
     }
-    order.paymentMethod = req.body.paymentMethod;
     await order.save();
     const cart = await cartSchema.findOneAndDelete({ userId: userId });
   } catch (error) {

@@ -426,18 +426,73 @@ const orderId="<%=order.id%>"
 const grandTotal = "<%= grandTotal %>"; 
 const amountInPaise = (grandTotal * 100).toFixed();
 // This assumes grandTotal is passed from the server
-if(paymentMethod==="Cash On Delivery" && grandTotal>1000)
-{
-  Swal.fire({
-    icon:"error",
-    title:"Payment not available",
-    text:"COD is available for above 1000"
-  })
-}
-
 if (paymentMethod === "RazorPay") {
     initiatePayment();
+} else if (paymentMethod === "Wallet") {
+    // Process wallet payment
+    fetch(`/repayment/${orderId}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ paymentMethod: paymentMethod, grandTotal: grandTotal })
+    })
+    .then(response => response.json())
+    .then(data => {
+        // Handle success response
+        Swal.fire({
+            title: "Paid successfully!",
+            icon: "success",
+            showConfirmButton: false
+        }).then(() => {
+            window.location.href = '/userorders';
+        });
+    })
+    .catch(error => {
+        // Handle error
+        console.error('Error:', error);
+        Swal.fire({
+            title: "Payment failed",
+            icon: "error",
+            text: "Payment failed. Please try again later."
+        });
+    });
+} else if (paymentMethod === "Cash On Delivery") {
+    if (grandTotal > 1000) {
+        // Process COD payment
+        Swal.fire({
+            icon: "error",
+            title: "Payment not available",
+            text: "COD is available for orders above 1000"
+        });
+    } else {
+        // Proceed with COD payment
+        fetch(`/repayment/${orderId}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ paymentMethod: paymentMethod, grandTotal: grandTotal })
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Handle success response
+            Swal.fire({
+                title: "Order placed successfully!",
+                icon: "success",
+                showConfirmButton: false
+            }).then(() => {
+                window.location.href = '/userorders';
+            });
+        })
+        .catch(error => {
+            // Handle error
+            console.error('Error:', error);
+            Swal.fire({
+                title: "Order placement failed",
+                icon: "error",
+                text: "Order placement failed. Please try again later."
+            });
+        });
+    }
 }
+
 console.log('PAUMENT',paymentMethod)
 
 

@@ -54,7 +54,7 @@ app.on('error', (err) => {
   console.error('Server error:', err);
 });
 const razorpay=new Razorpay({
-  key_id:process.env.RAZORPAY_KEY_ID,
+  key_id:process.env.RAZORPAY_KEY_ID, 
   key_secret:process.env.RAZORPAY_KEY_SECRET
 })
 app.listen(port, "localhost", () => {
