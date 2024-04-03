@@ -435,12 +435,14 @@ if(paymentMethod==="Cash On Delivery" && grandTotal>1000)
   })
 }
 
-if (paymentMethod === "Razorpay") {
+if (paymentMethod === "RazorPay") {
     initiatePayment();
 }
+console.log('PAUMENT',paymentMethod)
 
 
 function initiatePayment() {
+  console.log("IN INITIA")
     var options = {
         "key": "rzp_test_wSI5EPnj247nka",
         "amount": amountInPaise, // Convert amount to paise
