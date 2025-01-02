@@ -10,7 +10,6 @@ const crypto = require('crypto');
 const adminRouter = require('./routes/adminRouter.js');
 const userRouter = require('./routes/userRouter.js');
 const Razorpay = require('razorpay');
-require('dotenv').config();
 
 // Ensure the existence of the SESSION_SECRET in your environment variables or .env file
 const sessionSecret = crypto.randomBytes(32).toString('hex')

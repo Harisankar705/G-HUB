@@ -499,8 +499,8 @@ userOrderController.failedOrderPlacing = async (req, res) => {
     const order = await orderSchema.findById(orderId);
 
     console.log("IN RETYRPAYMENT");
-    const paymentMethod=req.body.
-    console.log(paymentMethod)
+    const paymentMethod=req.body.paymentMethod
+    
     if(paymentMethod==="Wallet")
     {
       const userWallet=await walletSchema.findOne({userId:userId})

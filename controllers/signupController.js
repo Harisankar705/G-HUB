@@ -47,7 +47,13 @@ signupController.signupForm = async (req, res) => {
     console.log("signupuser", req.session);
   }
 };
-//validatiog signup
+//validatiog signup      -
+
+
+
+
+
+
 //validatiog signup
 signupController.signuphandle = async (req, res) => {
   const { username, email, password } = req.body;
