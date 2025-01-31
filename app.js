@@ -46,7 +46,7 @@ app.use((req, res, next) => {
   next();
 });
 
-const port = process.env.PORT || 3001;
+const PORT = process.env.PORT || 10000;
 
 // Add error handling for database connection
 app.on('error', (err) => {
@@ -56,6 +56,6 @@ const razorpay=new Razorpay({
   key_id:process.env.RAZORPAY_KEY_ID, 
   key_secret:process.env.RAZORPAY_KEY_SECRET
 })
-app.listen(port, "localhost", () => {
-  console.log(`Server is running on port ${port}`);
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`Server is running on port ${PORT}`);
 });
